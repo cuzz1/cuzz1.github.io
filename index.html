@@ -1,0 +1,695 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>Hexo</title><meta property="og:type" content="blog"><meta property="og:title" content="Hexo"><meta property="og:url" content="http://blog.cuzz.site/"><meta property="og:site_name" content="Hexo"><meta property="og:locale" content="en_US"><meta property="og:image" content="http://blog.cuzz.site/img/og_image.png"><meta property="article:author" content="John Doe"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="/img/og_image.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://blog.cuzz.site"},"headline":"Hexo","image":["http://blog.cuzz.site/img/og_image.png"],"author":{"@type":"Person","name":"John Doe"},"description":""}</script><link rel="icon" href="/img/favicon.svg"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css"><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><meta name="generator" content="Hexo 5.0.2"></head><body class="is-3-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.svg" alt="Hexo" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item is-active" href="/">Home</a><a class="navbar-item" href="/archives">Archives</a><a class="navbar-item" href="/categories">Categories</a><a class="navbar-item" href="/tags">Tags</a><a class="navbar-item" href="/about">About</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a><a class="navbar-item search" title="Search" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-6-widescreen"><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><time class="level-item" dateTime="2020-08-17T13:54:59.000Z" title="2020-08-17T13:54:59.000Z">2020-08-17</time><span class="level-item"><a class="link-muted" href="/categories/Go/">Go</a></span><span class="level-item">16 minutes read (About 2327 words)</span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2020/08/17/Let&#039;s%20build%20a%20Full-Text%20Search%20engine/">Let&#039;s build a Full-Text Search engine</a></h1><div class="content"><blockquote>
+<p>这是一篇转载文章<a target="_blank" rel="noopener" href="https://artem.krylysov.com/blog/2020/07/28/lets-build-a-full-text-search-engine/">原文地址</a>，原文讲述如何构建一个全文搜索引擎，用的 Go 实现的，本来想翻译一下，顺便用 Java 实现一下，由于翻译出来比较生硬，还是把原文放出来，顺便把我用 Java 实现的版本放在链接中<a target="_blank" rel="noopener" href="https://github.com/cuzz1/simplefts">Java实现版本</a>。</p>
+</blockquote>
+<p>Full-Text Search is one of those tools people use every day without realizing it. If you ever googled “golang coverage report” or tried to find “indoor wireless camera” on an e-commerce website, you used some kind of full-text search.</p>
+<p>Full-Text Search (FTS) is a technique for searching text in a collection of documents. A document can refer to a web page, a newspaper article, an email message, or any structured text.</p>
+<p>Today we are going to build our own FTS engine. By the end of this post, we’ll be able to search across millions of documents in less than a millisecond. We’ll start with simple search queries like “give me all documents that contain the word <em>cat</em>“ and we’ll extend the engine to support more sophisticated boolean queries.</p>
+<p>Note</p>
+<blockquote>
+<p>Most well-known FTS engine is <a target="_blank" rel="noopener" href="https://lucene.apache.org/">Lucene</a> (as well as <a target="_blank" rel="noopener" href="https://github.com/elastic/elasticsearch">Elasticsearch</a> and Solr built on top of it).</p>
+</blockquote>
+<h2 id="Why-FTS"><a href="#Why-FTS" class="headerlink" title="Why FTS"></a>Why FTS</h2><p>Before we start writing code, you may ask “can’t we just use <em>grep</em> or have a loop that checks if every document contains the word I’m looking for?“. Yes, we can. However, it’s not always the best idea.</p>
+<h2 id="Corpus"><a href="#Corpus" class="headerlink" title="Corpus"></a>Corpus</h2><p>We are going to search a part of the abstract of English Wikipedia. The latest dump is available at <a target="_blank" rel="noopener" href="https://dumps.wikimedia.org/enwiki/latest/enwiki-latest-abstract1.xml.gz">dumps.wikimedia.org</a>. As of today, the file size after decompression is 913 MB. The XML file contains over 600K documents.</p>
+<p>Document example:</p>
+<figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">title</span>&gt;</span>Wikipedia: Kit-Cat Klock<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">url</span>&gt;</span>https://en.wikipedia.org/wiki/Kit-Cat_Klock<span class="tag">&lt;/<span class="name">url</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">abstract</span>&gt;</span>The Kit-Cat Klock is an art deco novelty wall clock shaped like a grinning cat with cartoon eyes that swivel in time with its pendulum tail.<span class="tag">&lt;/<span class="name">abstract</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="Loading-documents"><a href="#Loading-documents" class="headerlink" title="Loading documents"></a>Loading documents</h2><p>First, we need to load all the documents from the dump. The built-in encoding/xml package comes very handy:</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> (</span><br><span class="line">    <span class="string">&quot;encoding/xml&quot;</span></span><br><span class="line">    <span class="string">&quot;os&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> document <span class="keyword">struct</span> &#123;</span><br><span class="line">    Title <span class="keyword">string</span> <span class="string">`xml:&quot;title&quot;`</span></span><br><span class="line">    URL   <span class="keyword">string</span> <span class="string">`xml:&quot;url&quot;`</span></span><br><span class="line">    Text  <span class="keyword">string</span> <span class="string">`xml:&quot;abstract&quot;`</span></span><br><span class="line">    ID    <span class="keyword">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">loadDocuments</span><span class="params">(path <span class="keyword">string</span>)</span> <span class="params">([]document, error)</span></span> &#123;</span><br><span class="line">    f, err := os.Open(path)</span><br><span class="line">    <span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">defer</span> f.Close()</span><br><span class="line"></span><br><span class="line">    dec := xml.NewDecoder(f)</span><br><span class="line">    dump := <span class="keyword">struct</span> &#123;</span><br><span class="line">        Documents []document <span class="string">`xml:&quot;doc&quot;`</span></span><br><span class="line">    &#125;&#123;&#125;</span><br><span class="line">    <span class="keyword">if</span> err := dec.Decode(&amp;dump); err != <span class="literal">nil</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    docs := dump.Documents</span><br><span class="line">    <span class="keyword">for</span> i := <span class="keyword">range</span> docs &#123;</span><br><span class="line">        docs[i].ID = i</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> docs, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Every loaded document gets assigned a unique identifier. To keep things simple, the first loaded document gets assigned ID=0, the second ID=1 and so on.</p>
+<h2 id="First-attempt"><a href="#First-attempt" class="headerlink" title="First attempt"></a>First attempt</h2><h3 id="Searching-the-content"><a href="#Searching-the-content" class="headerlink" title="Searching the content"></a>Searching the content</h3><p>Now that we have all documents loaded into memory, we can try to find the ones about cats. At first, let’s loop through all documents and check if they contain the substring <em>cat</em>:</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">search</span><span class="params">(docs []document, term <span class="keyword">string</span>)</span> []<span class="title">document</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> r []document</span><br><span class="line">    <span class="keyword">for</span> _, doc := <span class="keyword">range</span> docs &#123;</span><br><span class="line">        <span class="keyword">if</span> strings.Contains(doc.Text, term) &#123;</span><br><span class="line">            r = <span class="built_in">append</span>(r, doc)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> r</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>On my laptop, the search phase takes 103ms - not too bad. If you spot check a few documents from the output, you may notice that the function matches <em>caterpillar</em> and <em>category</em>, but doesn’t match <em>Cat</em> with the capital <em>C</em>. That’s not quite what I was looking for.</p>
+<p>We need to fix two things before moving forward:</p>
+<ul>
+<li><p>Make the search case-insensitive (so <em>Cat</em> matches as well).</p>
+</li>
+<li><p>Match on a word boundary rather than on a substring (so <em>caterpillar</em> and <em>communication</em> don’t match).</p>
+</li>
+</ul>
+<h3 id="Searching-with-regular-expressions"><a href="#Searching-with-regular-expressions" class="headerlink" title="Searching with regular expressions"></a>Searching with regular expressions</h3><p>One solution that quickly comes to mind and allows implementing both requirements is <em>regular expressions</em>.</p>
+<p>Here it is - (?i)\bcat\b:</p>
+<ul>
+<li>(?i) makes the regex case-insensitive</li>
+<li>\b matches a word boundary (position where one side is a word character and another side is not a word character)</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">search</span><span class="params">(docs []document, term <span class="keyword">string</span>)</span> []<span class="title">document</span></span> &#123;</span><br><span class="line">    re := regexp.MustCompile(<span class="string">`(?i)\b`</span> + term + <span class="string">`\b`</span>) <span class="comment">// Don&#x27;t do this in production, it&#x27;s a security risk. term needs to be sanitized.</span></span><br><span class="line">    <span class="keyword">var</span> r []document</span><br><span class="line">    <span class="keyword">for</span> _, doc := <span class="keyword">range</span> docs &#123;</span><br><span class="line">        <span class="keyword">if</span> re.MatchString(doc.Text) &#123;</span><br><span class="line">            r = <span class="built_in">append</span>(r, doc)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> r</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Ugh, the search took more than 2 seconds. As you can see, things started getting slow even with 600K documents. While the approach is easy to implement, it doesn’t scale well. As the dataset grows larger, we need to scan more and more documents. The time complexity of this algorithm is linear - the number of documents required to scan is equal to the total number of documents. If we had 6M documents instead of 600K, the search would take 20 seconds. We need to do better than that.</p>
+<h2 id="Inverted-Index"><a href="#Inverted-Index" class="headerlink" title="Inverted Index"></a>Inverted Index</h2><p>To make search queries faster, we’ll preprocess the text and build an index in advance.</p>
+<p>The core of FTS is a data structure called <em>Inverted Index</em>. The Inverted Index associates every word in documents with documents that contain the word.</p>
+<p>Example:</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line">documents = &#123;</span><br><span class="line">    <span class="number">1</span>: <span class="string">&quot;a donut on a glass plate&quot;</span>,</span><br><span class="line">    <span class="number">2</span>: <span class="string">&quot;only the donut&quot;</span>,</span><br><span class="line">    <span class="number">3</span>: <span class="string">&quot;listen to the drum machine&quot;</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">index = &#123;</span><br><span class="line">    <span class="string">&quot;a&quot;</span>: [<span class="number">1</span>],</span><br><span class="line">    <span class="string">&quot;donut&quot;</span>: [<span class="number">1</span>, <span class="number">2</span>],</span><br><span class="line">    <span class="string">&quot;on&quot;</span>: [<span class="number">1</span>],</span><br><span class="line">    <span class="string">&quot;glass&quot;</span>: [<span class="number">1</span>],</span><br><span class="line">    <span class="string">&quot;plate&quot;</span>: [<span class="number">1</span>],</span><br><span class="line">    <span class="string">&quot;only&quot;</span>: [<span class="number">2</span>],</span><br><span class="line">    <span class="string">&quot;the&quot;</span>: [<span class="number">2</span>, <span class="number">3</span>],</span><br><span class="line">    <span class="string">&quot;listen&quot;</span>: [<span class="number">3</span>],</span><br><span class="line">    <span class="string">&quot;to&quot;</span>: [<span class="number">3</span>],</span><br><span class="line">    <span class="string">&quot;drum&quot;</span>: [<span class="number">3</span>],</span><br><span class="line">    <span class="string">&quot;machine&quot;</span>: [<span class="number">3</span>],</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Below is a real-world example of the Inverted Index. An index in a book where a term references a page number:</p>
+<p><img src="https://raw.githubusercontent.com/cuzz1/img/master/2020/08/book-index.png"></p>
+<h2 id="Text-analysis"><a href="#Text-analysis" class="headerlink" title="Text analysis"></a>Text analysis</h2><p>Before we start building the index, we need to break the raw text down into a list of words (tokens) suitable for indexing and searching.</p>
+<p>The text analyzer consists of a tokenizer and multiple filters.</p>
+<p><img src="https://raw.githubusercontent.com/cuzz1/img/master/2020/08/text-analysis.png"></p>
+<h2 id="Tokenizer"><a href="#Tokenizer" class="headerlink" title="Tokenizer"></a>Tokenizer</h2><p>The tokenizer is the first step of text analysis. Its job is to convert text into a list of tokens. Our implementation splits the text on a word boundary and removes punctuation marks:</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">tokenize</span><span class="params">(text <span class="keyword">string</span>)</span> []<span class="title">string</span></span> &#123;</span><br><span class="line">    <span class="keyword">return</span> strings.FieldsFunc(text, <span class="function"><span class="keyword">func</span><span class="params">(r <span class="keyword">rune</span>)</span> <span class="title">bool</span></span> &#123;</span><br><span class="line">        <span class="comment">// Split on any character that is not a letter or a number.</span></span><br><span class="line">        <span class="keyword">return</span> !unicode.IsLetter(r) &amp;&amp; !unicode.IsNumber(r)</span><br><span class="line">    &#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&gt; tokenize(&quot;A donut on a glass plate. Only the donuts.&quot;)</span><br><span class="line"></span><br><span class="line">[&quot;A&quot;, &quot;donut&quot;, &quot;on&quot;, &quot;a&quot;, &quot;glass&quot;, &quot;plate&quot;, &quot;Only&quot;, &quot;the&quot;, &quot;donuts&quot;]</span><br></pre></td></tr></table></figure>
+
+<h2 id="Filters"><a href="#Filters" class="headerlink" title="Filters"></a>Filters</h2><p>In most cases, just converting text into a list of tokens is not enough. To make the text easier to index and search, we’ll need to do additional normalization.</p>
+<h3 id="Lowercase"><a href="#Lowercase" class="headerlink" title="Lowercase"></a>Lowercase</h3><p>In order to make the search case-insensitive, the lowercase filter converts tokens to lower case. <em>cAt</em>, <em>Cat</em> and <em>caT</em> are normalized to <em>cat</em>. Later, when we query the index, we’ll lower case the search terms as well. This will make the search term <em>cAt</em> match the text <em>Cat</em>.</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">lowercaseFilter</span><span class="params">(tokens []<span class="keyword">string</span>)</span> []<span class="title">string</span></span> &#123;</span><br><span class="line">    r := <span class="built_in">make</span>([]<span class="keyword">string</span>, <span class="built_in">len</span>(tokens))</span><br><span class="line">    <span class="keyword">for</span> i, token := <span class="keyword">range</span> tokens &#123;</span><br><span class="line">        r[i] = strings.ToLower(token)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> r</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&gt; lowercaseFilter([]string&#123;&quot;A&quot;, &quot;donut&quot;, &quot;on&quot;, &quot;a&quot;, &quot;glass&quot;, &quot;plate&quot;, &quot;Only&quot;, &quot;the&quot;, &quot;donuts&quot;&#125;)</span><br><span class="line"></span><br><span class="line">[&quot;a&quot;, &quot;donut&quot;, &quot;on&quot;, &quot;a&quot;, &quot;glass&quot;, &quot;plate&quot;, &quot;only&quot;, &quot;the&quot;, &quot;donuts&quot;]</span><br></pre></td></tr></table></figure>
+
+<h3 id="Dropping-common-words"><a href="#Dropping-common-words" class="headerlink" title="Dropping common words"></a>Dropping common words</h3><p>Almost any English text contains commonly used words like <em>a</em>, <em>I</em>, <em>the</em> or <em>be</em>. Such words are called <em>stop words</em>. We are going to remove them since almost any document would match the stop words.</p>
+<p>There is no “official” list of stop words. Let’s exclude the top 10 by the <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Most_common_words_in_English">OEC rank</a>. Feel free to add more:</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">var</span> stopwords = <span class="keyword">map</span>[<span class="keyword">string</span>]<span class="keyword">struct</span>&#123;&#125;&#123; <span class="comment">// I wish Go had built-in sets.</span></span><br><span class="line">    <span class="string">&quot;a&quot;</span>: &#123;&#125;, <span class="string">&quot;and&quot;</span>: &#123;&#125;, <span class="string">&quot;be&quot;</span>: &#123;&#125;, <span class="string">&quot;have&quot;</span>: &#123;&#125;, <span class="string">&quot;i&quot;</span>: &#123;&#125;,</span><br><span class="line">    <span class="string">&quot;in&quot;</span>: &#123;&#125;, <span class="string">&quot;of&quot;</span>: &#123;&#125;, <span class="string">&quot;that&quot;</span>: &#123;&#125;, <span class="string">&quot;the&quot;</span>: &#123;&#125;, <span class="string">&quot;to&quot;</span>: &#123;&#125;,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">stopwordFilter</span><span class="params">(tokens []<span class="keyword">string</span>)</span> []<span class="title">string</span></span> &#123;</span><br><span class="line">    r := <span class="built_in">make</span>([]<span class="keyword">string</span>, <span class="number">0</span>, <span class="built_in">len</span>(tokens))</span><br><span class="line">    <span class="keyword">for</span> _, token := <span class="keyword">range</span> tokens &#123;</span><br><span class="line">        <span class="keyword">if</span> _, ok := stopwords[token]; !ok &#123;</span><br><span class="line">            r = <span class="built_in">append</span>(r, token)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> r</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&gt; stopwordFilter([]string&#123;&quot;a&quot;, &quot;donut&quot;, &quot;on&quot;, &quot;a&quot;, &quot;glass&quot;, &quot;plate&quot;, &quot;only&quot;, &quot;the&quot;, &quot;donuts&quot;&#125;)</span><br><span class="line"></span><br><span class="line">[&quot;donut&quot;, &quot;on&quot;, &quot;glass&quot;, &quot;plate&quot;, &quot;only&quot;, &quot;donuts&quot;]</span><br></pre></td></tr></table></figure>
+
+<h3 id="Stemming"><a href="#Stemming" class="headerlink" title="Stemming"></a>Stemming</h3><p>Because of the grammar rules, documents may include different forms of the same word. Stemming reduces words into their base form. For example, <em>fishing</em>, <em>fished</em> and <em>fisher</em> may be reduced to the base form (stem) <em>fish</em>.</p>
+<p>Implementing a stemmer is a non-trivial task, it’s not covered in this post. We’ll take one of the <a target="_blank" rel="noopener" href="https://github.com/kljensen/snowball">existing</a> modules:</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> snowballeng <span class="string">&quot;github.com/kljensen/snowball/english&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">stemmerFilter</span><span class="params">(tokens []<span class="keyword">string</span>)</span> []<span class="title">string</span></span> &#123;</span><br><span class="line">    r := <span class="built_in">make</span>([]<span class="keyword">string</span>, <span class="built_in">len</span>(tokens))</span><br><span class="line">    <span class="keyword">for</span> i, token := <span class="keyword">range</span> tokens &#123;</span><br><span class="line">        r[i] = snowballeng.Stem(token, <span class="literal">false</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> r</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&gt; stemmerFilter([]string&#123;&quot;donut&quot;, &quot;on&quot;, &quot;glass&quot;, &quot;plate&quot;, &quot;only&quot;, &quot;donuts&quot;&#125;)</span><br><span class="line"></span><br><span class="line">[&quot;donut&quot;, &quot;on&quot;, &quot;glass&quot;, &quot;plate&quot;, &quot;only&quot;, &quot;donut&quot;]</span><br></pre></td></tr></table></figure>
+
+<p>Note</p>
+<blockquote>
+<p>A stem is not always a valid word. For example, some stemmers may reduce <em>airline</em> to <em>airlin</em>.</p>
+</blockquote>
+<h2 id="Putting-the-analyzer-together"><a href="#Putting-the-analyzer-together" class="headerlink" title="Putting the analyzer together"></a>Putting the analyzer together</h2><figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">analyze</span><span class="params">(text <span class="keyword">string</span>)</span> []<span class="title">string</span></span> &#123;</span><br><span class="line">    tokens := tokenize(text)</span><br><span class="line">    tokens = lowercaseFilter(tokens)</span><br><span class="line">    tokens = stopwordFilter(tokens)</span><br><span class="line">    tokens = stemmerFilter(tokens)</span><br><span class="line">    <span class="keyword">return</span> tokens</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>The tokenizer and filters convert sentences into a list of tokens:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&gt; analyze(&quot;A donut on a glass plate. Only the donuts.&quot;)</span><br><span class="line"></span><br><span class="line">[&quot;donut&quot;, &quot;on&quot;, &quot;glass&quot;, &quot;plate&quot;, &quot;only&quot;, &quot;donut&quot;]</span><br></pre></td></tr></table></figure>
+
+<p>The tokens are ready for indexing.</p>
+<h2 id="Building-the-index"><a href="#Building-the-index" class="headerlink" title="Building the index"></a>Building the index</h2><p>Back to the inverted index. It maps every word in documents to document IDs. The built-in map is a good candidate for storing the mapping. The key in the map is a token (string) and the value is a list of document IDs:</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="keyword">type</span> index <span class="keyword">map</span>[<span class="keyword">string</span>][]<span class="keyword">int</span></span><br></pre></td></tr></table></figure>
+
+<p>Building the index consists of analyzing the documents and adding their IDs to the map:</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(idx index)</span> <span class="title">add</span><span class="params">(docs []document)</span></span> &#123;</span><br><span class="line">    <span class="keyword">for</span> _, doc := <span class="keyword">range</span> docs &#123;</span><br><span class="line">        <span class="keyword">for</span> _, token := <span class="keyword">range</span> analyze(doc.Text) &#123;</span><br><span class="line">            ids := idx[token]</span><br><span class="line">            <span class="keyword">if</span> ids != <span class="literal">nil</span> &amp;&amp; ids[<span class="built_in">len</span>(ids)<span class="number">-1</span>] == doc.ID &#123;</span><br><span class="line">                <span class="comment">// Don&#x27;t add same ID twice.</span></span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            &#125;</span><br><span class="line">            idx[token] = <span class="built_in">append</span>(ids, doc.ID)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">    idx := <span class="built_in">make</span>(index)</span><br><span class="line">    idx.add([]document&#123;&#123;ID: <span class="number">1</span>, Text: <span class="string">&quot;A donut on a glass plate. Only the donuts.&quot;</span>&#125;&#125;)</span><br><span class="line">    idx.add([]document&#123;&#123;ID: <span class="number">2</span>, Text: <span class="string">&quot;donut is a donut&quot;</span>&#125;&#125;)</span><br><span class="line">    fmt.Println(idx)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>It works! Each token in the map refers to IDs of the documents that contain the token:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">map[donut:[1 2] glass:[1] is:[2] on:[1] only:[1] plate:[1]]</span><br></pre></td></tr></table></figure>
+
+<h2 id="Querying"><a href="#Querying" class="headerlink" title="Querying"></a>Querying</h2><p>To query the index, we are going to apply the same tokenizer and filters we used for indexing:</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(idx index)</span> <span class="title">search</span><span class="params">(text <span class="keyword">string</span>)</span> [][]<span class="title">int</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> r [][]<span class="keyword">int</span></span><br><span class="line">    <span class="keyword">for</span> _, token := <span class="keyword">range</span> analyze(text) &#123;</span><br><span class="line">        <span class="keyword">if</span> ids, ok := idx[token]; ok &#123;</span><br><span class="line">            r = <span class="built_in">append</span>(r, ids)</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> r</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&gt; idx.search(&quot;Small wild cat&quot;)</span><br><span class="line"></span><br><span class="line">[[24, 173, 303, ...], [98, 173, 765, ...], [[24, 51, 173, ...]]</span><br></pre></td></tr></table></figure>
+
+<p>And finally, we can find all documents that mention cats. Searching 600K documents took less than a millisecond (18µs)!</p>
+<p>With the inverted index, the time complexity of the search query is linear to the number of search tokens. In the example query above, other than analyzing the input text, search had to perform only three map lookups.</p>
+<h2 id="Boolean-queries"><a href="#Boolean-queries" class="headerlink" title="Boolean queries"></a>Boolean queries</h2><p>The query from the previous section returned a disjoined list of documents for each token. What we normally expect to find when we type <em>small wild cat</em> in a search box is a list of results that contain <em>small</em>, <em>wild</em> and <em>cat</em> at the same time. The next step is to compute the set intersection between the lists. This way we’ll get a list of documents matching all tokens.</p>
+<p><img src="https://raw.githubusercontent.com/cuzz1/img/master/2020/08/venn.png" alt="xx"></p>
+<p>Luckily, IDs in our inverted index are inserted in ascending order. Since the IDs are sorted, it’s possible to compute the intersection between two lists in linear time. The intersection function iterates two lists simultaneously and collect IDs that exist in both:</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">intersection</span><span class="params">(a []<span class="keyword">int</span>, b []<span class="keyword">int</span>)</span> []<span class="title">int</span></span> &#123;</span><br><span class="line">    maxLen := <span class="built_in">len</span>(a)</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(b) &gt; maxLen &#123;</span><br><span class="line">        maxLen = <span class="built_in">len</span>(b)</span><br><span class="line">    &#125;</span><br><span class="line">    r := <span class="built_in">make</span>([]<span class="keyword">int</span>, <span class="number">0</span>, maxLen)</span><br><span class="line">    <span class="keyword">var</span> i, j <span class="keyword">int</span></span><br><span class="line">    <span class="keyword">for</span> i &lt; <span class="built_in">len</span>(a) &amp;&amp; j &lt; <span class="built_in">len</span>(b) &#123;</span><br><span class="line">        <span class="keyword">if</span> a[i] &lt; b[j] &#123;</span><br><span class="line">            i++</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> a[i] &gt; b[j] &#123;</span><br><span class="line">            j++</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            r = <span class="built_in">append</span>(r, a[i])</span><br><span class="line">            i++</span><br><span class="line">            j++</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> r</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Updated search analyzes the given query text, lookups tokens and computes the set intersection between lists of IDs:</p>
+<figure class="highlight go"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(idx index)</span> <span class="title">search</span><span class="params">(text <span class="keyword">string</span>)</span> []<span class="title">int</span></span> &#123;</span><br><span class="line">    <span class="keyword">var</span> r []<span class="keyword">int</span></span><br><span class="line">    <span class="keyword">for</span> _, token := <span class="keyword">range</span> analyze(text) &#123;</span><br><span class="line">        <span class="keyword">if</span> ids, ok := idx[token]; ok &#123;</span><br><span class="line">            <span class="keyword">if</span> r == <span class="literal">nil</span> &#123;</span><br><span class="line">                r = ids</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                r = intersection(r, ids)</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// Token doesn&#x27;t exist.</span></span><br><span class="line">            <span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> r</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>The Wikipedia dump contains only two documents that match <em>small</em>, <em>wild</em> and <em>cat</em> at the same time:</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&gt; idx.search(&quot;Small wild cat&quot;)</span><br><span class="line"></span><br><span class="line">130764  The wildcat is a species complex comprising two small wild cat species, the European wildcat (Felis silvestris) and the African wildcat (F. lybica).</span><br><span class="line">131692  Catopuma is a genus containing two Asian small wild cat species, the Asian golden cat (C. temminckii) and the bay cat.</span><br></pre></td></tr></table></figure>
+
+<p>The search is working as expected!</p>
+<p>By the way, this is the first time I hear about <em>catopuma</em>, here is one of them:</p>
+<p><img src="https://raw.githubusercontent.com/cuzz1/img/master/2020/08/asian-golden-cat-s.jpg" alt="cat"></p>
+<h2 id="Conclusions"><a href="#Conclusions" class="headerlink" title="Conclusions"></a>Conclusions</h2><p>We just built a Full-Text Search engine. Despite its simplicity, it can be a solid foundation for more advanced projects.</p>
+<p>I didn’t touch on a lot of things that can significantly improve the performance and make the engine more user friendly. Here are some ideas for further improvements:</p>
+<ul>
+<li>Extend boolean queries to support <em>OR</em> and <em>NOT</em>.</li>
+<li>Store the index on disk:<ul>
+<li>Rebuilding the index on every application restart may take a while.</li>
+<li>Large indexes may not fit in memory.</li>
+</ul>
+</li>
+<li>Experiment with memory and CPU-efficient data formats for storing sets of document IDs. Take a look at <a target="_blank" rel="noopener" href="https://roaringbitmap.org/">Roaring Bitmaps</a>.</li>
+<li>Support indexing multiple document fields.</li>
+<li>Sort results by relevance.</li>
+</ul>
+<p>The full source code is available on <a target="_blank" rel="noopener" href="https://github.com/akrylysov/simplefts">GitHub</a>.</p>
+<p>I’m not a native English speaker and I’m trying to improve my language skills. Feel free to correct me if you spot any spelling or grammatical error!</p>
+</div></article></div><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><time class="level-item" dateTime="2019-10-11T15:59:59.000Z" title="2019-10-11T15:59:59.000Z">2019-10-11</time><span class="level-item"><a class="link-muted" href="/categories/Go/">Go</a></span><span class="level-item">29 minutes read (About 4321 words)</span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2019/10/11/Go%E8%AF%AD%E8%A8%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0/">Go语言入门笔记</a></h1><div class="content"><h2 id="课程导论"><a href="#课程导论" class="headerlink" title="课程导论"></a>课程导论</h2><ul>
+<li>特点<ul>
+<li>没有“对象”，没有继承，没有泛型，没有 try/catch</li>
+<li>有接口，函数式编程，CSP 并发模型（goroutine + channel）</li>
+<li>语法简单</li>
+</ul>
+</li>
+<li>基本语法<ul>
+<li>变量</li>
+<li>选择，循环</li>
+<li>指针，数组，容器</li>
+</ul>
+</li>
+<li>面向接口<ul>
+<li>结构体</li>
+<li>duck typing 的概念</li>
+<li>组合的思想</li>
+</ul>
+</li>
+<li>函数式编程<ul>
+<li>闭包的概念</li>
+</ul>
+</li>
+<li>工程化<ul>
+<li>资源管理，错误处理</li>
+<li>测试和文档</li>
+<li>性能调优</li>
+</ul>
+</li>
+<li>并发编程<ul>
+<li>goroutine 和 channel</li>
+<li>理解调度器</li>
+</ul>
+</li>
+</ul></div><a class="article-more button is-small size-small" href="/2019/10/11/Go%E8%AF%AD%E8%A8%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0/#more">Read More</a></article></div><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><time class="level-item" dateTime="2019-08-11T15:59:59.000Z" title="2019-08-11T15:59:59.000Z">2019-08-11</time><span class="level-item"><a class="link-muted" href="/categories/Java-%E5%9F%BA%E7%A1%80/">Java 基础</a></span><span class="level-item">26 minutes read (About 3910 words)</span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2019/08/11/Java8%E7%9A%84%E6%B7%B1%E5%85%A5%E4%B8%8E%E5%AE%9E%E6%88%98/">Java8的深入与实战</a></h1><div class="content"><h2 id="Lambda-表达式和函数式接口"><a href="#Lambda-表达式和函数式接口" class="headerlink" title="Lambda 表达式和函数式接口"></a>Lambda 表达式和函数式接口</h2><p>Lambda 表达式定义：</p>
+<blockquote>
+<p>Lambda: In programming languages such as Lisp, Python and Ruby lambda is an operator used to denote <strong>anonymous functions</strong> or <strong>closures</strong>, following the usage of lambda calculus.</p>
+</blockquote>
+<p>为何需要使用 Lambda 表达式：</p>
+<ul>
+<li>在 Java 中，我们无法将函数作为一个参数传递给一个方法，也无法声明一个返回一个函数的方法。</li>
+<li>在 JavaScript 中，函数的参数是一个函数，返回值是另一个函数的情况是非常常见的，JavaScript 是一门典型的函数式语言。</li>
+</ul></div><a class="article-more button is-small size-small" href="/2019/08/11/Java8%E7%9A%84%E6%B7%B1%E5%85%A5%E4%B8%8E%E5%AE%9E%E6%88%98/#more">Read More</a></article></div><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><time class="level-item" dateTime="2019-07-23T15:59:59.000Z" title="2019-07-23T15:59:59.000Z">2019-07-23</time><span class="level-item"><a class="link-muted" href="/categories/%E9%9D%A2%E8%AF%95/">面试</a></span><span class="level-item">8 minutes read (About 1146 words)</span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2019/07/23/%E9%9D%A2%E8%AF%95%E9%AB%98%E9%A2%91%E9%A2%98/">面试高频题</a></h1><div class="content"><h2 id="如何控制线程打印顺序"><a href="#如何控制线程打印顺序" class="headerlink" title="如何控制线程打印顺序"></a>如何控制线程打印顺序</h2><h3 id="使用-join-方法"><a href="#使用-join-方法" class="headerlink" title="使用 join 方法"></a>使用 join 方法</h3><p>如下面代码所示：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadDemo</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> Thread thread1 = <span class="keyword">new</span> Thread(() -&gt; System.out.println(<span class="string">&quot;thread1&quot;</span>));</span><br><span class="line">        <span class="keyword">final</span> Thread thread2 = <span class="keyword">new</span> Thread(() -&gt; System.out.println(<span class="string">&quot;thread2&quot;</span>));</span><br><span class="line">        <span class="keyword">final</span> Thread thread3 = <span class="keyword">new</span> Thread(() -&gt; System.out.println(<span class="string">&quot;thread3&quot;</span>));</span><br><span class="line"></span><br><span class="line">        thread1.start();</span><br><span class="line">        thread1.join();</span><br><span class="line">        thread2.start();</span><br><span class="line">        thread2.join();</span><br><span class="line">        thread3.start();</span><br><span class="line">        thread3.join();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div><a class="article-more button is-small size-small" href="/2019/07/23/%E9%9D%A2%E8%AF%95%E9%AB%98%E9%A2%91%E9%A2%98/#more">Read More</a></article></div><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><time class="level-item" dateTime="2019-07-10T15:59:59.000Z" title="2019-07-10T15:59:59.000Z">2019-07-10</time><span class="level-item"><a class="link-muted" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/">分布式</a></span><span class="level-item">14 minutes read (About 2032 words)</span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2019/07/10/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E6%A1%86%E6%9E%B6Seata/">分布式事务框架Seata</a></h1><div class="content"><h2 id="分布式基础"><a href="#分布式基础" class="headerlink" title="分布式基础"></a>分布式基础</h2><h3 id="CAP-定理"><a href="#CAP-定理" class="headerlink" title="CAP 定理"></a>CAP 定理</h3><p>CAP 定理指的是在一个分布式系统中， Consistency（一致性）、 Availability（可用性）、Partition tolerance（分区容错性），三者不可兼得。在分布式系统中，分区容错性是必须需要实现的。所以只能在一致性和可用性之间进行权衡（AP 或者 CP）。</p>
+<h3 id="BASE-理论"><a href="#BASE-理论" class="headerlink" title="BASE 理论"></a>BASE 理论</h3><p>BASE 是 Basically Available（基本可用）、Soft state（软状态）和 Eventually consistent（最终一致性）三个短语的缩写。是对 CAP 中 AP 的一个扩展</p>
+<ol>
+<li>BA 基本可用：分布式系统在出现故障时，允许损失部分可用功能，保证核心功能可用。</li>
+<li>S 软状态：允许系统中存在中间状态，这个状态不影响系统可用性，这里指的是 CAP 中的不一致。</li>
+<li>E 最终一致：最终一致是指经过一段时间后，所有节点数据都将会达到一致。</li>
+</ol>
+<p>BASE 解决了 CAP 中理论没有网络延迟，在 BASE 中用软状态和最终一致，保证了延迟后的一致性。</p>
+<p>BASE 和 ACID 是相反的，它完全不同于 ACID 的强一致性模型，而是通过牺牲强一致性来获得可用性，并允许数据在一段时间内是不一致的，但最终达到一致状态。</p>
+<h3 id="分布式事务实现方式"><a href="#分布式事务实现方式" class="headerlink" title="分布式事务实现方式"></a><a target="_blank" rel="noopener" href="https://github.com/doocs/advanced-java/blob/master/docs/distributed-system/distributed-transaction.md">分布式事务实现方式</a></h3><ul>
+<li><strong>XA 方案(两阶段提交)</strong></li>
+<li><strong>TCC 方案</strong></li>
+<li>本地消息表</li>
+<li>可靠消息最终一致性方案</li>
+<li>最大努力通知方案</li>
+</ul>
+<h2 id="Seata简介"><a href="#Seata简介" class="headerlink" title="Seata简介"></a>Seata简介</h2><p>Seata (Simple Extensible Autonomous Transaction Architecture) 是阿里巴巴开源的分布式事务中间件，，解决微服务场景下面临的分布式事务问题。</p>
+<p>具体看 <a target="_blank" rel="noopener" href="https://github.com/seata/seata">Seata</a> 官网：</p>
+<p><img src="https://camo.githubusercontent.com/b3a71332ae0a91db7f8616286a69b879fcbea672/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f6c61726b2f302f323031382f706e672f31383836322f313534353239363739313037342d33626365376263652d303235652d343563332d393338362d3762393531333564616465382e706e67" alt="Seata solution"></p>
+<p><strong>Seata主要由三个重要组件组成：</strong></p>
+<ul>
+<li>Transaction Coordinator(TC)：管理全局的分支事务的状态，用于全局性事务的提交和回滚。</li>
+<li>Transaction Manager(TM)：事务管理器，用于开启全局事务、提交或者回滚全局事务，是全局事务的开启者。</li>
+<li>Resource Manager(RM)：资源管理器，用于分支事务上的资源管理，向 TC 注册分支事务，上报分支事务的状态，接受 TC 的命令来提交或者回滚分支事务。</li>
+</ul>
+<h2 id="Seata-两种模式"><a href="#Seata-两种模式" class="headerlink" title="Seata 两种模式"></a>Seata 两种模式</h2><p>Seata 关注的就是微服务架构下的数据一致性问题，是一整套的分布式事务解决方案。Seata 框架包含两种模式，一种是 AT 模式。AT 模式主要从数据分片的角度，关注多 DB 访问的数据一致性，当然也包括多服务下的多 DB 数据访问一致性问题。</p>
+<p>另外一个就是 TCC 模式，TCC 模式主要关注业务拆分，在按照业务横向扩展资源时，解决微服务间调用的一致性问题，保证读资源访问的事务属性。</p>
+<h3 id="AT-模式"><a href="#AT-模式" class="headerlink" title="AT 模式"></a>AT 模式</h3><p>AT 模式是通过两段提交的方式实现，AT 模式下，把每个数据库被当做是一个 Resource，Seata 里称为 DataSource Resource。业务通过 JDBC 标准接口访问数据库资源时，Seata 框架会对所有请求进行拦截，做一些操作。每个本地事务提交时，Seata RM（Resource Manager，资源管理器） 都会向 TC（Transaction Coordinator，事务协调器） 注册一个分支事务。当请求链路调用完成后，发起方通知 TC 提交或回滚分布式事务，进入二阶段调用流程。此时，TC 会根据之前注册的分支事务回调到对应参与者去执行对应资源的第二阶段。TC 是怎么找到分支事务与资源的对应关系呢？每个资源都有一个全局唯一的资源 ID，并且在初始化时用该 ID 向 TC 注册资源。在运行时，每个分支事务的注册都会带上其资源 ID。这样 TC 就能在二阶段调用时正确找到对应的资源。</p>
+<p>这就是我们的 AT 模式。简单总结一下，就是把每个数据库当做一个 Resource，在本地事务提交时会去注册一个分支事务。</p>
+<p>这种模式是对业务零入侵，并发没那么高。</p>
+<h3 id="TCC-模式"><a href="#TCC-模式" class="headerlink" title="TCC 模式"></a>TCC 模式</h3><p><strong>TCC 模型是把锁的粒度完全交给业务处理，它需要每个子事务业务都实现Try-Confirm / Cancel 接口。</strong></p>
+<blockquote>
+<p>TCC 模式本质也是 2PC ，只是 TCC 在应用层控制。</p>
+</blockquote>
+<ul>
+<li>Try:<ul>
+<li>尝试执行业务</li>
+<li>完成所有业务检查（一致性）</li>
+<li>预留必须业务资源（准隔离性）</li>
+</ul>
+</li>
+<li>Confirm:<ul>
+<li>确认执行业务；</li>
+<li>真正执行业务，不作任何业务检查</li>
+<li>只使用Try阶段预留的业务资源</li>
+<li>Confirm 操作满足幂等性</li>
+</ul>
+</li>
+<li>Cancel:<ul>
+<li>取消执行业务</li>
+<li>释放Try阶段预留的业务资源</li>
+<li>Cancel操作满足幂等性</li>
+</ul>
+</li>
+</ul>
+<p><strong>这三个阶段，都会按本地事务的方式执行。不同于 XA 的 prepare ，TCC 无需将 XA 的投票期间的所有资源挂起，因此极大的提高了吞吐量。</strong></p>
+<p>那么对应到 TCC 模式里，也是一样的，Seata 框架把每组 TCC 接口当做一个 Resource，称为 TCC Resource。这套 TCC 接口可以是 RPC，也以是服务内 JVM 调用。在业务启动时，Seata 框架会自动扫描识别到 TCC 接口的调用方和发布方。如果是 RPC 的话，就是 sofa:reference、sofa:service、dubbo:reference、dubbo:service 等。</p>
+<p>扫描到 TCC 接口的调用方和发布方之后。如果是发布方，会在业务启动时向 TC 注册 TCC Resource，与 DataSource Resource 一样，每个资源也会带有一个资源 ID。</p>
+<p>如果是调用方，Seata 框架会给调用方加上切面，与 AT 模式一样，在运行时，该切面会拦截所有对 TCC 接口的调用。每调用一次 Try 接口，切面会先向 TC 注册一个分支事务，然后才去执行原来的 RPC 调用。当请求链路调用完成后，TC 通过分支事务的资源 ID 回调到正确的参与者去执行对应 TCC 资源的 Confirm 或 Cancel 方法。</p>
+<p>在讲完了整个框架模型以后，大家可能会问 TCC 三个接口怎么实现。因为框架本身很简单，主要是扫描 TCC 接口，注册资源，拦截接口调用，注册分支事务，最后回调二阶段接口。最核心的实际上是 TCC 接口的实现逻辑。下面我将根据蚂蚁金服内部多年的实践来为大家分析怎么实现一个完备的 TCC 接口。</p>
+<h2 id="运行-Demo"><a href="#运行-Demo" class="headerlink" title="运行 Demo"></a>运行 Demo</h2><p><a target="_blank" rel="noopener" href="https://github.com/seata/seata-samples">官方Demo</a></p>
+<p>下面是 dubbo 的例子，运行后报错可以看到回滚信息：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">INFO [rpcDispatch_RMROLE_4_8] - onMessage:xid&#x3D;10.116.22.63:8091:2016481020,branchId&#x3D;2016481022,branchType&#x3D;AT,resourceId&#x3D;jdbc:mysql:&#x2F;&#x2F;localhost:3306&#x2F;fescar_demo?serverTimezone&#x3D;UTC,applicationData&#x3D;null</span><br><span class="line"> INFO [rpcDispatch_RMROLE_4_8] - Branch Rollbacking: 10.116.22.63:8091:2016481020 2016481022 jdbc:mysql:&#x2F;&#x2F;localhost:3306&#x2F;fescar_demo?serverTimezone&#x3D;UTC</span><br><span class="line"> INFO [rpcDispatch_RMROLE_4_8] - xid 10.116.22.63:8091:2016481020 branch 2016481022, undo_log deleted with GlobalFinished</span><br><span class="line"> INFO [rpcDispatch_RMROLE_4_8] - Branch Rollbacked result: PhaseTwo_Rollbacked</span><br><span class="line">DEBUG [rpcDispatch_RMROLE_4_8] - branch rollback result:xid&#x3D;10.116.22.63:8091:2016481020,branchId&#x3D;2016481022,branchStatus&#x3D;PhaseTwo_Rollbacked,result code &#x3D;Success,getMsg &#x3D;null</span><br><span class="line"> INFO [rpcDispatch_RMROLE_4_8] - RmRpcClient sendResponse xid&#x3D;10.116.22.63:8091:2016481020,branchId&#x3D;2016481022,branchStatus&#x3D;PhaseTwo_Rollbacked,result code &#x3D;Success,getMsg &#x3D;null</span><br><span class="line">DEBUG [rpcDispatch_RMROLE_4_8] - send response:xid&#x3D;10.116.22.63:8091:2016481020,branchId&#x3D;2016481022,branchStatus&#x3D;PhaseTwo_Rollbacked,result code &#x3D;Success,getMsg &#x3D;null,channel:[id: 0xc8027ef7, L:&#x2F;127.0.0.1:62873 - R:&#x2F;127.0.0.1:8091]</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意：</strong></p>
+<ul>
+<li>数据库驱动与 Mysql 版本一致</li>
+<li>数据库 rul 添加时区 <code>jdbc.account.url=jdbc:mysql://localhost:3306/fescar_demo?serverTimezone=UTC</code></li>
+</ul>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/Nb3qeOXXW1xa-qFr-uNi9g">Seata AT 模式分布式事务源码分析</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/G9vkficqBSpmtGITgsJPgw">分布式事务 Seata TCC 模式深度解析</a></p>
+</div></article></div><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><time class="level-item" dateTime="2019-06-03T11:54:59.000Z" title="2019-06-03T11:54:59.000Z">2019-06-03</time><span class="level-item"><a class="link-muted" href="/categories/Java-%E5%9F%BA%E7%A1%80/">Java 基础</a></span><span class="level-item">3 minutes read (About 428 words)</span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2019/06/03/%E5%85%B3%E4%BA%8Enull%E7%9A%84%E6%80%9D%E8%80%83/">关于null的思考</a></h1><div class="content"><p>写代码的时候有个地方需要把 <code>Integer</code> 类型强转为 <code>String</code></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line">Integer firstEventType = eventTask.getEventType1();</span><br><span class="line">String firstEventTypeName = eventTypeService.queryDescByCode(String.valueOf(firstEventType));</span><br></pre></td></tr></table></figure>
+
+<p>当我点开 <code>String#valueof</code> 这个静态方式时</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> String <span class="title">valueOf</span><span class="params">(Object obj)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> (obj == <span class="keyword">null</span>) ? <span class="string">&quot;null&quot;</span> : obj.toString();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>当我们没有获取到 firstEventType 这个值时，为 null，此时它返回给我们的是字符串 <strong>“null”</strong> ，有时候就不符合我们的业务场景，最好是提前做空值判断。</p></div><a class="article-more button is-small size-small" href="/2019/06/03/%E5%85%B3%E4%BA%8Enull%E7%9A%84%E6%80%9D%E8%80%83/#more">Read More</a></article></div><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><time class="level-item" dateTime="2019-05-10T15:29:22.000Z" title="2019-05-10T15:29:22.000Z">2019-05-10</time><span class="level-item"><a class="link-muted" href="/categories/%E9%9D%A2%E8%AF%95/">面试</a></span><span class="level-item">43 minutes read (About 6498 words)</span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2019/05/10/JVM%E9%9D%A2%E8%AF%95/">JVM 面试</a></h1><div class="content"><h2 id="JVM-垃圾回收的时候如何确定垃圾？知道什么是-GC-Roots"><a href="#JVM-垃圾回收的时候如何确定垃圾？知道什么是-GC-Roots" class="headerlink" title="JVM 垃圾回收的时候如何确定垃圾？知道什么是 GC Roots ?"></a>JVM 垃圾回收的时候如何确定垃圾？知道什么是 GC Roots ?</h2><ul>
+<li>什么是垃圾<ul>
+<li>简单来说就是内存中已经不在被使用到的空间就是垃圾</li>
+</ul>
+</li>
+<li>要进行垃圾回收，如何判断一个对象是否可以被回收？<ul>
+<li>引用计数法</li>
+<li>枚举根节点做可达性分析</li>
+</ul>
+</li>
+</ul>
+<p>为了解决引用计数法的循环引用问题，Java 使用了可达性算法。</p>
+<p><img src="JVM%E9%9D%A2%E8%AF%95/1350633405_4538.jpg" alt="img"></p>
+<p>跟踪收集器采用的为集中式的管理方式，全局记录对象之间的引用状态，执行时从一些列GC  Roots的对象做为起点，从这些节点向下开始进行搜索所有的引用链，当一个对象到GC  Roots 没有任何引用链时，则证明此对象是不可用的。</p>
+<p>图中，对象Object6、Object7、Object8虽然互相引用，但他们的GC Roots是不可到达的，所以它们将会被判定为是可回收的对象。</p>
+<p>哪些对象可以作为 GC Roots 的对象：</p>
+<ul>
+<li>虚拟机栈（栈帧中的局部变量区，也叫局部变量表）中引用的对象</li>
+<li>方法区中的类静态属性引用的对象</li>
+<li>方法去常量引用的对象</li>
+<li>本地方法栈中 JNI (Native方法)引用的对象</li>
+</ul>
+<h2 id="你说你做过-JVM-调优和参数配置，请问如果盘点查看-JVM-系统默认值？"><a href="#你说你做过-JVM-调优和参数配置，请问如果盘点查看-JVM-系统默认值？" class="headerlink" title="你说你做过 JVM 调优和参数配置，请问如果盘点查看 JVM 系统默认值？"></a>你说你做过 JVM 调优和参数配置，请问如果盘点查看 JVM 系统默认值？</h2><h3 id="JVM-的参数类型"><a href="#JVM-的参数类型" class="headerlink" title="JVM 的参数类型"></a>JVM 的参数类型</h3><ul>
+<li><p>标配参数</p>
+<ul>
+<li>-version</li>
+<li>-help </li>
+</ul>
+</li>
+<li><p>X 参数（了解）</p>
+<ul>
+<li>-Xint：解释执行</li>
+<li>-Xcomp：第一次使用就编译成本地代码</li>
+<li>-Xmixed：混合模式</li>
+</ul>
+</li>
+<li><p>XX 参数</p>
+<ul>
+<li><p>Boolean 类型：-XX：+ 或者 - 某个属性值（+ 表示开启，- 表示关闭）</p>
+<ul>
+<li>-XX:+PrintGCDetails：打印 GC 收集细节</li>
+<li>-XX:-PrintGCDetails：不打印 GC 收集细节</li>
+<li>-XX:+UseSerialGC：使用了串行收集器</li>
+<li>-XX:-UseSerialGC：不使用了串行收集器</li>
+</ul>
+</li>
+<li><p>KV 设置类型：-XX:key=value</p>
+<ul>
+<li>-XX:MetaspaceSize=128m</li>
+<li>-XX:MaxTenuringThreshold=15</li>
+</ul>
+</li>
+<li><p>jinfo 举例，如何查看当前运行程序的配置</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloGC</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;hello GC...&quot;</span>);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Thread.sleep(Integer.MAX_VALUE);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>我们可以使用 <code>jps -l</code> 命令，查出进程 id</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1923 org.jetbrains.jps.cmdline.Launcher</span><br><span class="line">1988 sun.tools.jps.Jps</span><br><span class="line">1173 org.jetbrains.kotlin.daemon.KotlinCompileDaemon</span><br><span class="line">32077 com.intellij.idea.Main</span><br><span class="line">1933 com.cuzz.jvm.HelloGC</span><br><span class="line">32382 org.jetbrains.idea.maven.server.RemoteMavenServer</span><br></pre></td></tr></table></figure>
+<p>在使用 <code>jinfo -flag PrintGCDetails 1933</code> 命令查看</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-XX:-PrintGCDetails</span><br></pre></td></tr></table></figure>
+<p>可以看出默认是不打印 GC 收集细节<br>也可是使用<code>jinfo -flags 1933</code> 查看所以的参数</p>
+</li>
+<li><p>两个经典参数：-Xms 和 - Xmx（如 -Xms1024m）</p>
+<ul>
+<li>-Xms 等价于 -XX:InitialHeapSize</li>
+<li>-Xmx 等价于 -XX:MaxHeapSize</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="盘点家底查看-JVM-默认值"><a href="#盘点家底查看-JVM-默认值" class="headerlink" title="盘点家底查看 JVM 默认值"></a>盘点家底查看 JVM 默认值</h3><ul>
+<li>查看初始默认值：-XX:+PrintFlagsInitial<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cuzz@cuzz-pc:~&#x2F;Project&#x2F;demo$ java -XX:+PrintFlagsInitial</span><br><span class="line">[Global flags]</span><br><span class="line">     intx ActiveProcessorCount                      &#x3D; -1                                  &#123;product&#125;</span><br><span class="line">    uintx AdaptiveSizeDecrementScaleFactor          &#x3D; 4                                   &#123;product&#125;</span><br><span class="line">    uintx AdaptiveSizeMajorGCDecayTimeScale         &#x3D; 10                                  &#123;product&#125;</span><br><span class="line">    uintx AdaptiveSizePausePolicy                   &#x3D; 0                                   &#123;product&#125;</span><br><span class="line">    uintx AdaptiveSizePolicyCollectionCostMargin    &#x3D; 50                                  &#123;product&#125;</span><br><span class="line">    uintx AdaptiveSizePolicyInitializingSteps       &#x3D; 20                                  &#123;product&#125;</span><br><span class="line">    uintx AdaptiveSizePolicyOutputInterval          &#x3D; 0                                   &#123;product&#125;</span><br><span class="line">    uintx AdaptiveSizePolicyWeight                  &#x3D; 10                                  &#123;product&#125;</span><br><span class="line">   ...</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+<li>查看修改更新：-XX:+PrintFlagsFinal<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">bool UsePSAdaptiveSurvivorSizePolicy           &#x3D; true                                &#123;product&#125;</span><br><span class="line">bool UseParNewGC                               &#x3D; false                               &#123;product&#125;</span><br><span class="line">bool UseParallelGC                            :&#x3D; true                                &#123;product&#125;</span><br><span class="line">bool UseParallelOldGC                          &#x3D; true                                &#123;product&#125;</span><br><span class="line">bool UsePerfData                               &#x3D; true                                &#123;product&#125;</span><br><span class="line">bool UsePopCountInstruction                    &#x3D; true                                &#123;product&#125;</span><br><span class="line">bool UseRDPCForConstantTableBase               &#x3D; false                               &#123;C2 product&#125;</span><br></pre></td></tr></table></figure>
+= 与 := 的区别是，一个是默认，一个是人物改变或者 jvm 加载时改变的参数</li>
+<li>打印命令行参数(可以看默认垃圾回收器)：-XX:+PrintCommandLineFlags<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cuzz@cuzz-pc:~&#x2F;Project&#x2F;demo$ java -XX:+PrintCommandLineFlags</span><br><span class="line">-XX:InitialHeapSize&#x3D;128789376 -XX:MaxHeapSize&#x3D;2060630016 -XX:+PrintCommandLineFlags -XX:+UseCompressedClassPointers -XX:+UseCompressedOops -XX:+UseParallelGC </span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="你平时工作用过的-JVM-常用的基本配置参数有哪些？"><a href="#你平时工作用过的-JVM-常用的基本配置参数有哪些？" class="headerlink" title="你平时工作用过的 JVM 常用的基本配置参数有哪些？"></a>你平时工作用过的 JVM 常用的基本配置参数有哪些？</h2><ul>
+<li><p>-Xms</p>
+<ul>
+<li>初始大小内存，默认为物理内存 1/64</li>
+<li>等价于 -XX:InitialHeapSize</li>
+</ul>
+</li>
+<li><p>-Xmx</p>
+<ul>
+<li>最大分配内存，默认为物理内存的 1/4</li>
+<li>等价于 -XX:MaxHeapSize</li>
+</ul>
+</li>
+<li><p>-Xss</p>
+<ul>
+<li>设置单个线程栈的大小，一般默认为 512-1024k</li>
+<li>等价于 -XX:ThreadStackSize</li>
+</ul>
+</li>
+<li><p>-Xmn</p>
+<ul>
+<li>设置年轻代的大小</li>
+<li><strong>整个JVM内存大小=年轻代大小 + 年老代大小 + 持久代大小</strong>，持久代一般固定大小为64m，所以增大年轻代后，将会减小年老代大小。此值对系统性能影响较大，Sun官方推荐配置为整个堆的3/8。</li>
+</ul>
+</li>
+<li><p>-XX:MetaspaceSize</p>
+<ul>
+<li>设置元空间大小（元空间的本质和永久代类似，都是对 JVM 规范中的方法区的实现，不过元空间于永久代之间最大区别在于，<strong>元空间并不在虚拟中，而是使用本地内存</strong>，因此默认情况下，元空间的大小仅受本地内存限制）</li>
+<li>元空间默认比较小，我们可以调大一点</li>
+</ul>
+</li>
+<li><p>-XX:+PrintGCDetails</p>
+<ul>
+<li><p>输出详细 GC 收集日志信息</p>
+<ul>
+<li><p>设置 JVM 参数为： -Xms10m -Xmx10m -XX:+PrintGCDetails</p>
+</li>
+<li><p>代码</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloGC</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">byte</span>[] bytes = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">20</span> * <span class="number">1024</span> * <span class="number">1024</span>];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>打印结果</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">[GC (Allocation Failure) [PSYoungGen: 1231K-&gt;448K(2560K)] 1231K-&gt;456K(9728K), 0.0015616 secs] [Times: user=0.00 sys=0.00, real=0.00 secs] </span><br><span class="line">[GC (Allocation Failure) [PSYoungGen: 448K-&gt;384K(2560K)] 456K-&gt;392K(9728K), 0.0016999 secs] [Times: user=0.00 sys=0.00, real=0.00 secs] </span><br><span class="line">[Full GC (Allocation Failure) [PSYoungGen: 384K-&gt;0K(2560K)] [ParOldGen: 8K-&gt;358K(7168K)] 392K-&gt;358K(9728K), [Metaspace: 3028K-&gt;3028K(1056768K)], 0.0066696 secs] [Times: user=0.01 sys=0.00, real=0.01 secs] </span><br><span class="line">[GC (Allocation Failure) [PSYoungGen: 0K-&gt;0K(2560K)] 358K-&gt;358K(9728K), 0.0005321 secs] [Times: user=0.00 sys=0.00, real=0.00 secs] </span><br><span class="line">[Full GC (Allocation Failure) [PSYoungGen: 0K-&gt;0K(2560K)] [ParOldGen: 358K-&gt;340K(7168K)] 358K-&gt;340K(9728K), [Metaspace: 3028K-&gt;3028K(1056768K)], 0.0051543 secs] [Times: user=0.01 sys=0.00, real=0.01 secs] </span><br><span class="line">Heap</span><br><span class="line"> PSYoungGen      total 2560K, used 81K [0x00000000ffd00000, 0x0000000100000000, 0x0000000100000000)</span><br><span class="line">  eden space 2048K, 3% used [0x00000000ffd00000,0x00000000ffd14668,0x00000000fff00000)</span><br><span class="line">  from space 512K, 0% used [0x00000000fff00000,0x00000000fff00000,0x00000000fff80000)</span><br><span class="line">  to   space 512K, 0% used [0x00000000fff80000,0x00000000fff80000,0x0000000100000000)</span><br><span class="line"> ParOldGen       total 7168K, used 340K [0x00000000ff600000, 0x00000000ffd00000, 0x00000000ffd00000)</span><br><span class="line">  object space 7168K, 4% used [0x00000000ff600000,0x00000000ff655188,0x00000000ffd00000)</span><br><span class="line"> Metaspace       used 3060K, capacity 4496K, committed 4864K, reserved 1056768K</span><br><span class="line">  class space    used 336K, capacity 388K, committed 512K, reserved 1048576K</span><br><span class="line">Exception in thread &quot;main&quot; java.lang.OutOfMemoryError: Java heap space</span><br><span class="line">    at com.cuzz.jvm.HelloGC.main(HelloGC.java:12)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>GC<br><img src="JVM%E9%9D%A2%E8%AF%95/a9a0eb99b30cf3fd8973f464eb4678bf50f760cc.jpg" alt="img"></p>
+</li>
+<li><p>FullGC<br><img src="JVM%E9%9D%A2%E8%AF%95/e04f3f3b68cff61027e5ba8eba9613bb7c69a08a.jpg" alt="img"></p>
+</li>
+</ul>
+</li>
+<li><p>-XX:SurvivorRatio</p>
+<ul>
+<li>设置新生代中 eden 和 S0/S1 空间比例</li>
+<li>默认 -XX:SurvivorRatio=8，Eden : S0 : S1 = 8 : 1 : 1</li>
+</ul>
+</li>
+<li><p>-XX:NewRatio</p>
+<ul>
+<li>配置年轻代和老年代在堆结构的占比</li>
+<li>默认 -XX:NewRatio=2 新生代占1，老年代占2，年轻代占整个堆的 1/3</li>
+</ul>
+</li>
+<li><p>-XX:MaxTenuringThreshold</p>
+<ul>
+<li>设置垃圾最大年龄</li>
+</ul>
+</li>
+</ul>
+<h2 id="强引用、软引用、弱引用和虚引用分别是什么？"><a href="#强引用、软引用、弱引用和虚引用分别是什么？" class="headerlink" title="强引用、软引用、弱引用和虚引用分别是什么？"></a>强引用、软引用、弱引用和虚引用分别是什么？</h2><p>在Java语言中，除了基本数据类型外，其他的都是指向各类对象的对象引用；Java中根据其生命周期的长短，将引用分为4类。</p>
+<ul>
+<li><p>强引用</p>
+<ul>
+<li>特点：我们平常典型编码Object obj = new Object()中的obj就是强引用。通过关键字new创建的对象所关联的引用就是强引用。 当JVM内存空间不足，JVM宁愿抛出OutOfMemoryError运行时错误（OOM），使程序异常终止，也不会靠随意回收具有强引用的“存活”对象来解决内存不足的问题。对于一个普通的对象，如果没有其他的引用关系，只要超过了引用的作用域或者显式地将相应（强）引用赋值为 null，就是可以被垃圾收集的了，具体回收时机还是要看垃圾收集策略。</li>
+</ul>
+</li>
+<li><p>软引用</p>
+<ul>
+<li><p>特点：软引用通过SoftReference类实现。 软引用的生命周期比强引用短一些。只有当 JVM 认为内存不足时，才会去试图回收软引用指向的对象：即JVM 会确保在抛出 OutOfMemoryError 之前，清理软引用指向的对象。软引用可以和一个引用队列（ReferenceQueue）联合使用，如果软引用所引用的对象被垃圾回收器回收，Java虚拟机就会把这个软引用加入到与之关联的引用队列中。后续，我们可以调用ReferenceQueue的poll()方法来检查是否有它所关心的对象被回收。如果队列为空，将返回一个null,否则该方法返回队列中前面的一个Reference对象。</p>
+</li>
+<li><p>应用场景：软引用通常用来实现内存敏感的缓存。如果还有空闲内存，就可以暂时保留缓存，当内存不足时清理掉，这样就保证了使用缓存的同时，不会耗尽内存。</p>
+</li>
+<li><p>代码验证<br>我设置 JVM 参数为 <code>-Xms10m -Xmx10m -XX:+PrintGCDetails</code></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SoftReferenceDemo</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Object obj = <span class="keyword">new</span> Object();</span><br><span class="line">        SoftReference&lt;Object&gt; softReference = <span class="keyword">new</span> SoftReference&lt;&gt;(obj);</span><br><span class="line">        obj = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 分配 20 M</span></span><br><span class="line">            <span class="keyword">byte</span>[] bytes = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">20</span> * <span class="number">1024</span> * <span class="number">1024</span>];</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;软引用：&quot;</span> + softReference.get());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">[GC (Allocation Failure) [PSYoungGen: 1234K-&gt;448K(2560K)] 1234K-&gt;456K(9728K), 0.0016748 secs] [Times: user=0.00 sys=0.00, real=0.01 secs] </span><br><span class="line">[GC (Allocation Failure) [PSYoungGen: 448K-&gt;384K(2560K)] 456K-&gt;392K(9728K), 0.0018398 secs] [Times: user=0.01 sys=0.00, real=0.00 secs] </span><br><span class="line">[Full GC (Allocation Failure) [PSYoungGen: 384K-&gt;0K(2560K)] [ParOldGen: 8K-&gt;358K(7168K)] 392K-&gt;358K(9728K), [Metaspace: 3030K-&gt;3030K(1056768K)], 0.0057246 secs] [Times: user=0.01 sys=0.00, real=0.01 secs] </span><br><span class="line">[GC (Allocation Failure) [PSYoungGen: 0K-&gt;0K(2560K)] 358K-&gt;358K(9728K), 0.0006038 secs] [Times: user=0.00 sys=0.00, real=0.00 secs] </span><br><span class="line">[Full GC (Allocation Failure) [PSYoungGen: 0K-&gt;0K(2560K)] [ParOldGen: 358K-&gt;340K(7168K)] 358K-&gt;340K(9728K), [Metaspace: 3030K-&gt;3030K(1056768K)], 0.0115080 secs] [Times: user=0.01 sys=0.00, real=0.01 secs] </span><br><span class="line">软引用：null</span><br><span class="line">Exception in thread &quot;main&quot; java.lang.OutOfMemoryError: Java heap space</span><br><span class="line">    at com.cuzz.jvm.SoftReferenceDemo.main(SoftReferenceDemo.java:21)</span><br><span class="line">Heap</span><br><span class="line"> PSYoungGen      total 2560K, used 98K [0x00000000ffd00000, 0x0000000100000000, 0x0000000100000000)</span><br><span class="line">  eden space 2048K, 4% used [0x00000000ffd00000,0x00000000ffd18978,0x00000000fff00000)</span><br><span class="line">  from space 512K, 0% used [0x00000000fff00000,0x00000000fff00000,0x00000000fff80000)</span><br><span class="line">  to   space 512K, 0% used [0x00000000fff80000,0x00000000fff80000,0x0000000100000000)</span><br><span class="line"> ParOldGen       total 7168K, used 340K [0x00000000ff600000, 0x00000000ffd00000, 0x00000000ffd00000)</span><br><span class="line">  object space 7168K, 4% used [0x00000000ff600000,0x00000000ff6552f8,0x00000000ffd00000)</span><br><span class="line"> Metaspace       used 3067K, capacity 4496K, committed 4864K, reserved 1056768K</span><br><span class="line">  class space    used 336K, capacity 388K, committed 512K, reserved 1048576K</span><br></pre></td></tr></table></figure>
+
+<p>发现当内存不够的时候就会被回收。</p>
+</li>
+</ul>
+</li>
+<li><p>弱引用</p>
+<ul>
+<li><p>特点：弱引用通过WeakReference类实现。 弱引用的生命周期比软引用短。在垃圾回收器线程扫描它所管辖的内存区域的过程中，一旦发现了具有弱引用的对象，不管当前内存空间足够与否，都会回收它的内存。由于垃圾回收器是一个优先级很低的线程，因此不一定会很快回收弱引用的对象。弱引用可以和一个引用队列（ReferenceQueue）联合使用，如果弱引用所引用的对象被垃圾回收，Java虚拟机就会把这个弱引用加入到与之关联的引用队列中。</p>
+</li>
+<li><p>应用场景：弱应用同样可用于内存敏感的缓存。</p>
+</li>
+<li><p>代码验证</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WeakReferenceDemo</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Object obj = <span class="keyword">new</span> Object();</span><br><span class="line">        WeakReference&lt;Object&gt; weakReference = <span class="keyword">new</span> WeakReference&lt;&gt;(obj);</span><br><span class="line">        System.out.println(obj);</span><br><span class="line">        System.out.println(weakReference.get());</span><br><span class="line"></span><br><span class="line">        obj = <span class="keyword">null</span>;</span><br><span class="line">        System.gc();</span><br><span class="line">        System.out.println(<span class="string">&quot;GC之后....&quot;</span>);</span><br><span class="line">        </span><br><span class="line">        System.out.println(obj);</span><br><span class="line">        System.out.println(weakReference.get());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">java.lang.Object@1540e19d</span><br><span class="line">java.lang.Object@1540e19d</span><br><span class="line">GC之后....</span><br><span class="line">null</span><br><span class="line">null</span><br></pre></td></tr></table></figure>
+
+<p>值得注意的是<code> String name = &quot;cuzz&quot;</code> 这种会放入永久代，以及 <code>Integer age = 1</code> 在 int 中 -128 到 127 会被缓存，所以是强引用，然后 GC 也不会被回收。</p>
+</li>
+<li><p>引用队列</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ReferenceQueueDemo</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        Object obj = <span class="keyword">new</span> Object();</span><br><span class="line">        ReferenceQueue&lt;Object&gt; referenceQueue = <span class="keyword">new</span> ReferenceQueue&lt;&gt;();</span><br><span class="line">        WeakReference&lt;Object&gt; weakReference = <span class="keyword">new</span> WeakReference&lt;&gt;(obj, referenceQueue);</span><br><span class="line">        System.out.println(obj);</span><br><span class="line">        System.out.println(weakReference.get());</span><br><span class="line">        System.out.println(weakReference);</span><br><span class="line"></span><br><span class="line">        obj = <span class="keyword">null</span>;</span><br><span class="line">        System.gc();</span><br><span class="line">        Thread.sleep(<span class="number">500</span>);</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;GC之后....&quot;</span>);</span><br><span class="line">        System.out.println(obj);</span><br><span class="line">        System.out.println(weakReference.get());</span><br><span class="line">        System.out.println(weakReference);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">java.lang.Object@1540e19d</span><br><span class="line">java.lang.Object@1540e19d</span><br><span class="line">java.lang.ref.WeakReference@677327b6</span><br><span class="line">GC之后....</span><br><span class="line">null</span><br><span class="line">null</span><br><span class="line">java.lang.ref.WeakReference@677327b6</span><br></pre></td></tr></table></figure>
+<p>会把该对象的包装类即<code>weakReference</code>放入到<code>ReferenceQueue</code>里面，我们可以从queue中获取到相应的对象信息，同时进行额外的处理。比如反向操作，数据清理等。</p>
+</li>
+</ul>
+</li>
+<li><p>虚引用</p>
+<ul>
+<li>特点：虚引用也叫幻象引用，通过PhantomReference类来实现。无法通过虚引用访问对象的任何属性或函数。幻象引用仅仅是提供了一种确保对象被 finalize 以后，做某些事情的机制。如果一个对象仅持有虚引用，那么它就和没有任何引用一样，在任何时候都可能被垃圾回收器回收。虚引用必须和引用队列 （ReferenceQueue）联合使用。当垃圾回收器准备回收一个对象时，如果发现它还有虚引用，就会在回收对象的内存之前，把这个虚引用加入到与之关联的引用队列中。<br>ReferenceQueue queue = new ReferenceQueue ();<br>PhantomReference pr = new PhantomReference (object, queue);<br>程序可以通过判断引用队列中是否已经加入了虚引用，来了解被引用的对象是否将要被垃圾回收。如果程序发现某个虚引用已经被加入到引用队列，那么就可以在所引用的对象的内存被回收之前采取一些程序行动。</li>
+<li>应用场景：可用来跟踪对象被垃圾回收器回收的活动，当一个虚引用关联的对象被垃圾收集器回收之前会收到一条系统通知。</li>
+</ul>
+</li>
+</ul>
+<h2 id="请谈谈你对-OOM-的认识？"><a href="#请谈谈你对-OOM-的认识？" class="headerlink" title="请谈谈你对 OOM 的认识？"></a>请谈谈你对 OOM 的认识？</h2><ul>
+<li><p>java.lang.StackOverflowError</p>
+<ul>
+<li>在一个函数中调用自己就会产生这个错误</li>
+</ul>
+</li>
+<li><p>java.lang.OutOfMemoryError : Java heap space</p>
+<ul>
+<li>new 一个很大对象</li>
+</ul>
+</li>
+<li><p>java.lang.OutOfMemoryError : GC overhead limit exceeded</p>
+<ul>
+<li>执行垃圾收集的时间比例太大， 有效的运算量太小，默认情况下,，如果GC花费的时间超过 **98%**， 并且GC回收的内存少于 **2%**， JVM就会抛出这个错误。</li>
+</ul>
+</li>
+<li><p>java.lang.OutOfMemoryError : Direct buffer memory<br>配置参数：-Xms10m -Xmx10m -XX:+PrintGCDetails -XX:MaxDirectMemorySize=5m</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DirectBufferDemo</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;maxDirectMemory : &quot;</span> + sun.misc.VM.maxDirectMemory() / (<span class="number">1024</span> * <span class="number">1024</span>) + <span class="string">&quot;MB&quot;</span>);</span><br><span class="line">        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(<span class="number">6</span> * <span class="number">1024</span> * <span class="number">1024</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">maxDirectMemory : 5MB</span><br><span class="line">[GC (System.gc()) [PSYoungGen: 1315K-&gt;464K(2560K)] 1315K-&gt;472K(9728K), 0.0008907 secs] [Times: user&#x3D;0.00 sys&#x3D;0.00, real&#x3D;0.01 secs] </span><br><span class="line">[Full GC (System.gc()) [PSYoungGen: 464K-&gt;0K(2560K)] [ParOldGen: 8K-&gt;359K(7168K)] 472K-&gt;359K(9728K), [Metaspace: 3037K-&gt;3037K(1056768K)], 0.0060466 secs] [Times: user&#x3D;0.01 sys&#x3D;0.00, real&#x3D;0.00 secs] </span><br><span class="line">Exception in thread &quot;main&quot; java.lang.OutOfMemoryError: Direct buffer memory</span><br><span class="line">    at java.nio.Bits.reserveMemory(Bits.java:694)</span><br><span class="line">    at java.nio.DirectByteBuffer.&lt;init&gt;(DirectByteBuffer.java:123)</span><br><span class="line">    at java.nio.ByteBuffer.allocateDirect(ByteBuffer.java:311)</span><br><span class="line">    at com.cuzz.jvm.DirectBufferDemo.main(DirectBufferDemo.java:17)</span><br><span class="line">Heap</span><br><span class="line"> PSYoungGen      total 2560K, used 56K [0x00000000ffd00000, 0x0000000100000000, 0x0000000100000000)</span><br><span class="line">  eden space 2048K, 2% used [0x00000000ffd00000,0x00000000ffd0e170,0x00000000fff00000)</span><br><span class="line">  from space 512K, 0% used [0x00000000fff00000,0x00000000fff00000,0x00000000fff80000)</span><br><span class="line">  to   space 512K, 0% used [0x00000000fff80000,0x00000000fff80000,0x0000000100000000)</span><br><span class="line"> ParOldGen       total 7168K, used 359K [0x00000000ff600000, 0x00000000ffd00000, 0x00000000ffd00000)</span><br><span class="line">  object space 7168K, 5% used [0x00000000ff600000,0x00000000ff659e28,0x00000000ffd00000)</span><br><span class="line"> Metaspace       used 3068K, capacity 4496K, committed 4864K, reserved 1056768K</span><br><span class="line">  class space    used 336K, capacity 388K, committed 512K, reserved 1048576K</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>java.lang.OutOfMemoryError : unable to create new native thread</p>
+<ul>
+<li>创建线程数太多了</li>
+</ul>
+</li>
+<li><p>java.lang.OutOfMemoryError : Metaspace</p>
+<ul>
+<li>Java 8 之后的版本使用元空间（Metaspace）代替了永久代，元空间是方法区在 HotSpot 中的实现，它与持久代最大的区别是：元空间并不在虚拟机中的内存中而是使用本地内存。</li>
+<li>元空间存放的信息：<ul>
+<li>虚拟机加载的类信息</li>
+<li>常量池</li>
+<li>静态变量</li>
+<li>即时编译后的代码</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>具体的实现可以看看这个帖子：<a target="_blank" rel="noopener" href="http://www.dataguru.cn/thread-351920-1-1.html">几种手动OOM的方式</a></p>
+<h2 id="GC-垃圾回收算法和垃圾收集器的关系？谈谈你的理解？"><a href="#GC-垃圾回收算法和垃圾收集器的关系？谈谈你的理解？" class="headerlink" title="GC 垃圾回收算法和垃圾收集器的关系？谈谈你的理解？"></a>GC 垃圾回收算法和垃圾收集器的关系？谈谈你的理解？</h2><ul>
+<li>四种 GC 垃圾回收算法<ul>
+<li>引用计数</li>
+<li>复制回收</li>
+<li>标记清除</li>
+<li>标记整理</li>
+</ul>
+</li>
+<li>GC 算法是内存回收的方法论，垃圾收集其就是算法的落实的实现。</li>
+<li>目前为止还没有完美的收集器的出现，更加没有万能的收集器，只是针对具体应用最适合的收集器，进行分代收集。</li>
+<li>串行垃圾回收器（Serial）<ul>
+<li>它为单线程环境设计且只使用一个线程进行垃圾回收，会暂停所有的用户线程，所以不适合服务环境。</li>
+</ul>
+</li>
+<li>并行垃圾回收器（Parallel）<ul>
+<li>多个垃圾收集线程并行工作，此时用户线程是暂停的，用于科学计算、大数据处理等弱交互场景。</li>
+</ul>
+</li>
+<li>并发垃圾回收器（CMS）<ul>
+<li>用户线程和垃圾收集线程同时执行（不一定是并行，可能是交替执行），不需要停顿用户线程，互联网公司多用它，适用对相应时间有要求的场景。</li>
+</ul>
+</li>
+<li>G1 垃圾回收器<ul>
+<li>G1 垃圾回收器将堆内存分割成不同的区域然后并发的对其进行垃圾回收。</li>
+</ul>
+</li>
+</ul>
+<h2 id="怎么查看服务器默认垃圾收集器是哪个？生产是如何配置垃圾收集器？谈谈你对垃圾收集器的理解？"><a href="#怎么查看服务器默认垃圾收集器是哪个？生产是如何配置垃圾收集器？谈谈你对垃圾收集器的理解？" class="headerlink" title="怎么查看服务器默认垃圾收集器是哪个？生产是如何配置垃圾收集器？谈谈你对垃圾收集器的理解？"></a>怎么查看服务器默认垃圾收集器是哪个？生产是如何配置垃圾收集器？谈谈你对垃圾收集器的理解？</h2><ul>
+<li>怎么查看服务器默认垃圾收集器是哪个？<ul>
+<li>Java -XX:+PrintCommandLineFlags</li>
+</ul>
+</li>
+<li>Java 的 GC 回收的类型主要有：<ul>
+<li>UseSerialGC，UseParallelGC，UseConcMarkSweepGC，UseParNewGC，UseParallelOldGC，UseG1GC</li>
+<li>Java 8 以后基本不使用 Serial Old</li>
+</ul>
+</li>
+<li>垃圾收集器<br><img src="JVM%E9%9D%A2%E8%AF%95/timg.jpg" alt="timg"></li>
+<li>参数说明<ul>
+<li>DefNew : Default New Generation</li>
+<li>Tenured : Old</li>
+<li>ParNew : Parallel New Generation</li>
+<li>PSYoungGen : Parallel Scavenge</li>
+<li>ParOldGen : Parallel Old Generation</li>
+</ul>
+</li>
+<li>Server/Client 模式分别是什么意思<ul>
+<li>最主要的差别在于：-Server模式启动时，速度较慢，但是一旦运行起来后，性能将会有很大的提升。</li>
+<li>当虚拟机运行在-client模式的时候，使用的是一个代号为C1的轻量级编译器, 而-server模式启动的虚拟机采用相对重量级，代号为C2的编译器，C2比C1编译器编译的相对彻底，服务起来之后,性能更高。</li>
+<li>所以通常用于做服务器的时候我们用服务端模式，如果你的电脑只是运行一下java程序，就客户端模式就可以了。当然这些都是我们做程序优化程序才需要这些东西的，普通人并不关注这些专业的东西了。其实服务器模式即使编译更彻底，然后垃圾回收优化更好，这当然吃的内存要多点相对于客户端模式。</li>
+</ul>
+</li>
+<li>新生代<ul>
+<li>串行 GC (Serial/ Serital Copying)</li>
+<li>并行 GC (ParNew)</li>
+<li>并行回收 GC (Parallel/ Parallel Scanvenge)</li>
+</ul>
+</li>
+<li>老年代<ul>
+<li>串行 GC (Serial Old/ Serial MSC)</li>
+<li>并行 GC (Parallel Old/ Parallel MSC)</li>
+<li>并发标记清除 GC (CMS)<ul>
+<li>是一种以获取最短回收停顿时间为目标的收集器，适合应用在互联网站或者 B/S 系统的服务器上，这个类应用尤其重视服务器的响应速度，希望系统停顿时间最短。</li>
+<li>CMS 非常适合堆内存大、CPU 核数多的服务器端应用，也是 G1 出现之前大型应用首选收集器。</li>
+<li>并发停顿比较少，并发指的是与用户线程一起执行。</li>
+<li>过程<ul>
+<li>初始标记（initail mark）：只是标记一下 GC Roots 能直接关联的对象，速度很快，需要暂停所有的工作线程</li>
+<li>并发标记（concurrent mark 和用户线程一起）：进行 GC Roots 的跟踪过程，和用户线程一起工作，不需要暂停工作线程。</li>
+<li>重新标记（remark）：为了修正在并发标记期间，因用户程序继续运行而导致标记产生变动的那一部分对象的标记记录，仍然需要暂停所有的工作线程。</li>
+<li>并发清除（concurrent sweep 和用户线程一起）：清除 GC 不可达对象，和用户线程一起工作，不需要暂停工作线程，基于标记结果，直接清除。由于耗时最长的并发标记和并发清除过程中，垃圾收集线程和用户线程可以一起并发工作，所以总体来看 CMS 收集器的内存回收和用户线程是一起并发地执行。</li>
+</ul>
+</li>
+<li>优缺点<ul>
+<li>优点：并发收集停顿低</li>
+<li>缺点：并发执行对 CPU 资源压力大，采用的标记清除算法会导致大量碎片</li>
+</ul>
+</li>
+<li>由于并发进行， CMS 在收集与应用线程会同时增加对堆内存的占用，也就是说，CMS 必须要在老年代堆用尽之前完成垃圾回收，否者 CMS 回收失败，将触发担保机制，串行老年代收集器将会以 STW 的方式进行一次 GC，从而造成较大的停顿时间。</li>
+<li>标记清除算法无法整理空间碎片，老年代空间会随着应用时长被逐渐耗尽，最后将不得不通过担保机制对堆内存进行压缩。CMS 也提供了参数 -XX:CMSFullGCsBeForeCompaction (默认0，即每次都进行内存整理) 来指定多少次 CMS 收集之后，进行一次压</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>垃圾收集器配置代码总结<ul>
+<li>配置新生代收集器，老年代收集器会自动配置上。<br><img src="JVM%E9%9D%A2%E8%AF%95/1558237229584.png" alt="1558237229584"></li>
+</ul>
+</li>
+<li>如何选择垃圾收集器<ul>
+<li>单 CPU 或者小内存，单机程序：-XX:UseSerialGC</li>
+<li>多 CPU 需要最大吞吐量，如后台计算型应用：-XX:UseParallelGC 或者 -XX:UseParallelOldGC</li>
+<li>多 CPU 追求低停顿时间，需要快速响应，如互联网应用：-XX:+UseConcMarkSweepGC</li>
+</ul>
+</li>
+</ul>
+<h2 id="G1-垃圾收集器你了解吗？"><a href="#G1-垃圾收集器你了解吗？" class="headerlink" title="G1 垃圾收集器你了解吗？"></a>G1 垃圾收集器你了解吗？</h2><ul>
+<li><p>以前收集器的特点</p>
+<ul>
+<li>年轻代和老年代是各自独立且连续的内存块</li>
+<li>年轻代收集器使用 eden + S0 + S1 进行复制算法</li>
+<li>老年代收集必须扫描整个老年代区域</li>
+<li>都是以尽可能的少而快速地执行 GC 为设计原则</li>
+</ul>
+</li>
+<li><p>G1 是什么</p>
+<ul>
+<li>G1 是一种面向服务端的垃圾收集器，应用在多核处理器和大容量内存环境中，在实现高吞吐量的同时，尽可能的满足垃圾收集器的暂停时间要求。</li>
+<li>像 CMS 收集器一样，能与应用程序线程并发执行，整理空闲空间更快，需要更多的时间来预测 GC 停顿时间，不希望牺牲大量的吞吐性能，不需要更大的 JAVA Heap。</li>
+<li>G1 收集器的设计目的是取代 CMS 收集器，同时与 CMS 相比，G1 垃圾收集器是一个有整理内存过程的垃圾收集器，不会产生很多内存碎片。G1 的 Stop The World 更可控，G1 在停顿上添加了预测机制，用户可以指定期望的停顿时间。</li>
+<li>G1 是在 2012 年才在 jdk.1.7u4 中可以呀用，在 jdk9 中将 G1 变成默认垃圾收集器来代替 CMS。它是以款面向服务应用的收集器。</li>
+<li>主要改变是 Eden、Survivor 和 Tenured 等内存区域不再是连续的，而是变成了一个个大小一样的 region，每个 region 从 1M 到 32M 不等，一个 region 有可能属于 Eden、Survivor 或者 Tenured 内存区域。</li>
+</ul>
+</li>
+<li><p>特点</p>
+<ul>
+<li>G1 能充分利用多 CPU、多核环境硬件优势，尽量缩短 STW。</li>
+<li>G1 整体采用标记-整理算法，局部是通过是通过复制算法，<strong>不会产生内存碎片</strong>。</li>
+<li>宏观上看 G1 之中不在区分年轻代和老年代，被内存划分为多个独立的子区域。</li>
+<li>G1 收集器里面讲整个的内存区域混合在一起，<strong>但其本身依然在小范围内要进行年轻代和老年代的区分</strong>。保留了新生代和老年代，但她们不在是物理隔离，而是一部分 Region 的集合且不需要 Region 是连续的，也就是说依然会采用不同的 GC 方式来处理不同的区域。</li>
+<li>G1 虽然也是分代收集器，但整个内存分区不存在物理上的年轻代和老年代的区别，也不需要完全独立的 Survivor to space 堆做复制准备。G1 只有逻辑上的分代概念，或者说每个分区都可能随 G1 的运行在不同代之间前后切换。</li>
+</ul>
+</li>
+<li><p>底层原理</p>
+<ul>
+<li><p>Region 区域化垃圾收集器：最大好处是化整为零，避免全内存扫描，只需要按照区域来进行扫描即可。</p>
+</li>
+<li><h3 id="Region"><a href="#Region" class="headerlink" title="Region"></a>Region</h3><p><img src="JVM%E9%9D%A2%E8%AF%95/5611237-f643066bd97c7703.png" alt="5611237-f643066bd97c7703"><br>G1的内存结构和传统的内存空间划分有比较的不同。G1将内存划分成了多个大小相等的Region（默认是512K），Region逻辑上连续，物理内存地址不连续。同时每个Region被标记成E、S、O、H，分别表示Eden、Survivor、Old、Humongous。其中E、S属于年轻代，O与H属于老年代。<br>H表示Humongous。从字面上就可以理解表示大的对象（下面简称H对象）。<strong>当分配的对象大于等于Region大小的一半</strong>的时候就会被认为是巨型对象。H对象默认分配在老年代，可以防止GC的时候大对象的内存拷贝。通过如果发现堆内存容不下H对象的时候，会触发一次GC操作。 </p>
+</li>
+<li><p>回收步骤</p>
+<ul>
+<li>参看：<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/548c67aa1bc0">G1从入门到放弃</a></li>
+</ul>
+</li>
+<li><p>四步过程<br><img src="JVM%E9%9D%A2%E8%AF%95/u=1236259389,1737476709&fm=26&gp=0.jpg" alt="u=1236259389,1737476709&amp;fm=26&amp;gp=0"></p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="生产环境服务器变慢，诊断思路和性能评估谈谈？"><a href="#生产环境服务器变慢，诊断思路和性能评估谈谈？" class="headerlink" title="生产环境服务器变慢，诊断思路和性能评估谈谈？"></a>生产环境服务器变慢，诊断思路和性能评估谈谈？</h2><ul>
+<li>整机：top</li>
+<li>CPU：vmstat</li>
+<li>内存：free</li>
+<li>硬盘：df</li>
+<li>磁盘IO：iostat</li>
+<li>网络IO：ifstat</li>
+</ul>
+<h2 id="假如生产环境出现-CPU-过高，请谈谈你的分析思路和定位？"><a href="#假如生产环境出现-CPU-过高，请谈谈你的分析思路和定位？" class="headerlink" title="假如生产环境出现 CPU 过高，请谈谈你的分析思路和定位？"></a>假如生产环境出现 CPU 过高，请谈谈你的分析思路和定位？</h2><ul>
+<li>先用 top 命令找出 CPU 占比最高的</li>
+<li>ps -ef 或者 jps 进一步定位，得知是一个怎么样的一个后台程序</li>
+<li>定位到具体的线程或代码<ul>
+<li>ps -mp 11111 -o THREAD,tid,time</li>
+<li>-m 显示所有的线程</li>
+<li>-p 进程使用cpu的时间</li>
+<li>-o 该参数后是用户自定义格式</li>
+</ul>
+</li>
+<li>将需要的线程 ID 转化为 16 进制格式</li>
+<li>jstat &lt;进程ID&gt; | grep &lt;线程ID(16进制)&gt; -A60</li>
+</ul>
+<h2 id="对于-JDK-自带的-JVM-监控和性能分析工具用过哪些？一般机是怎么用到的？"><a href="#对于-JDK-自带的-JVM-监控和性能分析工具用过哪些？一般机是怎么用到的？" class="headerlink" title="对于 JDK 自带的 JVM 监控和性能分析工具用过哪些？一般机是怎么用到的？"></a>对于 JDK 自带的 JVM 监控和性能分析工具用过哪些？一般机是怎么用到的？</h2><p>下一篇重点介绍。</p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://time.geekbang.org/column/article/6970">强引用、软引用、弱引用、幻象引用有什么区别？(评论)</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/548c67aa1bc0">G1从入门到放弃</a></li>
+</ul>
+</div></article></div><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><time class="level-item" dateTime="2019-05-07T15:59:59.000Z" title="2019-05-07T15:59:59.000Z">2019-05-07</time><span class="level-item"><a class="link-muted" href="/categories/%E6%97%A5%E8%AE%B0/">日记</a></span><span class="level-item">4 minutes read (About 659 words)</span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2019/05/07/2019%E6%98%A5%E6%8B%9B%E6%80%BB%E7%BB%93/">2019春招总结</a></h1><div class="content"><h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>3 月份开始准备春招到现在已经 2 个多月了， 总结一下这个两个月的面试的一些情况，下面是我这个月面过的一些公司。</p></div><a class="article-more button is-small size-small" href="/2019/05/07/2019%E6%98%A5%E6%8B%9B%E6%80%BB%E7%BB%93/#more">Read More</a></article></div><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><time class="level-item" dateTime="2019-04-16T15:59:59.000Z" title="2019-04-16T15:59:59.000Z">2019-04-16</time><span class="level-item"><a class="link-muted" href="/categories/%E9%9D%A2%E8%AF%95/">面试</a></span><span class="level-item">an hour read (About 9061 words)</span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2019/04/16/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">Java 并发编程</a></h1><div class="content"><h2 id="请谈谈你对-volatile-的理解"><a href="#请谈谈你对-volatile-的理解" class="headerlink" title="请谈谈你对 volatile 的理解"></a>请谈谈你对 volatile 的理解</h2><h3 id="volatile-是-Java-虚拟机提供的轻量级的同步机制"><a href="#volatile-是-Java-虚拟机提供的轻量级的同步机制" class="headerlink" title="volatile 是 Java 虚拟机提供的轻量级的同步机制"></a>volatile 是 Java 虚拟机提供的轻量级的同步机制</h3><ul>
+<li>保证可见性</li>
+<li>禁止指令排序</li>
+<li>不保证原子性</li>
+</ul>
+<h3 id="JMM（Java-内存模型）-你谈谈"><a href="#JMM（Java-内存模型）-你谈谈" class="headerlink" title="JMM（Java 内存模型） 你谈谈"></a>JMM（Java 内存模型） 你谈谈</h3><h4 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h4><ul>
+<li>JMM 本身是一种抽象的概念并不是真实存在，它描述的是一组规定或则规范，通过这组规范定义了程序中的访问方式。</li>
+<li>JMM 同步规定<ul>
+<li>线程解锁前，必须把共享变量的值刷新回主内存</li>
+<li>线程加锁前，必须读取主内存的最新值到自己的工作内存</li>
+<li>加锁解锁是同一把锁</li>
+</ul>
+</li>
+<li>由于 JVM 运行程序的实体是线程，而每个线程创建时 JVM 都会为其创建一个工作内存，工作内存是每个线程的私有数据区域，而 Java 内存模型中规定所有变量的储存在主内存，主内存是共享内存区域，所有的线程都可以访问，但线程对变量的操作（读取赋值等）必须都工作内存进行看。</li>
+<li>首先要将变量从主内存拷贝的自己的工作内存空间，然后对变量进行操作，操作完成后再将变量写回主内存，不能直接操作主内存中的变量，工作内存中存储着主内存中的变量副本拷贝，前面说过，工作内存是每个线程的私有数据区域，因此不同的线程间无法访问对方的工作内存，线程间的通信(传值)必须通过主内存来完成。</li>
+<li>内存模型图<br><img src="Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E6%90%9C%E7%8B%97%E6%88%AA%E5%9B%BE20190416211412.png" alt="搜狗截图20190416211412"></li>
+</ul></div><a class="article-more button is-small size-small" href="/2019/04/16/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/#more">Read More</a></article></div><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><time class="level-item" dateTime="2019-04-06T14:56:12.000Z" title="2019-04-06T14:56:12.000Z">2019-04-06</time><span class="level-item"><a class="link-muted" href="/categories/%E7%AE%97%E6%B3%95/">算法</a></span><span class="level-item">2 minutes read (About 327 words)</span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2019/04/06/%E7%94%9F%E4%BA%A7%E8%80%85%E6%B6%88%E8%B4%B9%E8%80%85/">生产者消费者</a></h1><div class="content"><p>维基百科解释：</p>
+<blockquote>
+<p>In <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Computing">computing</a>, the <strong>producer–consumer problem</strong>[<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Producer%E2%80%93consumer_problem#cite_note-ostep1-1">1]</a>[<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Producer%E2%80%93consumer_problem#cite_note-ostep2-2">2]</a> (also known as the <strong>bounded-buffer problem</strong>) is a classic example of a multi-<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Process_(computing)">process</a> <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Synchronization_(computer_science)">synchronization</a> problem. The problem describes two processes, the producer and the consumer, who share a common, fixed-size <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Buffer_(computer_science)">buffer</a> used as a <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Queue_(data_structure)">queue</a>. The producer’s job is to generate data, put it into the buffer, and start again. At the same time, the consumer is consuming the data (i.e., removing it from the buffer), one piece at a time. The problem is to make sure that the producer won’t try to add data into the buffer if it’s full and that the consumer won’t try to remove data from an empty buffer. </p>
+</blockquote>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.LinkedList;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.Random;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.ExecutorService;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.Executors;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Author</span>: cuzz</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Date</span>: 2019/4/6 13:03</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Description</span>: 生产者消费者</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ProducerConsumerDemo</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Container container = <span class="keyword">new</span> Container();</span><br><span class="line">        ExecutorService executor = Executors.newFixedThreadPool(<span class="number">2</span>);</span><br><span class="line">        executor.execute(() -&gt; container.produce());</span><br><span class="line">        executor.execute(() -&gt; container.consume());</span><br><span class="line">        executor.shutdown();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Container</span> </span>&#123;</span><br><span class="line">    <span class="keyword">private</span> List&lt;Integer&gt; list = <span class="keyword">new</span> LinkedList&lt;&gt;();</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="keyword">int</span> MAX_SIZE = <span class="number">5</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Random random = <span class="keyword">new</span> Random();</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">produce</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    <span class="keyword">while</span> (list.size() &gt;= MAX_SIZE) &#123;</span><br><span class="line">                        wait();</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">int</span> i = random.nextInt();</span><br><span class="line">                    System.out.println(<span class="string">&quot;produce...&quot;</span> + i);</span><br><span class="line">                    list.add(i);</span><br><span class="line">                    notify();</span><br><span class="line">                    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">                &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">consume</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="keyword">synchronized</span> (<span class="keyword">this</span>) &#123;</span><br><span class="line">                    <span class="keyword">while</span> (list.isEmpty()) &#123;</span><br><span class="line">                        wait();</span><br><span class="line">                    &#125;</span><br><span class="line">                    <span class="keyword">int</span> i = list.remove(<span class="number">0</span>);</span><br><span class="line">                    System.out.println(<span class="string">&quot;consume...&quot;</span> + i);</span><br><span class="line">                    notify();</span><br><span class="line">                    Thread.sleep(<span class="number">1000</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+</div></article></div><nav class="pagination is-centered mt-4" role="navigation" aria-label="pagination"><div class="pagination-previous is-invisible is-hidden-mobile"><a href="/page/0/">Previous</a></div><div class="pagination-next"><a href="/page/2/">Next</a></div><ul class="pagination-list is-hidden-mobile"><li><a class="pagination-link is-current" href="/">1</a></li><li><a class="pagination-link" href="/page/2/">2</a></li><li><a class="pagination-link" href="/page/3/">3</a></li><li><a class="pagination-link" href="/page/4/">4</a></li></ul></nav></div><div class="column column-left is-4-tablet is-4-desktop is-3-widescreen  order-1"><div class="card widget"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="avatar" src="/img/avatar.png" alt="cuzz"></figure><p class="title is-size-4 is-block line-height-inherit">cuzz</p><p class="is-size-6 is-block">爱技术，爱生活，爱分享。</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>中国武汉</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">Posts</p><a href="/archives"><p class="title">40</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">Categories</p><a href="/categories"><p class="title">15</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">Tags</p><a href="/tags"><p class="title">40</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://github.com/ppoffice" target="_blank" rel="noopener">Follow</a></div><div class="level is-mobile"><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/cuzz1"><i class="fab fa-github"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Facebook" href="https://facebook.com"><i class="fab fa-facebook"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="RSS" href="/"><i class="fas fa-rss"></i></a></div></div></div><!--!--><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">Links</h3><ul class="menu-list"><li><a class="level is-mobile is-mobile" href="https://hexo.io" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Hexo</span></span><span class="level-right"><span class="level-item tag">hexo.io</span></span></a></li><li><a class="level is-mobile is-mobile" href="https://bulma.io" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Bulma</span></span><span class="level-right"><span class="level-item tag">bulma.io</span></span></a></li></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">Categories</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/categories/Go/"><span class="level-start"><span class="level-item">Go</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/HTTP/"><span class="level-start"><span class="level-item">HTTP</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/Java-%E5%9F%BA%E7%A1%80/"><span class="level-start"><span class="level-item">Java 基础</span></span><span class="level-end"><span class="level-item tag">5</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/Netty/"><span class="level-start"><span class="level-item">Netty</span></span><span class="level-end"><span class="level-item tag">5</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/Spring/"><span class="level-start"><span class="level-item">Spring</span></span><span class="level-end"><span class="level-item tag">4</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/linux/"><span class="level-start"><span class="level-item">linux</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/monthly/"><span class="level-start"><span class="level-item">monthly</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/python%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E7%B2%BE%E9%80%9A/"><span class="level-start"><span class="level-item">python从入门到精通</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/"><span class="level-start"><span class="level-item">分布式</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/%E5%89%8D%E7%AB%AF/"><span class="level-start"><span class="level-item">前端</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/%E6%97%A5%E8%AE%B0/"><span class="level-start"><span class="level-item">日记</span></span><span class="level-end"><span class="level-item tag">3</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/"><span class="level-start"><span class="level-item">深入理解Java虚拟机</span></span><span class="level-end"><span class="level-item tag">4</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/"><span class="level-start"><span class="level-item">知识图谱</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/%E7%AE%97%E6%B3%95/"><span class="level-start"><span class="level-item">算法</span></span><span class="level-end"><span class="level-item tag">3</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/%E9%9D%A2%E8%AF%95/"><span class="level-start"><span class="level-item">面试</span></span><span class="level-end"><span class="level-item tag">6</span></span></a></li></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">Tags</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/Full-Text-Search/"><span class="tag">Full-Text Search</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Future/"><span class="tag">Future</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Go/"><span class="tag">Go</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/JVM/"><span class="tag">JVM</span><span class="tag is-grey-lightest">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Java8/"><span class="tag">Java8</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/LRUCache/"><span class="tag">LRUCache</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/MySQL/"><span class="tag">MySQL</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/NIO/"><span class="tag">NIO</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/ProducerConsumer/"><span class="tag">ProducerConsumer</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Python/"><span class="tag">Python</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Reactor/"><span class="tag">Reactor</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Redis/"><span class="tag">Redis</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Seata/"><span class="tag">Seata</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Spring/"><span class="tag">Spring</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/TCP-IP/"><span class="tag">TCP/IP</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/jQuery/"><span class="tag">jQuery</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/join/"><span class="tag">join</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/lambda/"><span class="tag">lambda</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/lintcode/"><span class="tag">lintcode</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/shell/"><span class="tag">shell</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/synchronized/"><span class="tag">synchronized</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/volatile/"><span class="tag">volatile</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/"><span class="tag">分布式锁</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%8D%9A%E5%AE%A2/"><span class="tag">博客</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%8F%8D%E5%B0%84/"><span class="tag">反射</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%A0%86%E6%8E%92%E5%BA%8F/"><span class="tag">堆排序</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/"><span class="tag">多线程</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><span class="tag">学习笔记</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%AE%9E%E4%B9%A0/"><span class="tag">实习</span><span class="tag is-grey-lightest">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"><span class="tag">并发编程</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"><span class="tag">数据库</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%B3%A8%E8%A7%A3/"><span class="tag">注解</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%BA%90%E7%A0%81/"><span class="tag">源码</span><span class="tag is-grey-lightest">6</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E7%BA%BF%E7%A8%8B%E9%80%9A%E4%BF%A1/"><span class="tag">线程通信</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E7%BD%91%E7%BB%9C/"><span class="tag">网络</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E8%8B%B1%E6%96%87/"><span class="tag">英文</span><span class="tag is-grey-lightest">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E8%BD%AC%E8%BD%BD/"><span class="tag">转载</span><span class="tag is-grey-lightest">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E9%94%81/"><span class="tag">锁</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E9%9B%B6%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8/"><span class="tag">零基础入门</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E9%9D%A2%E8%AF%95/"><span class="tag">面试</span><span class="tag is-grey-lightest">1</span></a></div></div></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">Subscribe to Updates</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button is-primary" type="submit" value="Subscribe"></div></div></form></div></div></div><div class="card widget"><div class="card-content"><div class="notification is-danger">You need to set <code>client_id</code> and <code>slot_id</code> to show this AD unit. Please set it in <code>_config.yml</code>.</div></div></div><div class="column-right-shadow is-hidden-widescreen"></div></div><div class="column column-right is-4-tablet is-4-desktop is-3-widescreen is-hidden-touch is-hidden-desktop-only order-3"><div class="card widget"><div class="card-content"><h3 class="menu-label">Recent</h3><article class="media"><div class="media-content size-small"><p><time dateTime="2020-08-17T13:54:59.000Z">2020-08-17</time></p><p class="title is-6"><a class="link-muted" href="/2020/08/17/Let&#039;s%20build%20a%20Full-Text%20Search%20engine/">Let&#039;s build a Full-Text Search engine</a></p><p class="is-uppercase"><a class="link-muted" href="/categories/Go/">Go</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2019-10-11T15:59:59.000Z">2019-10-11</time></p><p class="title is-6"><a class="link-muted" href="/2019/10/11/Go%E8%AF%AD%E8%A8%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0/">Go语言入门笔记</a></p><p class="is-uppercase"><a class="link-muted" href="/categories/Go/">Go</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2019-08-11T15:59:59.000Z">2019-08-11</time></p><p class="title is-6"><a class="link-muted" href="/2019/08/11/Java8%E7%9A%84%E6%B7%B1%E5%85%A5%E4%B8%8E%E5%AE%9E%E6%88%98/">Java8的深入与实战</a></p><p class="is-uppercase"><a class="link-muted" href="/categories/Java-%E5%9F%BA%E7%A1%80/">Java 基础</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2019-07-23T15:59:59.000Z">2019-07-23</time></p><p class="title is-6"><a class="link-muted" href="/2019/07/23/%E9%9D%A2%E8%AF%95%E9%AB%98%E9%A2%91%E9%A2%98/">面试高频题</a></p><p class="is-uppercase"><a class="link-muted" href="/categories/%E9%9D%A2%E8%AF%95/">面试</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2019-07-10T15:59:59.000Z">2019-07-10</time></p><p class="title is-6"><a class="link-muted" href="/2019/07/10/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E6%A1%86%E6%9E%B6Seata/">分布式事务框架Seata</a></p><p class="is-uppercase"><a class="link-muted" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/">分布式</a></p></div></article></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">Archives</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/archives/2020/08/"><span class="level-start"><span class="level-item">August 2020</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2019/10/"><span class="level-start"><span class="level-item">October 2019</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2019/08/"><span class="level-start"><span class="level-item">August 2019</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2019/07/"><span class="level-start"><span class="level-item">July 2019</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2019/06/"><span class="level-start"><span class="level-item">June 2019</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2019/05/"><span class="level-start"><span class="level-item">May 2019</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2019/04/"><span class="level-start"><span class="level-item">April 2019</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2019/03/"><span class="level-start"><span class="level-item">March 2019</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2019/02/"><span class="level-start"><span class="level-item">February 2019</span></span><span class="level-end"><span class="level-item tag">9</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2019/01/"><span class="level-start"><span class="level-item">January 2019</span></span><span class="level-end"><span class="level-item tag">8</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2018/12/"><span class="level-start"><span class="level-item">December 2018</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2018/11/"><span class="level-start"><span class="level-item">November 2018</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2018/10/"><span class="level-start"><span class="level-item">October 2018</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2018/09/"><span class="level-start"><span class="level-item">September 2018</span></span><span class="level-end"><span class="level-item tag">4</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2018/07/"><span class="level-start"><span class="level-item">July 2018</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2018/06/"><span class="level-start"><span class="level-item">June 2018</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2018/01/"><span class="level-start"><span class="level-item">January 2018</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li></ul></div></div></div></div></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.svg" alt="Hexo" height="28"></a><p class="size-small"><span>&copy; 2020 John Doe</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script>moment.locale("en");</script><script>var IcarusThemeSettings = {
+            site: {
+                url: 'http://blog.cuzz.site',
+                external_link: {"enable":true,"exclude":[]}
+            },
+            article: {
+                highlight: {
+                    clipboard: false,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/animation.js"></script><a id="back-to-top" title="Back to Top" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="Type something..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"Type something...","untitled":"(Untitled)","posts":"Posts","pages":"Pages","categories":"Categories","tags":"Tags"});
+        });</script></body></html>

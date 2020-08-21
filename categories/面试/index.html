@@ -1,0 +1,1004 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>Category: 面试 - Hexo</title><meta property="og:type" content="blog"><meta property="og:title" content="Hexo"><meta property="og:url" content="http://blog.cuzz.site/"><meta property="og:site_name" content="Hexo"><meta property="og:locale" content="en_US"><meta property="og:image" content="http://blog.cuzz.site/img/og_image.png"><meta property="article:author" content="John Doe"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="/img/og_image.png"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://blog.cuzz.site"},"headline":"Hexo","image":["http://blog.cuzz.site/img/og_image.png"],"author":{"@type":"Person","name":"John Doe"},"description":""}</script><link rel="icon" href="/img/favicon.svg"><link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css"><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><meta name="generator" content="Hexo 5.0.2"></head><body class="is-3-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.svg" alt="Hexo" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">Home</a><a class="navbar-item" href="/archives">Archives</a><a class="navbar-item" href="/categories">Categories</a><a class="navbar-item" href="/tags">Tags</a><a class="navbar-item" href="/about">About</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a><a class="navbar-item search" title="Search" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-6-widescreen"><div class="card"><div class="card-content"><nav class="breadcrumb" aria-label="breadcrumbs"><ul><li><a href="/categories">Categories</a></li><li class="is-active"><a href="#" aria-current="page">面试</a></li></ul></nav></div></div><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><time class="level-item" dateTime="2019-07-23T15:59:59.000Z" title="2019-07-23T15:59:59.000Z">2019-07-23</time><span class="level-item"><a class="link-muted" href="/categories/%E9%9D%A2%E8%AF%95/">面试</a></span><span class="level-item">8 minutes read (About 1146 words)</span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2019/07/23/%E9%9D%A2%E8%AF%95%E9%AB%98%E9%A2%91%E9%A2%98/">面试高频题</a></h1><div class="content"><h2 id="如何控制线程打印顺序"><a href="#如何控制线程打印顺序" class="headerlink" title="如何控制线程打印顺序"></a>如何控制线程打印顺序</h2><h3 id="使用-join-方法"><a href="#使用-join-方法" class="headerlink" title="使用 join 方法"></a>使用 join 方法</h3><p>如下面代码所示：</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ThreadDemo</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        <span class="keyword">final</span> Thread thread1 = <span class="keyword">new</span> Thread(() -&gt; System.out.println(<span class="string">&quot;thread1&quot;</span>));</span><br><span class="line">        <span class="keyword">final</span> Thread thread2 = <span class="keyword">new</span> Thread(() -&gt; System.out.println(<span class="string">&quot;thread2&quot;</span>));</span><br><span class="line">        <span class="keyword">final</span> Thread thread3 = <span class="keyword">new</span> Thread(() -&gt; System.out.println(<span class="string">&quot;thread3&quot;</span>));</span><br><span class="line"></span><br><span class="line">        thread1.start();</span><br><span class="line">        thread1.join();</span><br><span class="line">        thread2.start();</span><br><span class="line">        thread2.join();</span><br><span class="line">        thread3.start();</span><br><span class="line">        thread3.join();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></div><a class="article-more button is-small size-small" href="/2019/07/23/%E9%9D%A2%E8%AF%95%E9%AB%98%E9%A2%91%E9%A2%98/#more">Read More</a></article></div><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><time class="level-item" dateTime="2019-05-10T15:29:22.000Z" title="2019-05-10T15:29:22.000Z">2019-05-10</time><span class="level-item"><a class="link-muted" href="/categories/%E9%9D%A2%E8%AF%95/">面试</a></span><span class="level-item">43 minutes read (About 6498 words)</span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2019/05/10/JVM%E9%9D%A2%E8%AF%95/">JVM 面试</a></h1><div class="content"><h2 id="JVM-垃圾回收的时候如何确定垃圾？知道什么是-GC-Roots"><a href="#JVM-垃圾回收的时候如何确定垃圾？知道什么是-GC-Roots" class="headerlink" title="JVM 垃圾回收的时候如何确定垃圾？知道什么是 GC Roots ?"></a>JVM 垃圾回收的时候如何确定垃圾？知道什么是 GC Roots ?</h2><ul>
+<li>什么是垃圾<ul>
+<li>简单来说就是内存中已经不在被使用到的空间就是垃圾</li>
+</ul>
+</li>
+<li>要进行垃圾回收，如何判断一个对象是否可以被回收？<ul>
+<li>引用计数法</li>
+<li>枚举根节点做可达性分析</li>
+</ul>
+</li>
+</ul>
+<p>为了解决引用计数法的循环引用问题，Java 使用了可达性算法。</p>
+<p><img src="JVM%E9%9D%A2%E8%AF%95/1350633405_4538.jpg" alt="img"></p>
+<p>跟踪收集器采用的为集中式的管理方式，全局记录对象之间的引用状态，执行时从一些列GC  Roots的对象做为起点，从这些节点向下开始进行搜索所有的引用链，当一个对象到GC  Roots 没有任何引用链时，则证明此对象是不可用的。</p>
+<p>图中，对象Object6、Object7、Object8虽然互相引用，但他们的GC Roots是不可到达的，所以它们将会被判定为是可回收的对象。</p>
+<p>哪些对象可以作为 GC Roots 的对象：</p>
+<ul>
+<li>虚拟机栈（栈帧中的局部变量区，也叫局部变量表）中引用的对象</li>
+<li>方法区中的类静态属性引用的对象</li>
+<li>方法去常量引用的对象</li>
+<li>本地方法栈中 JNI (Native方法)引用的对象</li>
+</ul>
+<h2 id="你说你做过-JVM-调优和参数配置，请问如果盘点查看-JVM-系统默认值？"><a href="#你说你做过-JVM-调优和参数配置，请问如果盘点查看-JVM-系统默认值？" class="headerlink" title="你说你做过 JVM 调优和参数配置，请问如果盘点查看 JVM 系统默认值？"></a>你说你做过 JVM 调优和参数配置，请问如果盘点查看 JVM 系统默认值？</h2><h3 id="JVM-的参数类型"><a href="#JVM-的参数类型" class="headerlink" title="JVM 的参数类型"></a>JVM 的参数类型</h3><ul>
+<li><p>标配参数</p>
+<ul>
+<li>-version</li>
+<li>-help </li>
+</ul>
+</li>
+<li><p>X 参数（了解）</p>
+<ul>
+<li>-Xint：解释执行</li>
+<li>-Xcomp：第一次使用就编译成本地代码</li>
+<li>-Xmixed：混合模式</li>
+</ul>
+</li>
+<li><p>XX 参数</p>
+<ul>
+<li><p>Boolean 类型：-XX：+ 或者 - 某个属性值（+ 表示开启，- 表示关闭）</p>
+<ul>
+<li>-XX:+PrintGCDetails：打印 GC 收集细节</li>
+<li>-XX:-PrintGCDetails：不打印 GC 收集细节</li>
+<li>-XX:+UseSerialGC：使用了串行收集器</li>
+<li>-XX:-UseSerialGC：不使用了串行收集器</li>
+</ul>
+</li>
+<li><p>KV 设置类型：-XX:key=value</p>
+<ul>
+<li>-XX:MetaspaceSize=128m</li>
+<li>-XX:MaxTenuringThreshold=15</li>
+</ul>
+</li>
+<li><p>jinfo 举例，如何查看当前运行程序的配置</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloGC</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;hello GC...&quot;</span>);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Thread.sleep(Integer.MAX_VALUE);</span><br><span class="line">        &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>我们可以使用 <code>jps -l</code> 命令，查出进程 id</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">1923 org.jetbrains.jps.cmdline.Launcher</span><br><span class="line">1988 sun.tools.jps.Jps</span><br><span class="line">1173 org.jetbrains.kotlin.daemon.KotlinCompileDaemon</span><br><span class="line">32077 com.intellij.idea.Main</span><br><span class="line">1933 com.cuzz.jvm.HelloGC</span><br><span class="line">32382 org.jetbrains.idea.maven.server.RemoteMavenServer</span><br></pre></td></tr></table></figure>
+<p>在使用 <code>jinfo -flag PrintGCDetails 1933</code> 命令查看</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">-XX:-PrintGCDetails</span><br></pre></td></tr></table></figure>
+<p>可以看出默认是不打印 GC 收集细节<br>也可是使用<code>jinfo -flags 1933</code> 查看所以的参数</p>
+</li>
+<li><p>两个经典参数：-Xms 和 - Xmx（如 -Xms1024m）</p>
+<ul>
+<li>-Xms 等价于 -XX:InitialHeapSize</li>
+<li>-Xmx 等价于 -XX:MaxHeapSize</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="盘点家底查看-JVM-默认值"><a href="#盘点家底查看-JVM-默认值" class="headerlink" title="盘点家底查看 JVM 默认值"></a>盘点家底查看 JVM 默认值</h3><ul>
+<li>查看初始默认值：-XX:+PrintFlagsInitial<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cuzz@cuzz-pc:~&#x2F;Project&#x2F;demo$ java -XX:+PrintFlagsInitial</span><br><span class="line">[Global flags]</span><br><span class="line">     intx ActiveProcessorCount                      &#x3D; -1                                  &#123;product&#125;</span><br><span class="line">    uintx AdaptiveSizeDecrementScaleFactor          &#x3D; 4                                   &#123;product&#125;</span><br><span class="line">    uintx AdaptiveSizeMajorGCDecayTimeScale         &#x3D; 10                                  &#123;product&#125;</span><br><span class="line">    uintx AdaptiveSizePausePolicy                   &#x3D; 0                                   &#123;product&#125;</span><br><span class="line">    uintx AdaptiveSizePolicyCollectionCostMargin    &#x3D; 50                                  &#123;product&#125;</span><br><span class="line">    uintx AdaptiveSizePolicyInitializingSteps       &#x3D; 20                                  &#123;product&#125;</span><br><span class="line">    uintx AdaptiveSizePolicyOutputInterval          &#x3D; 0                                   &#123;product&#125;</span><br><span class="line">    uintx AdaptiveSizePolicyWeight                  &#x3D; 10                                  &#123;product&#125;</span><br><span class="line">   ...</span><br><span class="line"></span><br></pre></td></tr></table></figure></li>
+<li>查看修改更新：-XX:+PrintFlagsFinal<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">bool UsePSAdaptiveSurvivorSizePolicy           &#x3D; true                                &#123;product&#125;</span><br><span class="line">bool UseParNewGC                               &#x3D; false                               &#123;product&#125;</span><br><span class="line">bool UseParallelGC                            :&#x3D; true                                &#123;product&#125;</span><br><span class="line">bool UseParallelOldGC                          &#x3D; true                                &#123;product&#125;</span><br><span class="line">bool UsePerfData                               &#x3D; true                                &#123;product&#125;</span><br><span class="line">bool UsePopCountInstruction                    &#x3D; true                                &#123;product&#125;</span><br><span class="line">bool UseRDPCForConstantTableBase               &#x3D; false                               &#123;C2 product&#125;</span><br></pre></td></tr></table></figure>
+= 与 := 的区别是，一个是默认，一个是人物改变或者 jvm 加载时改变的参数</li>
+<li>打印命令行参数(可以看默认垃圾回收器)：-XX:+PrintCommandLineFlags<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">cuzz@cuzz-pc:~&#x2F;Project&#x2F;demo$ java -XX:+PrintCommandLineFlags</span><br><span class="line">-XX:InitialHeapSize&#x3D;128789376 -XX:MaxHeapSize&#x3D;2060630016 -XX:+PrintCommandLineFlags -XX:+UseCompressedClassPointers -XX:+UseCompressedOops -XX:+UseParallelGC </span><br></pre></td></tr></table></figure>
+
+</li>
+</ul>
+<h2 id="你平时工作用过的-JVM-常用的基本配置参数有哪些？"><a href="#你平时工作用过的-JVM-常用的基本配置参数有哪些？" class="headerlink" title="你平时工作用过的 JVM 常用的基本配置参数有哪些？"></a>你平时工作用过的 JVM 常用的基本配置参数有哪些？</h2><ul>
+<li><p>-Xms</p>
+<ul>
+<li>初始大小内存，默认为物理内存 1/64</li>
+<li>等价于 -XX:InitialHeapSize</li>
+</ul>
+</li>
+<li><p>-Xmx</p>
+<ul>
+<li>最大分配内存，默认为物理内存的 1/4</li>
+<li>等价于 -XX:MaxHeapSize</li>
+</ul>
+</li>
+<li><p>-Xss</p>
+<ul>
+<li>设置单个线程栈的大小，一般默认为 512-1024k</li>
+<li>等价于 -XX:ThreadStackSize</li>
+</ul>
+</li>
+<li><p>-Xmn</p>
+<ul>
+<li>设置年轻代的大小</li>
+<li><strong>整个JVM内存大小=年轻代大小 + 年老代大小 + 持久代大小</strong>，持久代一般固定大小为64m，所以增大年轻代后，将会减小年老代大小。此值对系统性能影响较大，Sun官方推荐配置为整个堆的3/8。</li>
+</ul>
+</li>
+<li><p>-XX:MetaspaceSize</p>
+<ul>
+<li>设置元空间大小（元空间的本质和永久代类似，都是对 JVM 规范中的方法区的实现，不过元空间于永久代之间最大区别在于，<strong>元空间并不在虚拟中，而是使用本地内存</strong>，因此默认情况下，元空间的大小仅受本地内存限制）</li>
+<li>元空间默认比较小，我们可以调大一点</li>
+</ul>
+</li>
+<li><p>-XX:+PrintGCDetails</p>
+<ul>
+<li><p>输出详细 GC 收集日志信息</p>
+<ul>
+<li><p>设置 JVM 参数为： -Xms10m -Xmx10m -XX:+PrintGCDetails</p>
+</li>
+<li><p>代码</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">HelloGC</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">byte</span>[] bytes = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">20</span> * <span class="number">1024</span> * <span class="number">1024</span>];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>打印结果</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">[GC (Allocation Failure) [PSYoungGen: 1231K-&gt;448K(2560K)] 1231K-&gt;456K(9728K), 0.0015616 secs] [Times: user=0.00 sys=0.00, real=0.00 secs] </span><br><span class="line">[GC (Allocation Failure) [PSYoungGen: 448K-&gt;384K(2560K)] 456K-&gt;392K(9728K), 0.0016999 secs] [Times: user=0.00 sys=0.00, real=0.00 secs] </span><br><span class="line">[Full GC (Allocation Failure) [PSYoungGen: 384K-&gt;0K(2560K)] [ParOldGen: 8K-&gt;358K(7168K)] 392K-&gt;358K(9728K), [Metaspace: 3028K-&gt;3028K(1056768K)], 0.0066696 secs] [Times: user=0.01 sys=0.00, real=0.01 secs] </span><br><span class="line">[GC (Allocation Failure) [PSYoungGen: 0K-&gt;0K(2560K)] 358K-&gt;358K(9728K), 0.0005321 secs] [Times: user=0.00 sys=0.00, real=0.00 secs] </span><br><span class="line">[Full GC (Allocation Failure) [PSYoungGen: 0K-&gt;0K(2560K)] [ParOldGen: 358K-&gt;340K(7168K)] 358K-&gt;340K(9728K), [Metaspace: 3028K-&gt;3028K(1056768K)], 0.0051543 secs] [Times: user=0.01 sys=0.00, real=0.01 secs] </span><br><span class="line">Heap</span><br><span class="line"> PSYoungGen      total 2560K, used 81K [0x00000000ffd00000, 0x0000000100000000, 0x0000000100000000)</span><br><span class="line">  eden space 2048K, 3% used [0x00000000ffd00000,0x00000000ffd14668,0x00000000fff00000)</span><br><span class="line">  from space 512K, 0% used [0x00000000fff00000,0x00000000fff00000,0x00000000fff80000)</span><br><span class="line">  to   space 512K, 0% used [0x00000000fff80000,0x00000000fff80000,0x0000000100000000)</span><br><span class="line"> ParOldGen       total 7168K, used 340K [0x00000000ff600000, 0x00000000ffd00000, 0x00000000ffd00000)</span><br><span class="line">  object space 7168K, 4% used [0x00000000ff600000,0x00000000ff655188,0x00000000ffd00000)</span><br><span class="line"> Metaspace       used 3060K, capacity 4496K, committed 4864K, reserved 1056768K</span><br><span class="line">  class space    used 336K, capacity 388K, committed 512K, reserved 1048576K</span><br><span class="line">Exception in thread &quot;main&quot; java.lang.OutOfMemoryError: Java heap space</span><br><span class="line">    at com.cuzz.jvm.HelloGC.main(HelloGC.java:12)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>GC<br><img src="JVM%E9%9D%A2%E8%AF%95/a9a0eb99b30cf3fd8973f464eb4678bf50f760cc.jpg" alt="img"></p>
+</li>
+<li><p>FullGC<br><img src="JVM%E9%9D%A2%E8%AF%95/e04f3f3b68cff61027e5ba8eba9613bb7c69a08a.jpg" alt="img"></p>
+</li>
+</ul>
+</li>
+<li><p>-XX:SurvivorRatio</p>
+<ul>
+<li>设置新生代中 eden 和 S0/S1 空间比例</li>
+<li>默认 -XX:SurvivorRatio=8，Eden : S0 : S1 = 8 : 1 : 1</li>
+</ul>
+</li>
+<li><p>-XX:NewRatio</p>
+<ul>
+<li>配置年轻代和老年代在堆结构的占比</li>
+<li>默认 -XX:NewRatio=2 新生代占1，老年代占2，年轻代占整个堆的 1/3</li>
+</ul>
+</li>
+<li><p>-XX:MaxTenuringThreshold</p>
+<ul>
+<li>设置垃圾最大年龄</li>
+</ul>
+</li>
+</ul>
+<h2 id="强引用、软引用、弱引用和虚引用分别是什么？"><a href="#强引用、软引用、弱引用和虚引用分别是什么？" class="headerlink" title="强引用、软引用、弱引用和虚引用分别是什么？"></a>强引用、软引用、弱引用和虚引用分别是什么？</h2><p>在Java语言中，除了基本数据类型外，其他的都是指向各类对象的对象引用；Java中根据其生命周期的长短，将引用分为4类。</p>
+<ul>
+<li><p>强引用</p>
+<ul>
+<li>特点：我们平常典型编码Object obj = new Object()中的obj就是强引用。通过关键字new创建的对象所关联的引用就是强引用。 当JVM内存空间不足，JVM宁愿抛出OutOfMemoryError运行时错误（OOM），使程序异常终止，也不会靠随意回收具有强引用的“存活”对象来解决内存不足的问题。对于一个普通的对象，如果没有其他的引用关系，只要超过了引用的作用域或者显式地将相应（强）引用赋值为 null，就是可以被垃圾收集的了，具体回收时机还是要看垃圾收集策略。</li>
+</ul>
+</li>
+<li><p>软引用</p>
+<ul>
+<li><p>特点：软引用通过SoftReference类实现。 软引用的生命周期比强引用短一些。只有当 JVM 认为内存不足时，才会去试图回收软引用指向的对象：即JVM 会确保在抛出 OutOfMemoryError 之前，清理软引用指向的对象。软引用可以和一个引用队列（ReferenceQueue）联合使用，如果软引用所引用的对象被垃圾回收器回收，Java虚拟机就会把这个软引用加入到与之关联的引用队列中。后续，我们可以调用ReferenceQueue的poll()方法来检查是否有它所关心的对象被回收。如果队列为空，将返回一个null,否则该方法返回队列中前面的一个Reference对象。</p>
+</li>
+<li><p>应用场景：软引用通常用来实现内存敏感的缓存。如果还有空闲内存，就可以暂时保留缓存，当内存不足时清理掉，这样就保证了使用缓存的同时，不会耗尽内存。</p>
+</li>
+<li><p>代码验证<br>我设置 JVM 参数为 <code>-Xms10m -Xmx10m -XX:+PrintGCDetails</code></p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SoftReferenceDemo</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Object obj = <span class="keyword">new</span> Object();</span><br><span class="line">        SoftReference&lt;Object&gt; softReference = <span class="keyword">new</span> SoftReference&lt;&gt;(obj);</span><br><span class="line">        obj = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 分配 20 M</span></span><br><span class="line">            <span class="keyword">byte</span>[] bytes = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">20</span> * <span class="number">1024</span> * <span class="number">1024</span>];</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125; <span class="keyword">finally</span> &#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;软引用：&quot;</span> + softReference.get());</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight text"><table><tr><td class="code"><pre><span class="line">[GC (Allocation Failure) [PSYoungGen: 1234K-&gt;448K(2560K)] 1234K-&gt;456K(9728K), 0.0016748 secs] [Times: user=0.00 sys=0.00, real=0.01 secs] </span><br><span class="line">[GC (Allocation Failure) [PSYoungGen: 448K-&gt;384K(2560K)] 456K-&gt;392K(9728K), 0.0018398 secs] [Times: user=0.01 sys=0.00, real=0.00 secs] </span><br><span class="line">[Full GC (Allocation Failure) [PSYoungGen: 384K-&gt;0K(2560K)] [ParOldGen: 8K-&gt;358K(7168K)] 392K-&gt;358K(9728K), [Metaspace: 3030K-&gt;3030K(1056768K)], 0.0057246 secs] [Times: user=0.01 sys=0.00, real=0.01 secs] </span><br><span class="line">[GC (Allocation Failure) [PSYoungGen: 0K-&gt;0K(2560K)] 358K-&gt;358K(9728K), 0.0006038 secs] [Times: user=0.00 sys=0.00, real=0.00 secs] </span><br><span class="line">[Full GC (Allocation Failure) [PSYoungGen: 0K-&gt;0K(2560K)] [ParOldGen: 358K-&gt;340K(7168K)] 358K-&gt;340K(9728K), [Metaspace: 3030K-&gt;3030K(1056768K)], 0.0115080 secs] [Times: user=0.01 sys=0.00, real=0.01 secs] </span><br><span class="line">软引用：null</span><br><span class="line">Exception in thread &quot;main&quot; java.lang.OutOfMemoryError: Java heap space</span><br><span class="line">    at com.cuzz.jvm.SoftReferenceDemo.main(SoftReferenceDemo.java:21)</span><br><span class="line">Heap</span><br><span class="line"> PSYoungGen      total 2560K, used 98K [0x00000000ffd00000, 0x0000000100000000, 0x0000000100000000)</span><br><span class="line">  eden space 2048K, 4% used [0x00000000ffd00000,0x00000000ffd18978,0x00000000fff00000)</span><br><span class="line">  from space 512K, 0% used [0x00000000fff00000,0x00000000fff00000,0x00000000fff80000)</span><br><span class="line">  to   space 512K, 0% used [0x00000000fff80000,0x00000000fff80000,0x0000000100000000)</span><br><span class="line"> ParOldGen       total 7168K, used 340K [0x00000000ff600000, 0x00000000ffd00000, 0x00000000ffd00000)</span><br><span class="line">  object space 7168K, 4% used [0x00000000ff600000,0x00000000ff6552f8,0x00000000ffd00000)</span><br><span class="line"> Metaspace       used 3067K, capacity 4496K, committed 4864K, reserved 1056768K</span><br><span class="line">  class space    used 336K, capacity 388K, committed 512K, reserved 1048576K</span><br></pre></td></tr></table></figure>
+
+<p>发现当内存不够的时候就会被回收。</p>
+</li>
+</ul>
+</li>
+<li><p>弱引用</p>
+<ul>
+<li><p>特点：弱引用通过WeakReference类实现。 弱引用的生命周期比软引用短。在垃圾回收器线程扫描它所管辖的内存区域的过程中，一旦发现了具有弱引用的对象，不管当前内存空间足够与否，都会回收它的内存。由于垃圾回收器是一个优先级很低的线程，因此不一定会很快回收弱引用的对象。弱引用可以和一个引用队列（ReferenceQueue）联合使用，如果弱引用所引用的对象被垃圾回收，Java虚拟机就会把这个弱引用加入到与之关联的引用队列中。</p>
+</li>
+<li><p>应用场景：弱应用同样可用于内存敏感的缓存。</p>
+</li>
+<li><p>代码验证</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">WeakReferenceDemo</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        Object obj = <span class="keyword">new</span> Object();</span><br><span class="line">        WeakReference&lt;Object&gt; weakReference = <span class="keyword">new</span> WeakReference&lt;&gt;(obj);</span><br><span class="line">        System.out.println(obj);</span><br><span class="line">        System.out.println(weakReference.get());</span><br><span class="line"></span><br><span class="line">        obj = <span class="keyword">null</span>;</span><br><span class="line">        System.gc();</span><br><span class="line">        System.out.println(<span class="string">&quot;GC之后....&quot;</span>);</span><br><span class="line">        </span><br><span class="line">        System.out.println(obj);</span><br><span class="line">        System.out.println(weakReference.get());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>输出</p>
+<figure class="highlight txt"><table><tr><td class="code"><pre><span class="line">java.lang.Object@1540e19d</span><br><span class="line">java.lang.Object@1540e19d</span><br><span class="line">GC之后....</span><br><span class="line">null</span><br><span class="line">null</span><br></pre></td></tr></table></figure>
+
+<p>值得注意的是<code> String name = &quot;cuzz&quot;</code> 这种会放入永久代，以及 <code>Integer age = 1</code> 在 int 中 -128 到 127 会被缓存，所以是强引用，然后 GC 也不会被回收。</p>
+</li>
+<li><p>引用队列</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ReferenceQueueDemo</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> InterruptedException </span>&#123;</span><br><span class="line">        Object obj = <span class="keyword">new</span> Object();</span><br><span class="line">        ReferenceQueue&lt;Object&gt; referenceQueue = <span class="keyword">new</span> ReferenceQueue&lt;&gt;();</span><br><span class="line">        WeakReference&lt;Object&gt; weakReference = <span class="keyword">new</span> WeakReference&lt;&gt;(obj, referenceQueue);</span><br><span class="line">        System.out.println(obj);</span><br><span class="line">        System.out.println(weakReference.get());</span><br><span class="line">        System.out.println(weakReference);</span><br><span class="line"></span><br><span class="line">        obj = <span class="keyword">null</span>;</span><br><span class="line">        System.gc();</span><br><span class="line">        Thread.sleep(<span class="number">500</span>);</span><br><span class="line"></span><br><span class="line">        System.out.println(<span class="string">&quot;GC之后....&quot;</span>);</span><br><span class="line">        System.out.println(obj);</span><br><span class="line">        System.out.println(weakReference.get());</span><br><span class="line">        System.out.println(weakReference);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">java.lang.Object@1540e19d</span><br><span class="line">java.lang.Object@1540e19d</span><br><span class="line">java.lang.ref.WeakReference@677327b6</span><br><span class="line">GC之后....</span><br><span class="line">null</span><br><span class="line">null</span><br><span class="line">java.lang.ref.WeakReference@677327b6</span><br></pre></td></tr></table></figure>
+<p>会把该对象的包装类即<code>weakReference</code>放入到<code>ReferenceQueue</code>里面，我们可以从queue中获取到相应的对象信息，同时进行额外的处理。比如反向操作，数据清理等。</p>
+</li>
+</ul>
+</li>
+<li><p>虚引用</p>
+<ul>
+<li>特点：虚引用也叫幻象引用，通过PhantomReference类来实现。无法通过虚引用访问对象的任何属性或函数。幻象引用仅仅是提供了一种确保对象被 finalize 以后，做某些事情的机制。如果一个对象仅持有虚引用，那么它就和没有任何引用一样，在任何时候都可能被垃圾回收器回收。虚引用必须和引用队列 （ReferenceQueue）联合使用。当垃圾回收器准备回收一个对象时，如果发现它还有虚引用，就会在回收对象的内存之前，把这个虚引用加入到与之关联的引用队列中。<br>ReferenceQueue queue = new ReferenceQueue ();<br>PhantomReference pr = new PhantomReference (object, queue);<br>程序可以通过判断引用队列中是否已经加入了虚引用，来了解被引用的对象是否将要被垃圾回收。如果程序发现某个虚引用已经被加入到引用队列，那么就可以在所引用的对象的内存被回收之前采取一些程序行动。</li>
+<li>应用场景：可用来跟踪对象被垃圾回收器回收的活动，当一个虚引用关联的对象被垃圾收集器回收之前会收到一条系统通知。</li>
+</ul>
+</li>
+</ul>
+<h2 id="请谈谈你对-OOM-的认识？"><a href="#请谈谈你对-OOM-的认识？" class="headerlink" title="请谈谈你对 OOM 的认识？"></a>请谈谈你对 OOM 的认识？</h2><ul>
+<li><p>java.lang.StackOverflowError</p>
+<ul>
+<li>在一个函数中调用自己就会产生这个错误</li>
+</ul>
+</li>
+<li><p>java.lang.OutOfMemoryError : Java heap space</p>
+<ul>
+<li>new 一个很大对象</li>
+</ul>
+</li>
+<li><p>java.lang.OutOfMemoryError : GC overhead limit exceeded</p>
+<ul>
+<li>执行垃圾收集的时间比例太大， 有效的运算量太小，默认情况下,，如果GC花费的时间超过 **98%**， 并且GC回收的内存少于 **2%**， JVM就会抛出这个错误。</li>
+</ul>
+</li>
+<li><p>java.lang.OutOfMemoryError : Direct buffer memory<br>配置参数：-Xms10m -Xmx10m -XX:+PrintGCDetails -XX:MaxDirectMemorySize=5m</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DirectBufferDemo</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;maxDirectMemory : &quot;</span> + sun.misc.VM.maxDirectMemory() / (<span class="number">1024</span> * <span class="number">1024</span>) + <span class="string">&quot;MB&quot;</span>);</span><br><span class="line">        ByteBuffer byteBuffer = ByteBuffer.allocateDirect(<span class="number">6</span> * <span class="number">1024</span> * <span class="number">1024</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>输出</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">maxDirectMemory : 5MB</span><br><span class="line">[GC (System.gc()) [PSYoungGen: 1315K-&gt;464K(2560K)] 1315K-&gt;472K(9728K), 0.0008907 secs] [Times: user&#x3D;0.00 sys&#x3D;0.00, real&#x3D;0.01 secs] </span><br><span class="line">[Full GC (System.gc()) [PSYoungGen: 464K-&gt;0K(2560K)] [ParOldGen: 8K-&gt;359K(7168K)] 472K-&gt;359K(9728K), [Metaspace: 3037K-&gt;3037K(1056768K)], 0.0060466 secs] [Times: user&#x3D;0.01 sys&#x3D;0.00, real&#x3D;0.00 secs] </span><br><span class="line">Exception in thread &quot;main&quot; java.lang.OutOfMemoryError: Direct buffer memory</span><br><span class="line">    at java.nio.Bits.reserveMemory(Bits.java:694)</span><br><span class="line">    at java.nio.DirectByteBuffer.&lt;init&gt;(DirectByteBuffer.java:123)</span><br><span class="line">    at java.nio.ByteBuffer.allocateDirect(ByteBuffer.java:311)</span><br><span class="line">    at com.cuzz.jvm.DirectBufferDemo.main(DirectBufferDemo.java:17)</span><br><span class="line">Heap</span><br><span class="line"> PSYoungGen      total 2560K, used 56K [0x00000000ffd00000, 0x0000000100000000, 0x0000000100000000)</span><br><span class="line">  eden space 2048K, 2% used [0x00000000ffd00000,0x00000000ffd0e170,0x00000000fff00000)</span><br><span class="line">  from space 512K, 0% used [0x00000000fff00000,0x00000000fff00000,0x00000000fff80000)</span><br><span class="line">  to   space 512K, 0% used [0x00000000fff80000,0x00000000fff80000,0x0000000100000000)</span><br><span class="line"> ParOldGen       total 7168K, used 359K [0x00000000ff600000, 0x00000000ffd00000, 0x00000000ffd00000)</span><br><span class="line">  object space 7168K, 5% used [0x00000000ff600000,0x00000000ff659e28,0x00000000ffd00000)</span><br><span class="line"> Metaspace       used 3068K, capacity 4496K, committed 4864K, reserved 1056768K</span><br><span class="line">  class space    used 336K, capacity 388K, committed 512K, reserved 1048576K</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>java.lang.OutOfMemoryError : unable to create new native thread</p>
+<ul>
+<li>创建线程数太多了</li>
+</ul>
+</li>
+<li><p>java.lang.OutOfMemoryError : Metaspace</p>
+<ul>
+<li>Java 8 之后的版本使用元空间（Metaspace）代替了永久代，元空间是方法区在 HotSpot 中的实现，它与持久代最大的区别是：元空间并不在虚拟机中的内存中而是使用本地内存。</li>
+<li>元空间存放的信息：<ul>
+<li>虚拟机加载的类信息</li>
+<li>常量池</li>
+<li>静态变量</li>
+<li>即时编译后的代码</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>具体的实现可以看看这个帖子：<a target="_blank" rel="noopener" href="http://www.dataguru.cn/thread-351920-1-1.html">几种手动OOM的方式</a></p>
+<h2 id="GC-垃圾回收算法和垃圾收集器的关系？谈谈你的理解？"><a href="#GC-垃圾回收算法和垃圾收集器的关系？谈谈你的理解？" class="headerlink" title="GC 垃圾回收算法和垃圾收集器的关系？谈谈你的理解？"></a>GC 垃圾回收算法和垃圾收集器的关系？谈谈你的理解？</h2><ul>
+<li>四种 GC 垃圾回收算法<ul>
+<li>引用计数</li>
+<li>复制回收</li>
+<li>标记清除</li>
+<li>标记整理</li>
+</ul>
+</li>
+<li>GC 算法是内存回收的方法论，垃圾收集其就是算法的落实的实现。</li>
+<li>目前为止还没有完美的收集器的出现，更加没有万能的收集器，只是针对具体应用最适合的收集器，进行分代收集。</li>
+<li>串行垃圾回收器（Serial）<ul>
+<li>它为单线程环境设计且只使用一个线程进行垃圾回收，会暂停所有的用户线程，所以不适合服务环境。</li>
+</ul>
+</li>
+<li>并行垃圾回收器（Parallel）<ul>
+<li>多个垃圾收集线程并行工作，此时用户线程是暂停的，用于科学计算、大数据处理等弱交互场景。</li>
+</ul>
+</li>
+<li>并发垃圾回收器（CMS）<ul>
+<li>用户线程和垃圾收集线程同时执行（不一定是并行，可能是交替执行），不需要停顿用户线程，互联网公司多用它，适用对相应时间有要求的场景。</li>
+</ul>
+</li>
+<li>G1 垃圾回收器<ul>
+<li>G1 垃圾回收器将堆内存分割成不同的区域然后并发的对其进行垃圾回收。</li>
+</ul>
+</li>
+</ul>
+<h2 id="怎么查看服务器默认垃圾收集器是哪个？生产是如何配置垃圾收集器？谈谈你对垃圾收集器的理解？"><a href="#怎么查看服务器默认垃圾收集器是哪个？生产是如何配置垃圾收集器？谈谈你对垃圾收集器的理解？" class="headerlink" title="怎么查看服务器默认垃圾收集器是哪个？生产是如何配置垃圾收集器？谈谈你对垃圾收集器的理解？"></a>怎么查看服务器默认垃圾收集器是哪个？生产是如何配置垃圾收集器？谈谈你对垃圾收集器的理解？</h2><ul>
+<li>怎么查看服务器默认垃圾收集器是哪个？<ul>
+<li>Java -XX:+PrintCommandLineFlags</li>
+</ul>
+</li>
+<li>Java 的 GC 回收的类型主要有：<ul>
+<li>UseSerialGC，UseParallelGC，UseConcMarkSweepGC，UseParNewGC，UseParallelOldGC，UseG1GC</li>
+<li>Java 8 以后基本不使用 Serial Old</li>
+</ul>
+</li>
+<li>垃圾收集器<br><img src="JVM%E9%9D%A2%E8%AF%95/timg.jpg" alt="timg"></li>
+<li>参数说明<ul>
+<li>DefNew : Default New Generation</li>
+<li>Tenured : Old</li>
+<li>ParNew : Parallel New Generation</li>
+<li>PSYoungGen : Parallel Scavenge</li>
+<li>ParOldGen : Parallel Old Generation</li>
+</ul>
+</li>
+<li>Server/Client 模式分别是什么意思<ul>
+<li>最主要的差别在于：-Server模式启动时，速度较慢，但是一旦运行起来后，性能将会有很大的提升。</li>
+<li>当虚拟机运行在-client模式的时候，使用的是一个代号为C1的轻量级编译器, 而-server模式启动的虚拟机采用相对重量级，代号为C2的编译器，C2比C1编译器编译的相对彻底，服务起来之后,性能更高。</li>
+<li>所以通常用于做服务器的时候我们用服务端模式，如果你的电脑只是运行一下java程序，就客户端模式就可以了。当然这些都是我们做程序优化程序才需要这些东西的，普通人并不关注这些专业的东西了。其实服务器模式即使编译更彻底，然后垃圾回收优化更好，这当然吃的内存要多点相对于客户端模式。</li>
+</ul>
+</li>
+<li>新生代<ul>
+<li>串行 GC (Serial/ Serital Copying)</li>
+<li>并行 GC (ParNew)</li>
+<li>并行回收 GC (Parallel/ Parallel Scanvenge)</li>
+</ul>
+</li>
+<li>老年代<ul>
+<li>串行 GC (Serial Old/ Serial MSC)</li>
+<li>并行 GC (Parallel Old/ Parallel MSC)</li>
+<li>并发标记清除 GC (CMS)<ul>
+<li>是一种以获取最短回收停顿时间为目标的收集器，适合应用在互联网站或者 B/S 系统的服务器上，这个类应用尤其重视服务器的响应速度，希望系统停顿时间最短。</li>
+<li>CMS 非常适合堆内存大、CPU 核数多的服务器端应用，也是 G1 出现之前大型应用首选收集器。</li>
+<li>并发停顿比较少，并发指的是与用户线程一起执行。</li>
+<li>过程<ul>
+<li>初始标记（initail mark）：只是标记一下 GC Roots 能直接关联的对象，速度很快，需要暂停所有的工作线程</li>
+<li>并发标记（concurrent mark 和用户线程一起）：进行 GC Roots 的跟踪过程，和用户线程一起工作，不需要暂停工作线程。</li>
+<li>重新标记（remark）：为了修正在并发标记期间，因用户程序继续运行而导致标记产生变动的那一部分对象的标记记录，仍然需要暂停所有的工作线程。</li>
+<li>并发清除（concurrent sweep 和用户线程一起）：清除 GC 不可达对象，和用户线程一起工作，不需要暂停工作线程，基于标记结果，直接清除。由于耗时最长的并发标记和并发清除过程中，垃圾收集线程和用户线程可以一起并发工作，所以总体来看 CMS 收集器的内存回收和用户线程是一起并发地执行。</li>
+</ul>
+</li>
+<li>优缺点<ul>
+<li>优点：并发收集停顿低</li>
+<li>缺点：并发执行对 CPU 资源压力大，采用的标记清除算法会导致大量碎片</li>
+</ul>
+</li>
+<li>由于并发进行， CMS 在收集与应用线程会同时增加对堆内存的占用，也就是说，CMS 必须要在老年代堆用尽之前完成垃圾回收，否者 CMS 回收失败，将触发担保机制，串行老年代收集器将会以 STW 的方式进行一次 GC，从而造成较大的停顿时间。</li>
+<li>标记清除算法无法整理空间碎片，老年代空间会随着应用时长被逐渐耗尽，最后将不得不通过担保机制对堆内存进行压缩。CMS 也提供了参数 -XX:CMSFullGCsBeForeCompaction (默认0，即每次都进行内存整理) 来指定多少次 CMS 收集之后，进行一次压</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>垃圾收集器配置代码总结<ul>
+<li>配置新生代收集器，老年代收集器会自动配置上。<br><img src="JVM%E9%9D%A2%E8%AF%95/1558237229584.png" alt="1558237229584"></li>
+</ul>
+</li>
+<li>如何选择垃圾收集器<ul>
+<li>单 CPU 或者小内存，单机程序：-XX:UseSerialGC</li>
+<li>多 CPU 需要最大吞吐量，如后台计算型应用：-XX:UseParallelGC 或者 -XX:UseParallelOldGC</li>
+<li>多 CPU 追求低停顿时间，需要快速响应，如互联网应用：-XX:+UseConcMarkSweepGC</li>
+</ul>
+</li>
+</ul>
+<h2 id="G1-垃圾收集器你了解吗？"><a href="#G1-垃圾收集器你了解吗？" class="headerlink" title="G1 垃圾收集器你了解吗？"></a>G1 垃圾收集器你了解吗？</h2><ul>
+<li><p>以前收集器的特点</p>
+<ul>
+<li>年轻代和老年代是各自独立且连续的内存块</li>
+<li>年轻代收集器使用 eden + S0 + S1 进行复制算法</li>
+<li>老年代收集必须扫描整个老年代区域</li>
+<li>都是以尽可能的少而快速地执行 GC 为设计原则</li>
+</ul>
+</li>
+<li><p>G1 是什么</p>
+<ul>
+<li>G1 是一种面向服务端的垃圾收集器，应用在多核处理器和大容量内存环境中，在实现高吞吐量的同时，尽可能的满足垃圾收集器的暂停时间要求。</li>
+<li>像 CMS 收集器一样，能与应用程序线程并发执行，整理空闲空间更快，需要更多的时间来预测 GC 停顿时间，不希望牺牲大量的吞吐性能，不需要更大的 JAVA Heap。</li>
+<li>G1 收集器的设计目的是取代 CMS 收集器，同时与 CMS 相比，G1 垃圾收集器是一个有整理内存过程的垃圾收集器，不会产生很多内存碎片。G1 的 Stop The World 更可控，G1 在停顿上添加了预测机制，用户可以指定期望的停顿时间。</li>
+<li>G1 是在 2012 年才在 jdk.1.7u4 中可以呀用，在 jdk9 中将 G1 变成默认垃圾收集器来代替 CMS。它是以款面向服务应用的收集器。</li>
+<li>主要改变是 Eden、Survivor 和 Tenured 等内存区域不再是连续的，而是变成了一个个大小一样的 region，每个 region 从 1M 到 32M 不等，一个 region 有可能属于 Eden、Survivor 或者 Tenured 内存区域。</li>
+</ul>
+</li>
+<li><p>特点</p>
+<ul>
+<li>G1 能充分利用多 CPU、多核环境硬件优势，尽量缩短 STW。</li>
+<li>G1 整体采用标记-整理算法，局部是通过是通过复制算法，<strong>不会产生内存碎片</strong>。</li>
+<li>宏观上看 G1 之中不在区分年轻代和老年代，被内存划分为多个独立的子区域。</li>
+<li>G1 收集器里面讲整个的内存区域混合在一起，<strong>但其本身依然在小范围内要进行年轻代和老年代的区分</strong>。保留了新生代和老年代，但她们不在是物理隔离，而是一部分 Region 的集合且不需要 Region 是连续的，也就是说依然会采用不同的 GC 方式来处理不同的区域。</li>
+<li>G1 虽然也是分代收集器，但整个内存分区不存在物理上的年轻代和老年代的区别，也不需要完全独立的 Survivor to space 堆做复制准备。G1 只有逻辑上的分代概念，或者说每个分区都可能随 G1 的运行在不同代之间前后切换。</li>
+</ul>
+</li>
+<li><p>底层原理</p>
+<ul>
+<li><p>Region 区域化垃圾收集器：最大好处是化整为零，避免全内存扫描，只需要按照区域来进行扫描即可。</p>
+</li>
+<li><h3 id="Region"><a href="#Region" class="headerlink" title="Region"></a>Region</h3><p><img src="JVM%E9%9D%A2%E8%AF%95/5611237-f643066bd97c7703.png" alt="5611237-f643066bd97c7703"><br>G1的内存结构和传统的内存空间划分有比较的不同。G1将内存划分成了多个大小相等的Region（默认是512K），Region逻辑上连续，物理内存地址不连续。同时每个Region被标记成E、S、O、H，分别表示Eden、Survivor、Old、Humongous。其中E、S属于年轻代，O与H属于老年代。<br>H表示Humongous。从字面上就可以理解表示大的对象（下面简称H对象）。<strong>当分配的对象大于等于Region大小的一半</strong>的时候就会被认为是巨型对象。H对象默认分配在老年代，可以防止GC的时候大对象的内存拷贝。通过如果发现堆内存容不下H对象的时候，会触发一次GC操作。 </p>
+</li>
+<li><p>回收步骤</p>
+<ul>
+<li>参看：<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/548c67aa1bc0">G1从入门到放弃</a></li>
+</ul>
+</li>
+<li><p>四步过程<br><img src="JVM%E9%9D%A2%E8%AF%95/u=1236259389,1737476709&fm=26&gp=0.jpg" alt="u=1236259389,1737476709&amp;fm=26&amp;gp=0"></p>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="生产环境服务器变慢，诊断思路和性能评估谈谈？"><a href="#生产环境服务器变慢，诊断思路和性能评估谈谈？" class="headerlink" title="生产环境服务器变慢，诊断思路和性能评估谈谈？"></a>生产环境服务器变慢，诊断思路和性能评估谈谈？</h2><ul>
+<li>整机：top</li>
+<li>CPU：vmstat</li>
+<li>内存：free</li>
+<li>硬盘：df</li>
+<li>磁盘IO：iostat</li>
+<li>网络IO：ifstat</li>
+</ul>
+<h2 id="假如生产环境出现-CPU-过高，请谈谈你的分析思路和定位？"><a href="#假如生产环境出现-CPU-过高，请谈谈你的分析思路和定位？" class="headerlink" title="假如生产环境出现 CPU 过高，请谈谈你的分析思路和定位？"></a>假如生产环境出现 CPU 过高，请谈谈你的分析思路和定位？</h2><ul>
+<li>先用 top 命令找出 CPU 占比最高的</li>
+<li>ps -ef 或者 jps 进一步定位，得知是一个怎么样的一个后台程序</li>
+<li>定位到具体的线程或代码<ul>
+<li>ps -mp 11111 -o THREAD,tid,time</li>
+<li>-m 显示所有的线程</li>
+<li>-p 进程使用cpu的时间</li>
+<li>-o 该参数后是用户自定义格式</li>
+</ul>
+</li>
+<li>将需要的线程 ID 转化为 16 进制格式</li>
+<li>jstat &lt;进程ID&gt; | grep &lt;线程ID(16进制)&gt; -A60</li>
+</ul>
+<h2 id="对于-JDK-自带的-JVM-监控和性能分析工具用过哪些？一般机是怎么用到的？"><a href="#对于-JDK-自带的-JVM-监控和性能分析工具用过哪些？一般机是怎么用到的？" class="headerlink" title="对于 JDK 自带的 JVM 监控和性能分析工具用过哪些？一般机是怎么用到的？"></a>对于 JDK 自带的 JVM 监控和性能分析工具用过哪些？一般机是怎么用到的？</h2><p>下一篇重点介绍。</p>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://time.geekbang.org/column/article/6970">强引用、软引用、弱引用、幻象引用有什么区别？(评论)</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/548c67aa1bc0">G1从入门到放弃</a></li>
+</ul>
+</div></article></div><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><time class="level-item" dateTime="2019-04-16T15:59:59.000Z" title="2019-04-16T15:59:59.000Z">2019-04-16</time><span class="level-item"><a class="link-muted" href="/categories/%E9%9D%A2%E8%AF%95/">面试</a></span><span class="level-item">an hour read (About 9061 words)</span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2019/04/16/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/">Java 并发编程</a></h1><div class="content"><h2 id="请谈谈你对-volatile-的理解"><a href="#请谈谈你对-volatile-的理解" class="headerlink" title="请谈谈你对 volatile 的理解"></a>请谈谈你对 volatile 的理解</h2><h3 id="volatile-是-Java-虚拟机提供的轻量级的同步机制"><a href="#volatile-是-Java-虚拟机提供的轻量级的同步机制" class="headerlink" title="volatile 是 Java 虚拟机提供的轻量级的同步机制"></a>volatile 是 Java 虚拟机提供的轻量级的同步机制</h3><ul>
+<li>保证可见性</li>
+<li>禁止指令排序</li>
+<li>不保证原子性</li>
+</ul>
+<h3 id="JMM（Java-内存模型）-你谈谈"><a href="#JMM（Java-内存模型）-你谈谈" class="headerlink" title="JMM（Java 内存模型） 你谈谈"></a>JMM（Java 内存模型） 你谈谈</h3><h4 id="基本概念"><a href="#基本概念" class="headerlink" title="基本概念"></a>基本概念</h4><ul>
+<li>JMM 本身是一种抽象的概念并不是真实存在，它描述的是一组规定或则规范，通过这组规范定义了程序中的访问方式。</li>
+<li>JMM 同步规定<ul>
+<li>线程解锁前，必须把共享变量的值刷新回主内存</li>
+<li>线程加锁前，必须读取主内存的最新值到自己的工作内存</li>
+<li>加锁解锁是同一把锁</li>
+</ul>
+</li>
+<li>由于 JVM 运行程序的实体是线程，而每个线程创建时 JVM 都会为其创建一个工作内存，工作内存是每个线程的私有数据区域，而 Java 内存模型中规定所有变量的储存在主内存，主内存是共享内存区域，所有的线程都可以访问，但线程对变量的操作（读取赋值等）必须都工作内存进行看。</li>
+<li>首先要将变量从主内存拷贝的自己的工作内存空间，然后对变量进行操作，操作完成后再将变量写回主内存，不能直接操作主内存中的变量，工作内存中存储着主内存中的变量副本拷贝，前面说过，工作内存是每个线程的私有数据区域，因此不同的线程间无法访问对方的工作内存，线程间的通信(传值)必须通过主内存来完成。</li>
+<li>内存模型图<br><img src="Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/%E6%90%9C%E7%8B%97%E6%88%AA%E5%9B%BE20190416211412.png" alt="搜狗截图20190416211412"></li>
+</ul></div><a class="article-more button is-small size-small" href="/2019/04/16/Java%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/#more">Read More</a></article></div><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><time class="level-item" dateTime="2019-02-23T15:59:59.000Z" title="2019-02-23T15:59:59.000Z">2019-02-23</time><span class="level-item"><a class="link-muted" href="/categories/%E9%9D%A2%E8%AF%95/">面试</a></span><span class="level-item">an hour read (About 12900 words)</span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2019/02/23/Redis/">Redis</a></h1><div class="content"><h2 id="什么是-Redis-？"><a href="#什么是-Redis-？" class="headerlink" title="什么是 Redis ？"></a>什么是 Redis ？</h2><p>Redis，全称 Remote Dictionary Server，是一个基于内存的高性能 Key-Value 数据库。</p>
+<p>另外，Redis 已经成为互联网公司在缓存组件选择的唯一，更多的关注点是，如何使用好 Redis 。</p></div><a class="article-more button is-small size-small" href="/2019/02/23/Redis/#more">Read More</a></article></div><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><time class="level-item" dateTime="2019-02-22T15:59:59.000Z" title="2019-02-22T15:59:59.000Z">2019-02-22</time><span class="level-item"><a class="link-muted" href="/categories/%E9%9D%A2%E8%AF%95/">面试</a></span><span class="level-item">33 minutes read (About 4928 words)</span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2019/02/22/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a></h1><div class="content"><h2 id="数据库架构"><a href="#数据库架构" class="headerlink" title="数据库架构"></a>数据库架构</h2><p>数据库架构可以分为存储文件系统和程序实例两大块，而程序实例根据不同的功能又可以分为如下小模块。</p>
+<p><img src="%E6%95%B0%E6%8D%AE%E5%BA%93%5C1550644570798.png" alt="1550644570798"></p>
+<h2 id="索引模块"><a href="#索引模块" class="headerlink" title="索引模块"></a>索引模块</h2><p>常见的问题有：</p>
+<ul>
+<li>为什么要使用索引</li>
+<li>什么样的信息能成为索引</li>
+<li>索引的数据结构</li>
+<li>密集索引和稀疏索引的区别</li>
+</ul>
+<h3 id="为什么要使用索引"><a href="#为什么要使用索引" class="headerlink" title="为什么要使用索引"></a>为什么要使用索引</h3><p>使用索引就像查字典一样，可以快速查询数据</p>
+<h3 id="什么样的信息能成为索引"><a href="#什么样的信息能成为索引" class="headerlink" title="什么样的信息能成为索引"></a>什么样的信息能成为索引</h3><p>主键、唯一键以及普通键等</p>
+<h3 id="索引的数据结构"><a href="#索引的数据结构" class="headerlink" title="索引的数据结构"></a>索引的数据结构</h3><ul>
+<li>生成索引，建立二叉查找树进行二分查找</li>
+<li>生成索引，建立 B Tree 结构结构进行查找</li>
+<li>生成索引，建立 B+ Tree 结构进行查找</li>
+<li>生成索引，建立 Hash 结构进行查找</li>
+</ul>
+<h4 id="什么是-B-Tree-索引？"><a href="#什么是-B-Tree-索引？" class="headerlink" title=" 什么是 B Tree 索引？"></a> 什么是 B Tree 索引？</h4><p>B-Tree 是为磁盘等外存储设备设计的一种平衡查找树。因此在讲 B-Tree 之前先了解下磁盘的相关知识。</p>
+<ul>
+<li><p>系统从磁盘读取数据到内存时是以磁盘块（block）为基本单位的，位于同一个磁盘块中的数据会被一次性读取出来，而不是需要什么取什么。</p>
+</li>
+<li><p>InnoDB存储引擎中有页（Page）的概念，页是其磁盘管理的最小单位。InnoDB 存储引擎中默认每个页的大小为 16 KB，可通过参数 innodb_page_size 将页的大小设置为 4K、8K、16K ，在 MySQL 中可通过如下命令查看页的大小：</p>
+<figure class="highlight"><table><tr><td class="code"><pre><span class="line">mysql&gt; show variables like &#x27;innodb_page_size&#x27;;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>而系统一个磁盘块的存储空间往往没有这么大，因此 InnoDB 每次申请磁盘空间时都会是若干地址连续磁盘块来达到页的大小 16KB 。InnoDB 在把磁盘数据读入到磁盘时会以页为基本单位，在查询数据时如果一个页中的每条数据都能有助于定位数据记录的位置，这将会减少磁盘 I/O 次数，提高查询效率。</p>
+</li>
+</ul>
+<p>B-Tree 结构的数据可以让系统高效的找到数据所在的磁盘块。为了描述B-Tree，首先定义一条记录为一个二元组 [key, data] ，key 为记录的键值，对应表中的主键值，data 为一行记录中除主键外的数据。对于不同的记录，key值互不相同。</p>
+<p>一棵 m 阶的 B-Tree 有如下特性：</p>
+<ul>
+<li>每个节点最多有 m 个孩子<ul>
+<li>除了根节点和叶子节点外，其它每个节点至少有 Ceil(m/2) 个孩子</li>
+<li>若根节点不是叶子节点，则至少有 2 个孩子</li>
+</ul>
+</li>
+<li>所有叶子节点都在同一层，且不包含其它关键字信息</li>
+<li>每个非叶子节点包含 n 个关键字信息（P0,P1,…Pn, k1,…kn）<ul>
+<li>关键字的个数 n 满足：ceil(m/2)-1 &lt;= n &lt;= m-1</li>
+<li>ki(i=1,…n) 为关键字，且关键字升序排序</li>
+<li>Pi(i=0,…n) 为指向子树根节点的指针。P(i-1) 指向的子树的所有节点关键字均小于 ki ，但都大于 k(i-1) </li>
+</ul>
+</li>
+</ul>
+<p>B-Tree 中的每个节点根据实际情况可以包含大量的关键字信息和分支，如下图所示为一个 3 阶的 B-Tree：</p>
+<p><img src="%E6%95%B0%E6%8D%AE%E5%BA%93%5C84ea509fa091a10add4e7614e6cb37db" alt="B-Tree 的结构"></p>
+<ul>
+<li>每个节点占用一个盘块的磁盘空间，一个节点上有两个升序排序的 key 和三个指向子树根节点的 point ，point 存储的是子节点所在磁盘块的地址。两个 key 划分成的三个范围域，对应三个 point 指向的子树的数据的范围域。</li>
+<li>以根节点为例，key 为 17 和 35 ，P1 指针指向的子树的数据范围为小于 17 ，P2 指针指向的子树的数据范围为 [17~35] ，P3 指针指向的子树的数据范围为大于 35 。</li>
+</ul>
+<p>模拟查找 key 为 29 的过程：</p>
+<ul>
+<li>1、根据根节点找到磁盘块 1 ，读入内存。【磁盘I/O操作第1次】</li>
+<li>2、比较 key 29 在区间（17,35），找到磁盘块 1 的指针 P2 。</li>
+<li>3、根据 P2 指针找到磁盘块 3 ，读入内存。【磁盘I/O操作第2次】</li>
+<li>4、比较 key 29 在区间（26,30），找到磁盘块3的指针P2。</li>
+<li>5、根据 P2 指针找到磁盘块 8 ，读入内存。【磁盘I/O操作第3次】</li>
+<li>6、在磁盘块 8 中的 key 列表中找到 eky 29 。</li>
+</ul>
+<p>分析上面过程，发现需要 3 次磁盘 I/O 操作，和 3 次内存查找操作。由于内存中的 key 是一个有序表结构，可以利用二分法查找提高效率。而 3 次磁盘 I/O 操作是影响整个 B-Tree 查找效率的决定因素。B-Tree 相对于 AVLTree 缩减了节点个数，使每次磁盘 I/O 取到内存的数据都发挥了作用，从而提高了查询效率。</p>
+<h4 id="什么是-B-Tree-索引？-1"><a href="#什么是-B-Tree-索引？-1" class="headerlink" title="什么是 B+Tree 索引？"></a>什么是 B+Tree 索引？</h4><p>B+Tree 是在 B-Tree 基础上的一种优化，使其更适合实现外存储索引结构，InnoDB存储引擎就是用 B+Tree 实现其索引结构。</p>
+<p>从上一节中的 B-Tree 结构图中可以看到，每个节点中不仅包含数据的 key 值，还有 data 值。而每一个页的存储空间是有限的，如果 data 数据较大时将会导致每个节点（即一个页）能存储的 key 的数量很小，当存储的数据量很大时同样会导致 B-Tree 的深度较大，增大查询时的磁盘 I/O 次数，进而影响查询效率。在 B+Tree 中，所有数据记录节点都是按照键值大小顺序存放在同一层的叶子节点上，而非叶子节点上只存储 key 值信息，这样可以大大加大每个节点存储的 key 值数量，降低 B+Tree 的高度。</p>
+<p>B+Tree 相对于 B-Tree 有几点不同：</p>
+<ul>
+<li>非叶子节点只存储键值信息。</li>
+<li>所有叶子节点之间都有一个链指针。</li>
+<li>数据记录都存放在叶子节点中。</li>
+</ul>
+<p><strong>B+ Tree 更适合用来做存储索引</strong>：</p>
+<ul>
+<li>B+ 数的磁盘读写代价更低</li>
+<li>B+ 数的查询效率更加稳定</li>
+<li>B+ 数更有利于对数据库的扫描（范围查询）</li>
+</ul>
+<p>将上一节中的 B-Tree 优化，由于 B+Tree 的非叶子节点只存储键值信息，假设每个磁盘块能存储 4 个键值及指针信息，则变成 B+Tree 后其结构如下图所示：</p>
+<p><img src="%E6%95%B0%E6%8D%AE%E5%BA%93%5C259d196856a231aff5e3cf1505848af4" alt="B+Tree 的结构"></p>
+<blockquote>
+<p>磁盘块4中的10数据，画错了，范围在[K[i], K[i+1])，左闭右开</p>
+</blockquote>
+<ul>
+<li>通常在 B+Tree 上有两个头指针，一个指向根节点，另一个指向关键字最小的叶子节点，而且所有叶子节点（即数据节点）之间是一种链式环结构。因此可以对 B+Tree 进行两种查找运算：一种是对于主键的范围查找和分页查找，另一种是从根节点开始，进行随机查找。</li>
+</ul>
+<p>可能上面例子中只有 22 条数据记录，看不出 B+Tree 的优点，下面做一个推算：</p>
+<ul>
+<li>InnoDB 存储引擎中页的大小为 16KB，一般表的主键类型为 INT（占用4个字节） 或 BIGINT（占用8个字节），指针类型也一般为 4 或 8 个字节，也就是说一个页（B+Tree 中的一个节点）中大概存储 16KB/(8B+8B)=1K 个键值（因为是估值，为方便计算，这里的 K 取值为〖10〗^3）。也就是说一个深度为 3 的 B+Tree 索引可以维护10^3 <em>10^3</em> 10^3 = 10亿 条记录。</li>
+<li>实际情况中每个节点可能不能填充满，因此在数据库中，B+Tree 的高度一般都在 2<del>4 层。MySQL 的 InnoDB 存储引擎在设计时是将根节点常驻内存的，也就是说查找某一键值的行记录时最多只需要 1</del>3 次磁盘 I/O 操作。</li>
+</ul>
+<h4 id="什么是-hash-索引？"><a href="#什么是-hash-索引？" class="headerlink" title="什么是 hash 索引？"></a>什么是 hash 索引？</h4><p>基于哈希表实现，优点是查找非常快。如下图 ：</p>
+<p><img src="%E6%95%B0%E6%8D%AE%E5%BA%93%5C20190107191452541898.png" alt="20190107191452541898"></p>
+<p>哈希索引就是采用一定的哈希算法，将键值换算成新的哈希值，检索时不需要想B+Tree那样从根结点开始查找，而是经过计算直接定位，所以速度很快。</p>
+<p>但是也有限制：</p>
+<ul>
+<li>只支持精确查找，不能用于部分查找和范围查找。无法排序和分组。因为原来有序的键值经过哈希算法很可能打乱。</li>
+<li>如果哈希冲突很多，查找速度很慢。比如在有大量重复键值的情况下。</li>
+<li>不能利用部分索引查询</li>
+<li>不能</li>
+</ul>
+<h3 id="聚集索引与非聚集索引"><a href="#聚集索引与非聚集索引" class="headerlink" title="聚集索引与非聚集索引"></a>聚集索引与非聚集索引</h3><p><img src="%E6%95%B0%E6%8D%AE%E5%BA%93%5C1550731169166.png" alt="1550731169166"></p>
+<h3 id="MyISAM-索引与-InnoDB-索引的区别？"><a href="#MyISAM-索引与-InnoDB-索引的区别？" class="headerlink" title="MyISAM 索引与 InnoDB 索引的区别？"></a>MyISAM 索引与 InnoDB 索引的区别？</h3><ul>
+<li>InnoDB 索引是聚簇索引，MyISAM 索引是非聚簇索引。</li>
+<li>InnoDB 的主键索引的叶子节点存储着行数据，因此主键索引非常高效。</li>
+<li>MyISAM 索引的叶子节点存储的是行数据地址，需要再寻址一次才能得到数据。</li>
+<li>InnoDB 非主键索引的叶子节点存储的是主键和其他带索引的列数据，因此查询时做到覆盖索引会非常高效</li>
+</ul>
+<h3 id="如何定位并优化慢查询的-Sql"><a href="#如何定位并优化慢查询的-Sql" class="headerlink" title="如何定位并优化慢查询的 Sql"></a>如何定位并优化慢查询的 Sql</h3><p>需要具体场景具体分析，其大致思路</p>
+<ul>
+<li>根据慢日志定位到慢查询的 sql</li>
+<li>使用 explain 等工具分析 sql</li>
+<li>修改 sql 或者尽量让 sql 走索引</li>
+</ul>
+<h4 id="定位慢查询sql"><a href="#定位慢查询sql" class="headerlink" title="定位慢查询sql"></a>定位慢查询sql</h4><p>开启慢查询日志即可 </p>
+<p>文件方式配置 MySQL 慢查询的方法：</p>
+<ul>
+<li>查询 MySQL 慢查询状态的方法： </li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">SHOW</span> <span class="keyword">VARIABLES</span> <span class="keyword">LIKE</span> <span class="string">&#x27;%query%&#x27;</span>;   </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在 mysql 配置文件 my.cnf 中增加： </li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line">log-slow-queries=/opt/data/slowquery.log</span><br><span class="line">long_query_time=2 </span><br><span class="line">log-queries-not-using-indexes  </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>命令方式配置 MySQL 慢查询的方法：</li>
+</ul>
+<figure class="highlight sql"><table><tr><td class="code"><pre><span class="line"><span class="keyword">set</span> <span class="keyword">global</span> slow_query_log=<span class="keyword">on</span>; </span><br><span class="line"><span class="keyword">set</span> <span class="keyword">global</span> long_query_time=<span class="number">1</span>; </span><br><span class="line"><span class="keyword">set</span> <span class="keyword">global</span> slow_query_log_file=‘/opt/<span class="keyword">data</span>/slow_query.log’;  </span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>解析 MySQL 慢查询日志的方法，按照 sql 执行时间最长的前 20 条 sql：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mysqldumpslow -s t -t 20 -g &#39;select&#39; &#x2F;opt&#x2F;data&#x2F;slowquery.log </span><br></pre></td></tr></table></figure>
+
+<p>在 log 中就能找到慢查询的 sql。</p>
+<h4 id="Explian-关键字"><a href="#Explian-关键字" class="headerlink" title="Explian 关键字"></a>Explian 关键字</h4><ul>
+<li><p>Explain命令在解决数据库性能上是第一推荐使用命令，大部分的性能问题可以通过此命令来简单的解决，Explain可以用来查看SQL语句的执行效 果，可以帮助选择更好的索引和优化查询语句，写出更好的优化语句。</p>
+<p>Explain语法：explain select … from … [where …]</p>
+<p>例如：explain select * from news;</p>
+<p>输出：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">+----+-------------+-------+-------+-------------------+---------+---------+-------+------</span><br><span class="line">| id | select_type | table | type  | possible_keys | key | key_len | ref | rows | Extra |</span><br><span class="line">+----+-------------+-------+-------+-------------------+---------+---------+-------+------</span><br></pre></td></tr></table></figure>
+
+<p>下面对各个属性进行了解：</p>
+<p>1、id：这是SELECT的查询序列号</p>
+<p>2、select_type：select_type就是select的类型，可以有以下几种：</p>
+<blockquote>
+<p>SIMPLE：简单SELECT(不使用UNION或子查询等)</p>
+<p>PRIMARY：最外面的SELECT</p>
+<p>UNION：UNION中的第二个或后面的SELECT语句</p>
+<p>DEPENDENT UNION：UNION中的第二个或后面的SELECT语句，取决于外面的查询</p>
+<p>UNION RESULT：UNION的结果。</p>
+<p>SUBQUERY：子查询中的第一个SELECT</p>
+<p>DEPENDENT SUBQUERY：子查询中的第一个SELECT，取决于外面的查询</p>
+<p>DERIVED：导出表的SELECT(FROM子句的子查询)</p>
+</blockquote>
+<p>3、table：显示这一行的数据是关于哪张表的</p>
+<p>4、type：这列最重要，显示了连接使用了哪种类别,有无使用索引，是使用Explain命令分析性能瓶颈的关键项之一。</p>
+<blockquote>
+<p>结果值从好到坏依次是：</p>
+<p>system &gt; const &gt; eq_ref &gt; ref &gt; fulltext &gt; ref_or_null &gt; index_merge &gt; unique_subquery &gt; index_subquery &gt; range &gt; index &gt; ALL</p>
+<p>一般来说，得保证查询至少达到range级别，最好能达到ref，否则就可能会出现性能问题。</p>
+</blockquote>
+<p>5、possible_keys：列指出MySQL能使用哪个索引在该表中找到行</p>
+<p>6、key：显示MySQL实际决定使用的键（索引）。如果没有选择索引，键是NULL</p>
+<p>7、key_len：显示MySQL决定使用的键长度。如果键是NULL，则长度为NULL。使用的索引的长度。在不损失精确性的情况下，长度越短越好</p>
+<p>8、ref：显示使用哪个列或常数与key一起从表中选择行。</p>
+<p>9、rows：显示MySQL认为它执行查询时必须检查的行数。</p>
+<p>10、Extra：包含MySQL解决查询的详细信息，也是关键参考项之一。</p>
+<blockquote>
+<p>Distinct<br>一旦MYSQL找到了与行相联合匹配的行，就不再搜索了</p>
+<p>Not exists<br>MYSQL 优化了LEFT JOIN，一旦它找到了匹配LEFT JOIN标准的行，</p>
+<p>就不再搜索了</p>
+<p>Range checked for each</p>
+<p>Record（index map:#）<br>没有找到理想的索引，因此对于从前面表中来的每一 个行组合，MYSQL检查使用哪个索引，并用它来从表中返回行。这是使用索引的最慢的连接之一</p>
+<p>Using filesort<br>看 到这个的时候，查询就需要优化了。MYSQL需要进行额外的步骤来发现如何对返回的行排序。它根据连接类型以及存储排序键值和匹配条件的全部行的行指针来 排序全部行</p>
+<p>Using index<br>列数据是从仅仅使用了索引中的信息而没有读取实际的行动的表返回的，这发生在对表 的全部的请求列都是同一个索引的部分的时候</p>
+<p>Using temporary<br>看到这个的时候，查询需要优化了。这 里，MYSQL需要创建一个临时表来存储结果，这通常发生在对不同的列集进行ORDER BY上，而不是GROUP BY上</p>
+<p>Using where<br>使用了WHERE从句来限制哪些行将与下一张表匹配或者是返回给用户。如果不想返回表中的全部行，并且连接类型ALL或index， 这就会发生，或者是查询有问题</p>
+</blockquote>
+<p>其他一些Tip：</p>
+<p>当type 显示为 “index” 时，并且Extra显示为 “Using Index”， 表明使用了覆盖索引。</p>
+</li>
+</ul>
+<h3 id="联合索引的最左匹配原则的成因"><a href="#联合索引的最左匹配原则的成因" class="headerlink" title="联合索引的最左匹配原则的成因"></a>联合索引的最左匹配原则的成因</h3><p>看看如下博客即可</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/b7911e0394b0">联合索引的最左前缀匹配原则</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/36996520/answer/93256153">mysql索引最左匹配原则的理解?</a></li>
+</ul>
+<h3 id="索引是建立得越多越好的吗"><a href="#索引是建立得越多越好的吗" class="headerlink" title="索引是建立得越多越好的吗"></a>索引是建立得越多越好的吗</h3><ul>
+<li>数据量小的表不需要建立索引，建立会增加额外的索引开销</li>
+<li>数据变更需要维护索引，因此更多的索引意味着更多的维护成本</li>
+<li>更多的索引意味着也需要更多的空间</li>
+</ul>
+<h2 id="锁模块"><a href="#锁模块" class="headerlink" title="锁模块"></a>锁模块</h2><h3 id="常见问题"><a href="#常见问题" class="headerlink" title="常见问题"></a>常见问题</h3><ul>
+<li>MyISAM 与 InnoDB 关于锁方面的区别是什么</li>
+<li>数据库事务的四大特性</li>
+<li>事务隔离级别以及各级别下的并发访问问题</li>
+<li>InnoDB 可重复读隔离级别下如何避免幻读</li>
+<li>RC、RR 级别下的 InnoDB 的非堵塞如果实现</li>
+</ul>
+<h3 id="MyISAM-与-InnoDB-关于锁方面的区别是什么"><a href="#MyISAM-与-InnoDB-关于锁方面的区别是什么" class="headerlink" title="MyISAM 与 InnoDB 关于锁方面的区别是什么"></a>MyISAM 与 InnoDB 关于锁方面的区别是什么</h3><ul>
+<li>MyISAM 默认用的是表级锁，不支持行级锁</li>
+<li>InnoDB 默认用的是行级锁，也支持表级锁</li>
+</ul>
+<h3 id="数据库锁的分类"><a href="#数据库锁的分类" class="headerlink" title="数据库锁的分类"></a>数据库锁的分类</h3><ul>
+<li>按锁的粒度划分，可分为表级锁、行级锁和页级锁</li>
+<li>按锁的级别划分，可分为共享锁和排他锁</li>
+<li>按加锁的方式划分，可分为自动锁和显示锁</li>
+<li>按操作划分，可分为 DML 锁和 DDL 锁</li>
+<li>按使用方式划分，可分为乐观锁和悲观锁</li>
+</ul>
+<h3 id="ACID"><a href="#ACID" class="headerlink" title="ACID"></a>ACID</h3><h4 id="1-原子性（Atomicity）"><a href="#1-原子性（Atomicity）" class="headerlink" title="1. 原子性（Atomicity）"></a>1. 原子性（Atomicity）</h4><p>事务被视为不可分割的最小单元，事务的所有操作要么全部提交成功，要么全部失败回滚。</p>
+<p>回滚可以用回滚日志来实现，回滚日志记录着事务所执行的修改操作，在回滚时反向执行这些修改操作即可。</p>
+<h4 id="2-一致性（Consistency）"><a href="#2-一致性（Consistency）" class="headerlink" title="2. 一致性（Consistency）"></a>2. 一致性（Consistency）</h4><p>数据库在事务执行前后都保持一致性状态。在一致性状态下，所有事务对一个数据的读取结果都是相同的。</p>
+<h4 id="3-隔离性（Isolation）"><a href="#3-隔离性（Isolation）" class="headerlink" title="3. 隔离性（Isolation）"></a>3. 隔离性（Isolation）</h4><p>一个事务所做的修改在最终提交以前，对其它事务是不可见的。</p>
+<h4 id="4-持久性（Durability）"><a href="#4-持久性（Durability）" class="headerlink" title="4. 持久性（Durability）"></a>4. 持久性（Durability）</h4><p>一旦事务提交，则其所做的修改将会永远保存到数据库中。即使系统发生崩溃，事务执行的结果也不能丢失。</p>
+<p>使用重做日志来保证持久性。</p>
+<h3 id="并发一致性问题"><a href="#并发一致性问题" class="headerlink" title="并发一致性问题"></a>并发一致性问题</h3><p>在并发环境下，事务的隔离性很难保证，因此会出现很多并发一致性问题。</p>
+<h4 id="丢失修改"><a href="#丢失修改" class="headerlink" title="丢失修改"></a>丢失修改</h4><p>T1 和 T2 两个事务都对一个数据进行修改，T1 先修改，T2 随后修改，T2 的修改覆盖了 T1 的修改。</p>
+<p><img src="%E6%95%B0%E6%8D%AE%E5%BA%93%5C26a7c9df-22f6-4df4-845a-745c053ab2e5.jpg" alt="26a7c9df-22f6-4df4-845a-745c053ab2e5"></p>
+<h4 id="读脏数据"><a href="#读脏数据" class="headerlink" title="读脏数据"></a>读脏数据</h4><p>T1 修改一个数据，T2 随后读取这个数据。如果 T1 撤销了这次修改，那么 T2 读取的数据是脏数据。</p>
+<p><img src="%E6%95%B0%E6%8D%AE%E5%BA%93%5Cbab0fba6-38e4-45f7-b34d-3edaad43810f.jpg" alt="bab0fba6-38e4-45f7-b34d-3edaad43810f"></p>
+<h4 id="不可重复读"><a href="#不可重复读" class="headerlink" title="不可重复读"></a>不可重复读</h4><p>T2 读取一个数据，T1 对该数据做了修改。如果 T2 再次读取这个数据，此时读取的结果和第一次读取的结果不同。</p>
+<p><img src="%E6%95%B0%E6%8D%AE%E5%BA%93%5C43bf0957-0386-4c09-9ad7-e163c5b62559.jpg" alt="43bf0957-0386-4c09-9ad7-e163c5b62559"></p>
+<h4 id="幻影读"><a href="#幻影读" class="headerlink" title="幻影读"></a>幻影读</h4><p>T1 读取某个范围的数据，T2 在这个范围内插入新的数据，T1 再次读取这个范围的数据，此时读取的结果和和第一次读取的结果不同。</p>
+<p><img src="%E6%95%B0%E6%8D%AE%E5%BA%93%5C2959e455-e6cb-4461-aeb3-e319fe5c41db.jpg" alt="2959e455-e6cb-4461-aeb3-e319fe5c41db"></p>
+<h3 id="隔离级别"><a href="#隔离级别" class="headerlink" title="隔离级别"></a>隔离级别</h3><h4 id="未提交读（READ-UNCOMMITTED）"><a href="#未提交读（READ-UNCOMMITTED）" class="headerlink" title="未提交读（READ UNCOMMITTED）"></a>未提交读（READ UNCOMMITTED）</h4><p>事务中的修改，即使没有提交，对其它事务也是可见的。</p>
+<h4 id="提交读（READ-COMMITTED）"><a href="#提交读（READ-COMMITTED）" class="headerlink" title="提交读（READ COMMITTED）"></a>提交读（READ COMMITTED）</h4><p>一个事务只能读取已经提交的事务所做的修改。换句话说，一个事务所做的修改在提交之前对其它事务是不可见的。</p>
+<h4 id="可重复读（REPEATABLE-READ）"><a href="#可重复读（REPEATABLE-READ）" class="headerlink" title="可重复读（REPEATABLE READ）"></a>可重复读（REPEATABLE READ）</h4><p>保证在同一个事务中多次读取同样数据的结果是一样的。</p>
+<h4 id="可串行化（SERIALIZABLE）"><a href="#可串行化（SERIALIZABLE）" class="headerlink" title="可串行化（SERIALIZABLE）"></a>可串行化（SERIALIZABLE）</h4><p>强制事务串行执行。</p>
+<hr>
+<table>
+<thead>
+<tr>
+<th align="center">隔离级别</th>
+<th align="center">脏读</th>
+<th align="center">不可重复读</th>
+<th align="center">幻影读</th>
+<th align="center">加锁读</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">未提交读</td>
+<td align="center">√</td>
+<td align="center">√</td>
+<td align="center">√</td>
+<td align="center">×</td>
+</tr>
+<tr>
+<td align="center">提交读</td>
+<td align="center">×</td>
+<td align="center">√</td>
+<td align="center">√</td>
+<td align="center">×</td>
+</tr>
+<tr>
+<td align="center">可重复读</td>
+<td align="center">×</td>
+<td align="center">×</td>
+<td align="center">√</td>
+<td align="center">×</td>
+</tr>
+<tr>
+<td align="center">可串行化</td>
+<td align="center">×</td>
+<td align="center">×</td>
+<td align="center">×</td>
+<td align="center">√</td>
+</tr>
+</tbody></table>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/%E6%95%B0%E6%8D%AE%E5%BA%93%E7%B3%BB%E7%BB%9F%E5%8E%9F%E7%90%86.md">数据库系统原理 </a></li>
+</ul>
+</div></article></div><div class="card"><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><time class="level-item" dateTime="2019-02-19T15:59:59.000Z" title="2019-02-19T15:59:59.000Z">2019-02-19</time><span class="level-item"><a class="link-muted" href="/categories/%E9%9D%A2%E8%AF%95/">面试</a></span><span class="level-item">an hour read (About 8160 words)</span></div></div><h1 class="title is-3 is-size-4-mobile"><a class="link-muted" href="/2019/02/19/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a></h1><div class="content"><h2 id="计算机网络体系结构"><a href="#计算机网络体系结构" class="headerlink" title="计算机网络体系结构"></a>计算机网络体系结构</h2><p><img src="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/7fa66f48-bc42-4b98-93c2-56b20feaa990.png" alt="img"></p>
+<h3 id="OSI"><a href="#OSI" class="headerlink" title="OSI"></a>OSI</h3><p>其中表示层和会话层用途如下：</p>
+<ul>
+<li><strong>表示层</strong> ：数据压缩、加密以及数据描述，这使得应用程序不必关心在各台主机中数据内部格式不同的问题。</li>
+<li><strong>会话层</strong> ：建立及管理会话。</li>
+</ul>
+<p>五层协议没有表示层和会话层，而是将这些功能留给应用程序开发者处理。</p>
+<h3 id="五层协议"><a href="#五层协议" class="headerlink" title="五层协议"></a>五层协议</h3><ul>
+<li><strong>应用层</strong> ：为特定应用程序提供数据传输服务，例如 HTTP、DNS 等。数据单位为报文。</li>
+<li><strong>传输层</strong> ：为进程提供通用数据传输服务。由于应用层协议很多，定义通用的传输层协议就可以支持不断增多的应用层协议。运输层包括两种协议：传输控制协议 TCP，提供面向连接、可靠的数据传输服务，数据单位为报文段；用户数据报协议 UDP，提供无连接、尽最大努力的数据传输服务，数据单位为用户数据报。TCP 主要提供完整性服务，UDP 主要提供及时性服务。</li>
+<li><strong>网络层</strong> ：为主机提供数据传输服务。而传输层协议是为主机中的进程提供数据传输服务。网络层把传输层传递下来的报文段或者用户数据报封装成分组。</li>
+<li><strong>数据链路层</strong> ：网络层针对的还是主机之间的数据传输服务，而主机之间可以有很多链路，链路层协议就是为同一链路的主机提供数据传输服务。数据链路层把网络层传下来的分组封装成帧。</li>
+<li><strong>物理层</strong> ：考虑的是怎样在传输媒体上传输数据比特流，而不是指具体的传输媒体。物理层的作用是尽可能屏蔽传输媒体和通信手段的差异，使数据链路层感觉不到这些差异。</li>
+</ul>
+<h3 id="TCP-IP"><a href="#TCP-IP" class="headerlink" title="TCP/IP"></a>TCP/IP</h3><p>它只有四层，相当于五层协议中数据链路层和物理层合并为网络接口层。</p>
+<p>TCP/IP 体系结构不严格遵循 OSI 分层概念，应用层可能会直接使用 IP 层或者网络接口层。</p>
+<p><img src="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/7048a730-a2d0-43d1-99ce-f774e4ef1b27.png" alt="img"></p>
+<p>TCP/IP 是 Internet上的标准通信协议集，该协议集由数十个具有层次结构的协议组成，其中 TCP 和 IP 是该协议集中的两个最重要的核心协议。TCP/IP协议族按层次可分为以下四层：应用层、传输层、网络层和网络接口层，各层对应的 PDU 数据单元的名称如下图所示。 </p>
+<p><img src="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/TCPIP%E4%B8%8EPSU.png" alt="TCPIP与PSU"></p>
+<h3 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h3><p>OSI 七层体系结构具有概念清楚、理论完整的特点，是一个理论上的国际标准，但却不是事实上的国际标准；而具有简单易用特点的 TCP/IP 四层体系结构则是事实上的标准。 需要指出的是，五层体系结构虽然综合了 OSI 和 TCP/IP 的优点，但其只是为了学术学习研究而提出的，没有具体的实际意义。</p>
+<h2 id="说说-TCP-的三次握手"><a href="#说说-TCP-的三次握手" class="headerlink" title="说说 TCP 的三次握手"></a>说说 TCP 的三次握手</h2><p>这一到很常见的面试题。</p>
+<h3 id="传输控制协议-TCP-简介"><a href="#传输控制协议-TCP-简介" class="headerlink" title="传输控制协议 TCP 简介"></a>传输控制协议 TCP 简介</h3><ul>
+<li>面向连接的、可靠的基于字节流的传输层通信协议</li>
+<li>将应用层的数据流分割成报文段并发送给目标节点的 TCP 层</li>
+<li>数据包都是由序号，对方收到则发送 ACK 确认，未收到则重传</li>
+<li>使用校验和来检验数据在传输过程中是否有误</li>
+</ul>
+<h3 id="TCP-报文头"><a href="#TCP-报文头" class="headerlink" title="TCP 报文头"></a>TCP 报文头</h3><p><img src="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/MJB-TCP-Header-800x564.png" alt="MJB-TCP-Header-800x564"></p>
+<ul>
+<li><strong>源端口、目的端口</strong> ：标记进程。</li>
+<li><strong>序号</strong> ：用于对字节流进行编号，例如序号为 301，表示第一个字节的编号为 301，如果携带的数据长度为 100 字节，那么下一个报文段的序号应为 401。</li>
+<li><strong>确认号</strong> ：期望收到的下一个报文段的序号。例如 B 正确收到 A 发送来的一个报文段，序号为 501，携带的数据长度为 200 字节，因此 B 期望下一个报文段的序号为 701，B 发送给 A 的确认报文段中确认号就为 701。</li>
+<li><strong>数据偏移</strong> ：指的是数据部分距离报文段起始处的偏移量，实际上指的是首部的长度。</li>
+<li><strong>连接标志（TCP Flags）</strong>：表示控制功能，下面是常见的连接标志。<ul>
+<li><strong>确认 ACK</strong> ：当 ACK=1 时确认号字段有效，否则无效。TCP 规定，在连接建立后所有传送的报文段都必须把 ACK 置 1。</li>
+<li><strong>同步 SYN</strong> ：在连接建立时用来同步序号。当 SYN=a1，ACK=0 时表示这是一个连接请求报文段。若对方同意建立连接，则响应报文中 SYN=1，ACK=1。</li>
+<li><strong>终止 FIN</strong> ：用来释放一个连接，当 FIN=1 时，表示此报文段的发送方的数据已发送完毕，并要求释放连接。</li>
+</ul>
+</li>
+<li><strong>窗口</strong> ：窗口值作为接收方让发送方设置其发送窗口的依据。之所以要有这个限制，是因为接收方的数据缓存空间是有限的。</li>
+</ul>
+<h3 id="三次握手"><a href="#三次握手" class="headerlink" title="三次握手"></a>三次握手</h3><p><img src="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/timg.jpg" alt="timg"></p>
+<p>在 TCP/IP 协议中， TCP 协议提供可靠的连接服务，采用三次握手建立一个连接。</p>
+<p>假设 A 为客户端，B 为服务器端。</p>
+<ul>
+<li>首先 B 处于 LISTEN（监听）状态，等待客户的连接请求。</li>
+<li>A 向 B 发送连接请求报文，SYN=1，ACK=0，选择一个初始的序号 x。</li>
+<li>B 收到连接请求报文，如果同意建立连接，则向 A 发送连接确认报文，SYN=1，ACK=1，确认号为 x+1，同时也选择一个初始的序号 y。</li>
+<li>A 收到 B 的连接确认报文后，还要向 B 发出确认，确认号为 y+1，序号为 x+1。</li>
+<li>B 收到 A 的确认后，连接建立。</li>
+</ul>
+<h3 id="对于建链接的3次握手"><a href="#对于建链接的3次握手" class="headerlink" title="对于建链接的3次握手"></a>对于建链接的3次握手</h3><p>主要是要初始化Sequence Number 的初始值。通信的双方要互相通知对方自己的初始化的 Sequence Number（缩写为ISN：Inital Sequence Number）——所以叫SYN，全称Synchronize Sequence Numbers。也就上图中的 x 和 y。这个号要作为以后的数据通信的序号，以保证应用层接收到的数据不会因为网络上的传输的问题而乱序（TCP会用这个序号来拼接数据）。</p>
+<h3 id="关于建连接时SYN超时"><a href="#关于建连接时SYN超时" class="headerlink" title="关于建连接时SYN超时"></a>关于建连接时SYN超时</h3><p>试想一下，如果server端接到了 client 发的 SYN 后回了 SYN-ACK 后 client 掉线了，server 端没有收到 client 回来的ACK，那么，这个连接处于一个中间状态，即没成功，也没失败。于是，server 端如果在一定时间内没有收到的TCP会重发 SYN-ACK。在Linux下，默认重试次数为5次，重试的间隔时间从 1s 开始每次都翻售，5 次的重试时间间隔为1s, 2s, 4s, 8s, 16s，总共31s，第5次发出后还要等32s都知道第5次也超时了，所以，总共需要 1s + 2s + 4s+ 8s+ 16s + 32s = 2^6 -1 = 63s，TCP才会把断开这个连接。</p>
+<h3 id="关于SYN-Flood攻击"><a href="#关于SYN-Flood攻击" class="headerlink" title="关于SYN Flood攻击"></a>关于SYN Flood攻击</h3><p>一些恶意的人就为此制造了SYN Flood攻击，给服务器发了一个SYN后，就下线了，于是服务器需要默认等 63s 才会断开连接，这样，攻击者就可以把服务器的 syn 连接的队列耗尽，让正常的连接请求不能处理。于是，Linux下给了一个叫 <strong>tcp_syncookies</strong> 的参数来应对这个事——当SYN队列满了后，TCP会通过源地址端口、目标地址端口和时间戳打造出一个特别的Sequence Number发回去（又叫cookie），如果是攻击者则不会有响应，如果是正常连接，则会把这个 SYN Cookie发回来，然后服务端可以通过cookie建连接（即使你不在SYN队列中）。</p>
+<p>请注意，<strong>请先千万别用 tcp_syncookies 来处理正常的大负载的连接的情况</strong>。因为，synccookies 是妥协版的TCP协议，并不严谨。对于正常的请求，你应该调整三个TCP参数可供你选择。</p>
+<ul>
+<li>第一个是：tcp_synack_retries 可以用他来减少重试次数；</li>
+<li>第二个是：tcp_max_syn_backlog，可以增大SYN连接数；</li>
+<li>第三个是：tcp_abort_on_overflow 处理不过来干脆就直接拒绝连接了 ；</li>
+</ul>
+<h3 id="保活机制"><a href="#保活机制" class="headerlink" title="保活机制"></a>保活机制</h3><ul>
+<li>向对方发送保活探测报文，如果未收到响应则继续发送</li>
+<li>尝试次数达到保活探测数仍然未收到响应则中断连接</li>
+</ul>
+<h2 id="谈谈四次挥手"><a href="#谈谈四次挥手" class="headerlink" title="谈谈四次挥手"></a>谈谈四次挥手</h2><p><img src="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/tisfsmg.jpg" alt="tisfsmg"></p>
+<p>以下描述不讨论序号和确认号，因为序号和确认号的规则比较简单。并且不讨论 ACK，因为 ACK 在连接建立之后都为 1。</p>
+<ul>
+<li>A 发送连接释放报文，FIN=1。</li>
+<li>B 收到之后发出确认，此时 TCP 属于半关闭状态，B 能向 A 发送数据但是 A 不能向 B 发送数据。</li>
+<li>当 B 不再需要连接时，发送连接释放报文，FIN=1。</li>
+<li>A 收到后发出确认，进入 TIME-WAIT 状态，等待 2 MSL（最大报文存活时间）后释放连接。</li>
+<li>B 收到 A 的确认后释放连接。</li>
+</ul>
+<h3 id="四次挥手的原因"><a href="#四次挥手的原因" class="headerlink" title="四次挥手的原因"></a>四次挥手的原因</h3><p>客户端发送了 FIN 连接释放报文之后，服务器收到了这个报文，就进入了 CLOSE-WAIT 状态。这个状态是为了让服务器端发送还未传送完毕的数据，传送完毕之后，服务器会发送 FIN 连接释放报文。</p>
+<p>TCP连接是全双工的，服务端可以发送数据到客户端，客户端也可以发送数据到服务端，发送方和接收方都需要两次挥手才能关闭 。</p>
+<h3 id="TIME-WAIT"><a href="#TIME-WAIT" class="headerlink" title="TIME_WAIT"></a>TIME_WAIT</h3><p>客户端接收到服务器端的 FIN 报文后进入此状态，此时并不是直接进入 CLOSED 状态，还需要等待一个时间计时器设置的时间 2MSL。这么做有两个理由：</p>
+<ul>
+<li>确保最后一个确认报文能够到达。如果 B 没收到 A 发送来的确认报文，那么就会重新发送连接释放请求报文，A 等待一段时间就是为了处理这种情况的发生。</li>
+<li>等待一段时间是为了让本连接持续时间内所产生的所有报文都从网络中消失，使得下一个新的连接不会出现旧的连接请求报文。</li>
+</ul>
+<h2 id="TCP-和-UDP-的区别"><a href="#TCP-和-UDP-的区别" class="headerlink" title="TCP 和 UDP 的区别"></a>TCP 和 UDP 的区别</h2><p>前面我们说了 TCP 现在我们来认识一下 UDP。</p>
+<h3 id="UPD-的特点"><a href="#UPD-的特点" class="headerlink" title="UPD 的特点"></a>UPD 的特点</h3><ul>
+<li>面向非连接的</li>
+<li>不维护连接状态，支持同时向多个客户端传输相同的消息</li>
+<li>数据包报头只有 8 个字节，额外开销较小</li>
+<li>吞吐量只受限于数据生成率、传输速率以及机器性能</li>
+<li>尽最大努力交付，不保证可靠交付，不需要维持复杂的链接状态表</li>
+<li>面向报文，不对应用程序提交的报文信息进行拆分或则合并</li>
+</ul>
+<h3 id="对比"><a href="#对比" class="headerlink" title="对比"></a>对比</h3><ul>
+<li>TCP 是面向连接的；UDP 是无连接的。</li>
+<li>TCP 是可靠的；UDP 是不可靠的。</li>
+<li>TCP 只支持点对点通信；UDP 支持一对一、一对多、多对一、多对多的通信模式。</li>
+<li>TCP 是面向字节流的；UDP 是面向报文的。</li>
+<li>TCP 有拥塞控制机制；UDP 没有拥塞控制，适合媒体通信。</li>
+<li>TCP 首部开销(20 个字节)，比 UDP 的首部开销(8 个字节)要大。</li>
+</ul>
+<h2 id="TCP-的滑动窗口"><a href="#TCP-的滑动窗口" class="headerlink" title="TCP 的滑动窗口"></a>TCP 的滑动窗口</h2><p>首先明确：</p>
+<p>TCP滑动窗口分为接受窗口，发送窗口。</p>
+<p>滑动窗口协议是<strong>传输层进行流控</strong>的一种措施，<strong>接收方通过通告发送方自己的窗口大小</strong>，从而控制发送方的发送速度，从而达到防止发送方发送速度过快而导致自己被淹没的目的。</p>
+<h3 id="重要概念"><a href="#重要概念" class="headerlink" title="重要概念"></a>重要概念</h3><p>对ACK的再认识，ack通常被理解为收到数据后给出的一个确认ACK，ACK包含两个非常重要的信息：</p>
+<ul>
+<li>一是期望接收到的下一字节的序号n，该n代表接收方已经接收到了前n-1字节数据，此时如果接收方收到第n+1字节数据而不是第n字节数据，接收方是不会发送序号为n+2的ACK的。举个例子，假如接收端收到1-1024字节，它会发送一个确认号为1025的ACK,但是接下来收到的是2049-3072，它是不会发送确认号为3072的ACK,而依旧发送1025的ACK。</li>
+<li>二是当前的窗口大小m，如此发送方在接收到ACK包含的这两个数据后就可以计算出还可以发送多少字节的数据给对方，假定当前发送方已发送到第x字节，则可以发送的字节数就是y=m-(x-n).这就是滑动窗口控制流量的基本原理</li>
+</ul>
+<p><strong>重点：发送方根据收到ACK当中的期望收到的下一个字节的序号n以及窗口m，还有当前已经发送的字节序号x，算出还可以发送的字节数。</strong></p>
+<p>发送端窗口的第一个字节序号一定是ACK中期望收到的下一个字节序号，比如下图：</p>
+<p><img src="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/9c21786770459afa47bfa2e4606cc454_hd.jpg" alt="img">  </p>
+<p>上图52 53 54 55 字节都是可以新发送的字节序。   </p>
+<p>接受端窗口的第一个字节序之前一定是已经完全接收的，后面窗口里面的数据都是希望接受的，窗口后面的数据都是不希望接受的。 </p>
+<p>TCP的滑动窗口分为接收窗口和发送窗口 不分析这两种窗口就讨论是不妥当的。  TCP的滑动窗口主要有两个作用，一是提供TCP的可靠性，二是提供TCP的流控特性。同时滑动窗口机制还体现了TCP面向字节流的设计思路。TCP 段中窗口的相关字段。 </p>
+<p><img src="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/d6b970fb6d44aafeeec4a4c9d61a9225_hd.jpg" alt="img"></p>
+<p>TCP的Window是一个16bit位字段，它代表的是窗口的字节容量，也就是TCP的标准窗口最大为2^16-1=65535个字节。</p>
+<p>另外在TCP的选项字段中还包含了一个TCP窗口扩大因子，option-kind为3，option-length为3个字节，option-data取值范围0-14。窗口扩大因子用来扩大TCP窗口，可把原来16bit的窗口，扩大为31bit。</p>
+<h3 id="滑动窗口基本原理"><a href="#滑动窗口基本原理" class="headerlink" title="滑动窗口基本原理"></a>滑动窗口基本原理</h3><p>对于TCP会话的发送方，任何时候在其发送缓存内的数据都可以分为4类，“已经发送并得到对端ACK的”，“已经发送但还未收到对端ACK的”，“未发送但对端允许发送的”，“未发送且对端不允许发送”。“已经发送但还未收到对端ACK的”和“未发送但对端允许发送的”这两部分数据称之为发送窗口。</p>
+<p><img src="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/a1d5c050ad957880094a5f003b1ccd24_hd.jpg" alt="img"></p>
+<p> 当收到接收方新的ACK对于发送窗口中后续字节的确认是，窗口滑动，滑动原理如下图。 </p>
+<p><img src="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/9c21786770459afa47bfa2e4606cc454_hd.jpg" alt="img"></p>
+<p>当收到ACK=36时窗口滑动。</p>
+<p>2）对于TCP的接收方，在某一时刻在它的接收缓存内存在3种。“已接收”，“未接收准备接收”，“未接收并未准备接收”（由于ACK直接由TCP协议栈回复，默认无应用延迟，不存在“已接收未回复ACK”）。其中“未接收准备接收”称之为接收窗口。</p>
+<h3 id="发送窗口与接收窗口关系"><a href="#发送窗口与接收窗口关系" class="headerlink" title="发送窗口与接收窗口关系"></a>发送窗口与接收窗口关系</h3><p>TCP是双工的协议，会话的双方都可以同时接收、发送数据。TCP会话的双方都各自维护一个“发送窗口”和一个“接收窗口”。其中各自的“接收窗口”大小取决于应用、系统、硬件的限制（TCP传输速率不能大于应用的数据处理速率）。各自的“发送窗口”则要求取决于对端通告的“接收窗口”，要求相同。</p>
+<p><img src="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/c798dd393fcf7c03b1db78f5bcf0304b_hd.jpg" alt="img"></p>
+<h3 id="滑动窗口实现面向流的可靠性"><a href="#滑动窗口实现面向流的可靠性" class="headerlink" title="滑动窗口实现面向流的可靠性"></a>滑动窗口实现面向流的可靠性</h3><ul>
+<li>最基本的传输可靠性来源于“确认重传”机制。</li>
+<li>TCP的滑动窗口的可靠性也是建立在“确认重传”基础上的。</li>
+<li>发送窗口只有收到对端对于本段发送窗口内字节的ACK确认，才会移动发送窗口的左边界。</li>
+<li>接收窗口只有在前面所有的段都确认的情况下才会移动左边界。当在前面还有字节未接收但收到后面字节的情况下，窗口不会移动，并不对后续字节确认。以此确保对端会对这些数据重传。</li>
+</ul>
+<h3 id="滑动窗口的流控特性"><a href="#滑动窗口的流控特性" class="headerlink" title="滑动窗口的流控特性"></a>滑动窗口的流控特性</h3><p>TCP的滑动窗口是动态的，我们可以想象成小学常见的一个数学题，一个水池，体积V，每小时进水量V1，出水量V2。当水池满了就不允许再注入了，如果有个液压系统控制水池大小，那么就可以控制水的注入速率和量。这样的水池就类似TCP的窗口。应用根据自身的处理能力变化，通过本端TCP接收窗口大小控制来对对对端的发送窗口流量限制。</p>
+<p>应用程序在需要（如内存不足）时，通过API通知TCP协议栈缩小TCP的接收窗口。然后TCP协议栈在下个段发送时包含新的窗口大小通知给对端，对端按通知的窗口来改变发送窗口，以此达到减缓发送速率的目的。</p>
+<h2 id="HTTP"><a href="#HTTP" class="headerlink" title="HTTP"></a>HTTP</h2><p>HTTP 协议，是 Hyper Text Transfer Protocol（超文本传输协议）的缩写，是用于从万维网（WWW:World Wide Web ）服务器传输超文本到本地浏览器的传送协议。</p>
+<p>主要特点如下：</p>
+<ul>
+<li>简单快速：客户向服务器请求服务时，只需传送请求方法和路径。请求方法常用的有 GET、HEAD、POST 等等。每种方法规定了客户与服务器联系的类型不同。由于 HTTP 协议简单，使得 HTTP 服务器的程序规模小，因而通信速度很快。</li>
+<li>数据格式灵活：HTTP 允许传输任意类型的数据对象。正在传输的类型由Content-Type 加以标记。</li>
+<li>无连接：无连接的含义是限制每次连接只处理一个请求。服务器处理完客户的请求，并收到客户的应答后，即断开连接。采用这种方式可以节省传输时间。</li>
+<li>无状态：HTTP 协议是无状态协议。无状态，是指协议对于事务处理没有记忆能力。无状态意味着如果后续处理需要前面的信息，则它必须重传，这样可能导致每次连接传送的数据量增大。另一方面，在服务器不需要先前信息时它的应答就较快。</li>
+<li>支持 B/S 及 C/S 模式。</li>
+</ul>
+<h3 id="GET-和-POST-区别"><a href="#GET-和-POST-区别" class="headerlink" title="GET 和 POST 区别"></a>GET 和 POST 区别</h3><p>从三个层面来解答：</p>
+<ul>
+<li>Http 报文层面：GET 将请求信息放在 URL中，POST 方法报文中</li>
+<li>数据库层面：GET 符合幂等性和安全性，POST 不符合</li>
+<li>其他层面：GET 可以被缓存、被存储（书签），而 POST 不行</li>
+</ul>
+<h3 id="Cookie-和-Session-的区别"><a href="#Cookie-和-Session-的区别" class="headerlink" title="Cookie 和 Session 的区别"></a>Cookie 和 Session 的区别</h3><p><strong>Cookie 简介：</strong></p>
+<ul>
+<li>是由服务器发给客户端的特殊信息，以文本的形式存放在客户端</li>
+<li>客户端再次请求的时候，会把 Cookie 回发给服务端</li>
+<li>服务器接收到后，会解析 Cookie 生成与客户端相对的内容</li>
+</ul>
+<p><strong>Cookiet 的设置以及发送过程：</strong></p>
+<p><img src="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/tisdfsdfrgremg.jpg" alt="tisdfsdfrgremg"></p>
+<p><strong>Session 简介：</strong></p>
+<ul>
+<li>服务端的机制，在服务端保存的信息</li>
+<li>解析客户端请求并操作 Session id ，按需保存状态信息</li>
+</ul>
+<p><strong>Session 的实现方式：</strong></p>
+<ul>
+<li>使用 Cookie 来实现</li>
+<li>使用 URL 回写来实现，每次在 URL 添加 Session id 信息</li>
+</ul>
+<p><strong>区别</strong>：</p>
+<ul>
+<li>Cookie 数据存放在客户端的浏览器上，Session 数据存放在服务器上</li>
+<li>Session 相对于 Cookie 更安全</li>
+<li>若考虑减轻服务器负担，应当使用 Cookie</li>
+</ul>
+<h3 id="HTTP-和-HTTPs-的区别"><a href="#HTTP-和-HTTPs-的区别" class="headerlink" title="HTTP 和 HTTPs 的区别"></a>HTTP 和 HTTPs 的区别</h3><p><img src="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/1550579240583.png" alt="1550579240583"></p>
+<h4 id="SSL-Security-Sockets-Layer-安全套接层"><a href="#SSL-Security-Sockets-Layer-安全套接层" class="headerlink" title="SSL (Security Sockets Layer) 安全套接层"></a>SSL (Security Sockets Layer) 安全套接层</h4><ul>
+<li>为网络通信提供安全及数据完整性的一种安全协议</li>
+<li>是操作系统对外的 API，SSL 3.0 更名为 TLS</li>
+<li>采用身份验证和数据加密来保证网络的通信的安全和数据的完整性</li>
+</ul>
+<h4 id="区别"><a href="#区别" class="headerlink" title="区别"></a>区别</h4><ul>
+<li>HTTPS 需要到 CA 申请证书，HTTP 不需要</li>
+<li>HTTPS 密文传输，HTTP 明文传输</li>
+<li>连接方式不同，HTTPS 默认使用 443 端口，HTTP 使用 80 端口</li>
+<li>HTTPS = HTTP + 加密 + 认证 + 完整性保护，较 HTTP 安全</li>
+</ul>
+<h3 id="其他内容"><a href="#其他内容" class="headerlink" title="其他内容"></a>其他内容</h3><ul>
+<li>一 、基础概念<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#uri">URI</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#%E8%AF%B7%E6%B1%82%E5%92%8C%E5%93%8D%E5%BA%94%E6%8A%A5%E6%96%87">请求和响应报文</a></li>
+</ul>
+</li>
+<li>二、HTTP 方法<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#get">GET</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#head">HEAD</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#post">POST</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#put">PUT</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#patch">PATCH</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#delete">DELETE</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#options">OPTIONS</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#connect">CONNECT</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#trace">TRACE</a></li>
+</ul>
+</li>
+<li>三、HTTP 状态码<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#1xx-%E4%BF%A1%E6%81%AF">1XX 信息</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#2xx-%E6%88%90%E5%8A%9F">2XX 成功</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#3xx-%E9%87%8D%E5%AE%9A%E5%90%91">3XX 重定向</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#4xx-%E5%AE%A2%E6%88%B7%E7%AB%AF%E9%94%99%E8%AF%AF">4XX 客户端错误</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#5xx-%E6%9C%8D%E5%8A%A1%E5%99%A8%E9%94%99%E8%AF%AF">5XX 服务器错误</a></li>
+</ul>
+</li>
+<li>四、HTTP 首部<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#%E9%80%9A%E7%94%A8%E9%A6%96%E9%83%A8%E5%AD%97%E6%AE%B5">通用首部字段</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#%E8%AF%B7%E6%B1%82%E9%A6%96%E9%83%A8%E5%AD%97%E6%AE%B5">请求首部字段</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#%E5%93%8D%E5%BA%94%E9%A6%96%E9%83%A8%E5%AD%97%E6%AE%B5">响应首部字段</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#%E5%AE%9E%E4%BD%93%E9%A6%96%E9%83%A8%E5%AD%97%E6%AE%B5">实体首部字段</a></li>
+</ul>
+</li>
+<li>五、具体应用<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#%E8%BF%9E%E6%8E%A5%E7%AE%A1%E7%90%86">连接管理</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#cookie">Cookie</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#%E7%BC%93%E5%AD%98">缓存</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#%E5%86%85%E5%AE%B9%E5%8D%8F%E5%95%86">内容协商</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#%E5%86%85%E5%AE%B9%E7%BC%96%E7%A0%81">内容编码</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#%E8%8C%83%E5%9B%B4%E8%AF%B7%E6%B1%82">范围请求</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#%E5%88%86%E5%9D%97%E4%BC%A0%E8%BE%93%E7%BC%96%E7%A0%81">分块传输编码</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#%E5%A4%9A%E9%83%A8%E5%88%86%E5%AF%B9%E8%B1%A1%E9%9B%86%E5%90%88">多部分对象集合</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#%E8%99%9A%E6%8B%9F%E4%B8%BB%E6%9C%BA">虚拟主机</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#%E9%80%9A%E4%BF%A1%E6%95%B0%E6%8D%AE%E8%BD%AC%E5%8F%91">通信数据转发</a></li>
+</ul>
+</li>
+<li>六、HTTPs<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#%E5%8A%A0%E5%AF%86">加密</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#%E8%AE%A4%E8%AF%81">认证</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#%E5%AE%8C%E6%95%B4%E6%80%A7%E4%BF%9D%E6%8A%A4">完整性保护</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#https-%E7%9A%84%E7%BC%BA%E7%82%B9">HTTPs 的缺点</a></li>
+</ul>
+</li>
+<li>七、HTTP/2.0<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#http1x-%E7%BC%BA%E9%99%B7">HTTP/1.x 缺陷</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#%E4%BA%8C%E8%BF%9B%E5%88%B6%E5%88%86%E5%B8%A7%E5%B1%82">二进制分帧层</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%8E%A8%E9%80%81">服务端推送</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#%E9%A6%96%E9%83%A8%E5%8E%8B%E7%BC%A9">首部压缩</a></li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#%E5%85%ABhttp11-%E6%96%B0%E7%89%B9%E6%80%A7">八、HTTP/1.1 新特性</a></li>
+<li>九、GET 和 POST 比较<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#%E4%BD%9C%E7%94%A8">作用</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#%E5%8F%82%E6%95%B0">参数</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#%E5%AE%89%E5%85%A8">安全</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#%E5%B9%82%E7%AD%89%E6%80%A7">幂等性</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#%E5%8F%AF%E7%BC%93%E5%AD%98">可缓存</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/HTTP.md#xmlhttprequest">XMLHttpRequest</a></li>
+</ul>
+</li>
+</ul>
+<h2 id="浏览器输入地址回车后发生的事情"><a href="#浏览器输入地址回车后发生的事情" class="headerlink" title="浏览器输入地址回车后发生的事情"></a>浏览器输入地址回车后发生的事情</h2><ol>
+<li>DNS解析</li>
+<li>TCP连接</li>
+<li>发送HTTP请求</li>
+<li>服务器处理请求并返回HTTP报文</li>
+<li>浏览器解析渲染页面</li>
+<li>连接结束</li>
+</ol>
+<h2 id="Socket-通信"><a href="#Socket-通信" class="headerlink" title="Socket 通信"></a>Socket 通信</h2><p>TCP/IP（Transmission Control Protocol/Internet Protocol）即传输控制协议/网间协议，是一个工业标准的协议集，它是为广域网（WANs）设计的。UDP（User Data Protocol，用户数据报协议）是与TCP相对应的协议。它是属于 TCP/IP 协议族中的一种。 这里有一张图，表明了这些协议的关系。 </p>
+<p><img src="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/socket1.jpg" alt="img"><br>TCP/IP协议族包括运输层、网络层、链路层。现在你知道TCP/IP与UDP的关系了吧。</p>
+<p>**Socket在哪里呢？ **</p>
+<p>上图我们没有看到 Socket 的影子，那么它到底在哪里呢？还是用图来说话，一目了然。</p>
+<p><img src="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/socket2.jpg" alt="img"></p>
+<p><strong>Socket 是什么呢？</strong></p>
+<p>Socket 是应用层与 TCP/IP 协议族通信的中间软件抽象层，它是一组接口。在设计模式中，Socket 其实就是一个门面模式，它把复杂的 TCP/IP 协议族隐藏在 Socket 接口后面，对用户来说，一组简单的接口就是全部，让Socket去组织数据，以符合指定的协议。</p>
+<h3 id="Socket-通信原理"><a href="#Socket-通信原理" class="headerlink" title="Socket 通信原理"></a>Socket 通信原理</h3><p><img src="%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/socket3.jpg" alt="img"></p>
+<p>先从服务器端说起。服务器端先初始化Socket，然后与端口绑定(bind)，对端口进行监听(listen)，调用accept阻塞，等待客户端连接。在这时如果有个客户端初始化一个Socket，然后连接服务器(connect)，如果连接成功，这时客户端与服务器端的连接就建立了。客户端发送数据请求，服务器端接收请求并处理请求，然后把回应数据发送给客户端，客户端读取数据，最后关闭连接，一次交互结束。  </p>
+<h3 id="TCP-实现"><a href="#TCP-实现" class="headerlink" title="TCP 实现"></a>TCP 实现</h3><p>服务端</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Author</span>: cuzz</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Date</span>: 2019/2/19 22:36</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@Description</span>:</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TCPServer</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="comment">// 创建socket，并将socket绑定到65000端口</span></span><br><span class="line">        ServerSocket serverSocket = <span class="keyword">new</span> ServerSocket(<span class="number">65000</span>);</span><br><span class="line">        <span class="comment">// 死循环，使socket一直等待并处理客户端发过来的请求</span></span><br><span class="line">        <span class="keyword">while</span> (<span class="keyword">true</span>) &#123;</span><br><span class="line">            <span class="comment">// 监听6500端口，直到客户端返回连接信息后才返回</span></span><br><span class="line">            Socket socket = serverSocket.accept();</span><br><span class="line">            <span class="comment">// 获取客户端请求信息后，执行相关逻辑</span></span><br><span class="line">            <span class="keyword">new</span> LengthCalculator(socket).start();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LengthCalculator</span> <span class="keyword">extends</span> <span class="title">Thread</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> Socket socket;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">LengthCalculator</span><span class="params">(Socket socket)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">this</span>.socket = socket;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 获取socket的输出流</span></span><br><span class="line">            OutputStream os = socket.getOutputStream();</span><br><span class="line">            <span class="comment">// 获取socket的输入流</span></span><br><span class="line">            InputStream is = socket.getInputStream();</span><br><span class="line">            <span class="keyword">byte</span>[] bytes = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];</span><br><span class="line">            <span class="keyword">int</span> len = <span class="number">0</span>;</span><br><span class="line">            StringBuilder sb = <span class="keyword">new</span> StringBuilder();</span><br><span class="line">            <span class="keyword">while</span> ((len = is.read(bytes)) != -<span class="number">1</span>) &#123;</span><br><span class="line">                os.write(bytes, <span class="number">0</span> , len);</span><br><span class="line">                System.out.println(<span class="keyword">new</span> String(bytes, <span class="number">0</span> , len));</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="comment">// 不要忘记关闭输入输出流</span></span><br><span class="line">            os.close();</span><br><span class="line">            is.close();</span><br><span class="line">            socket.close();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>客服端</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TCPClinet</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">        <span class="comment">// 创建socket，并指定连接的是ip和端口号</span></span><br><span class="line">        Socket socket = <span class="keyword">new</span> Socket(<span class="string">&quot;127.0.0.1&quot;</span>, <span class="number">65000</span>);</span><br><span class="line">        <span class="comment">// 获取输出流</span></span><br><span class="line">        OutputStream os = socket.getOutputStream();</span><br><span class="line">        <span class="comment">// 获取输入流</span></span><br><span class="line">        InputStream is = socket.getInputStream();</span><br><span class="line">        os.write(<span class="string">&quot;hello world&quot;</span>.getBytes());</span><br><span class="line">        <span class="keyword">int</span> len = <span class="number">0</span>;</span><br><span class="line">        <span class="keyword">byte</span>[] bytes = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];</span><br><span class="line">        len = is.read(bytes);</span><br><span class="line">        String content = <span class="keyword">new</span> String(bytes, <span class="number">0</span>, len);</span><br><span class="line">        System.out.println(content);</span><br><span class="line">        is.close();</span><br><span class="line">        os.close();</span><br><span class="line">        socket.close();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="UDP-实现"><a href="#UDP-实现" class="headerlink" title="UDP 实现"></a>UDP 实现</h3><p>服务端</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UDPServer</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="comment">// 服务端接受客户端发送的数据报</span></span><br><span class="line">        DatagramSocket socket = <span class="keyword">new</span> DatagramSocket(<span class="number">65001</span>); <span class="comment">//监听的端口号</span></span><br><span class="line">        <span class="keyword">byte</span>[] buff = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">100</span>]; <span class="comment">//存储从客户端接受到的内容</span></span><br><span class="line">        DatagramPacket packet = <span class="keyword">new</span> DatagramPacket(buff, buff.length);</span><br><span class="line">        <span class="comment">//接受客户端发送过来的内容，并将内容封装进DatagramPacket对象中</span></span><br><span class="line">        socket.receive(packet);</span><br><span class="line"></span><br><span class="line">        <span class="keyword">byte</span>[] data = packet.getData(); <span class="comment">//从DatagramPacket对象中获取到真正存储的数据</span></span><br><span class="line">        <span class="comment">//将数据从二进制转换成字符串形式</span></span><br><span class="line">        String content = <span class="keyword">new</span> String(data, <span class="number">0</span>, packet.getLength());</span><br><span class="line">        System.out.println(content);</span><br><span class="line">        <span class="comment">//将要发送给客户端的数据转换成二进制</span></span><br><span class="line">        <span class="keyword">byte</span>[] sendedContent = String.valueOf(content.length()).getBytes();</span><br><span class="line">        <span class="comment">// 服务端给客户端发送数据报</span></span><br><span class="line">        <span class="comment">//从DatagramPacket对象中获取到数据的来源地址与端口号</span></span><br><span class="line">        DatagramPacket packetToClient = <span class="keyword">new</span> DatagramPacket(sendedContent,</span><br><span class="line">                sendedContent.length, packet.getAddress(), packet.getPort());</span><br><span class="line">        socket.send(packetToClient); <span class="comment">//发送数据给客户端</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>客服端</p>
+<figure class="highlight java"><table><tr><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">UDPClient</span> </span>&#123;</span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="comment">// 客户端发数据报给服务端</span></span><br><span class="line">        DatagramSocket socket = <span class="keyword">new</span> DatagramSocket();</span><br><span class="line">        <span class="comment">// 要发送给服务端的数据</span></span><br><span class="line">        <span class="keyword">byte</span>[] buf = <span class="string">&quot;Hello World&quot;</span>.getBytes();</span><br><span class="line">        <span class="comment">// 将IP地址封装成InetAddress对象</span></span><br><span class="line">        InetAddress address = InetAddress.getByName(<span class="string">&quot;127.0.0.1&quot;</span>);</span><br><span class="line">        <span class="comment">// 将要发送给服务端的数据封装成DatagramPacket对象 需要填写上ip地址与端口号</span></span><br><span class="line">        DatagramPacket packet = <span class="keyword">new</span> DatagramPacket(buf, buf.length, address,</span><br><span class="line">                <span class="number">65001</span>);</span><br><span class="line">        <span class="comment">// 发送数据给服务端</span></span><br><span class="line">        socket.send(packet);</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 客户端接受服务端发送过来的数据报</span></span><br><span class="line">        <span class="keyword">byte</span>[] data = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">100</span>];</span><br><span class="line">        <span class="comment">// 创建DatagramPacket对象用来存储服务端发送过来的数据</span></span><br><span class="line">        DatagramPacket receivedPacket = <span class="keyword">new</span> DatagramPacket(data, data.length);</span><br><span class="line">        <span class="comment">// 将接受到的数据存储到DatagramPacket对象中</span></span><br><span class="line">        socket.receive(receivedPacket);</span><br><span class="line">        <span class="comment">// 将服务器端发送过来的数据取出来并打印到控制台</span></span><br><span class="line">        String content = <span class="keyword">new</span> String(receivedPacket.getData(), <span class="number">0</span>,</span><br><span class="line">                receivedPacket.getLength());</span><br><span class="line">        System.out.println(content);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/CyC2018/CS-Notes/blob/master/docs/notes/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C.md">计算机网络</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/justloveyou_/article/details/69612153">计算机网络体系结构综述（下）</a></li>
+<li><a target="_blank" rel="noopener" href="https://coolshell.cn/articles/11564.html">TCP 的那些事儿</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/32255109/answer/68558623">TCP协议的滑动窗口具体是怎样控制流量的？</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.cnblogs.com/wangcq/p/3520400.html">Socket通信原理</a></li>
+</ul>
+</div></article></div></div><div class="column column-left is-4-tablet is-4-desktop is-3-widescreen  order-1"><div class="card widget"><div class="card-content"><nav class="level"><div class="level-item has-text-centered flex-shrink-1"><div><figure class="image is-128x128 mx-auto mb-2"><img class="avatar" src="/img/avatar.png" alt="cuzz"></figure><p class="title is-size-4 is-block line-height-inherit">cuzz</p><p class="is-size-6 is-block">爱技术，爱生活，爱分享。</p><p class="is-size-6 is-flex justify-content-center"><i class="fas fa-map-marker-alt mr-1"></i><span>中国武汉</span></p></div></div></nav><nav class="level is-mobile"><div class="level-item has-text-centered is-marginless"><div><p class="heading">Posts</p><a href="/archives"><p class="title">40</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">Categories</p><a href="/categories"><p class="title">15</p></a></div></div><div class="level-item has-text-centered is-marginless"><div><p class="heading">Tags</p><a href="/tags"><p class="title">40</p></a></div></div></nav><div class="level"><a class="level-item button is-primary is-rounded" href="https://github.com/ppoffice" target="_blank" rel="noopener">Follow</a></div><div class="level is-mobile"><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Github" href="https://github.com/cuzz1"><i class="fab fa-github"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="Facebook" href="https://facebook.com"><i class="fab fa-facebook"></i></a><a class="level-item button is-transparent is-marginless" target="_blank" rel="noopener" title="RSS" href="/"><i class="fas fa-rss"></i></a></div></div></div><!--!--><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">Links</h3><ul class="menu-list"><li><a class="level is-mobile is-mobile" href="https://hexo.io" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Hexo</span></span><span class="level-right"><span class="level-item tag">hexo.io</span></span></a></li><li><a class="level is-mobile is-mobile" href="https://bulma.io" target="_blank" rel="noopener"><span class="level-left"><span class="level-item">Bulma</span></span><span class="level-right"><span class="level-item tag">bulma.io</span></span></a></li></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">Categories</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/categories/Go/"><span class="level-start"><span class="level-item">Go</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/HTTP/"><span class="level-start"><span class="level-item">HTTP</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/Java-%E5%9F%BA%E7%A1%80/"><span class="level-start"><span class="level-item">Java 基础</span></span><span class="level-end"><span class="level-item tag">5</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/Netty/"><span class="level-start"><span class="level-item">Netty</span></span><span class="level-end"><span class="level-item tag">5</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/Spring/"><span class="level-start"><span class="level-item">Spring</span></span><span class="level-end"><span class="level-item tag">4</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/linux/"><span class="level-start"><span class="level-item">linux</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/monthly/"><span class="level-start"><span class="level-item">monthly</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/python%E4%BB%8E%E5%85%A5%E9%97%A8%E5%88%B0%E7%B2%BE%E9%80%9A/"><span class="level-start"><span class="level-item">python从入门到精通</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/"><span class="level-start"><span class="level-item">分布式</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/%E5%89%8D%E7%AB%AF/"><span class="level-start"><span class="level-item">前端</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/%E6%97%A5%E8%AE%B0/"><span class="level-start"><span class="level-item">日记</span></span><span class="level-end"><span class="level-item tag">3</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Java%E8%99%9A%E6%8B%9F%E6%9C%BA/"><span class="level-start"><span class="level-item">深入理解Java虚拟机</span></span><span class="level-end"><span class="level-item tag">4</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/%E7%9F%A5%E8%AF%86%E5%9B%BE%E8%B0%B1/"><span class="level-start"><span class="level-item">知识图谱</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/%E7%AE%97%E6%B3%95/"><span class="level-start"><span class="level-item">算法</span></span><span class="level-end"><span class="level-item tag">3</span></span></a></li><li><a class="level is-mobile is-marginless" href="/categories/%E9%9D%A2%E8%AF%95/"><span class="level-start"><span class="level-item">面试</span></span><span class="level-end"><span class="level-item tag">6</span></span></a></li></ul></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">Tags</h3><div class="field is-grouped is-grouped-multiline"><div class="control"><a class="tags has-addons" href="/tags/Full-Text-Search/"><span class="tag">Full-Text Search</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Future/"><span class="tag">Future</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Go/"><span class="tag">Go</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/JVM/"><span class="tag">JVM</span><span class="tag is-grey-lightest">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Java8/"><span class="tag">Java8</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/LRUCache/"><span class="tag">LRUCache</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/MySQL/"><span class="tag">MySQL</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/NIO/"><span class="tag">NIO</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/ProducerConsumer/"><span class="tag">ProducerConsumer</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Python/"><span class="tag">Python</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Reactor/"><span class="tag">Reactor</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Redis/"><span class="tag">Redis</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Seata/"><span class="tag">Seata</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/Spring/"><span class="tag">Spring</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/TCP-IP/"><span class="tag">TCP/IP</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/jQuery/"><span class="tag">jQuery</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/join/"><span class="tag">join</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/lambda/"><span class="tag">lambda</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/lintcode/"><span class="tag">lintcode</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/shell/"><span class="tag">shell</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/synchronized/"><span class="tag">synchronized</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/volatile/"><span class="tag">volatile</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%88%86%E5%B8%83%E5%BC%8F%E9%94%81/"><span class="tag">分布式锁</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%8D%9A%E5%AE%A2/"><span class="tag">博客</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%8F%8D%E5%B0%84/"><span class="tag">反射</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%A0%86%E6%8E%92%E5%BA%8F/"><span class="tag">堆排序</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%A4%9A%E7%BA%BF%E7%A8%8B/"><span class="tag">多线程</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/"><span class="tag">学习笔记</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%AE%9E%E4%B9%A0/"><span class="tag">实习</span><span class="tag is-grey-lightest">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/"><span class="tag">并发编程</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/"><span class="tag">数据库</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%B3%A8%E8%A7%A3/"><span class="tag">注解</span><span class="tag is-grey-lightest">4</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E6%BA%90%E7%A0%81/"><span class="tag">源码</span><span class="tag is-grey-lightest">6</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E7%BA%BF%E7%A8%8B%E9%80%9A%E4%BF%A1/"><span class="tag">线程通信</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E7%BD%91%E7%BB%9C/"><span class="tag">网络</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E8%8B%B1%E6%96%87/"><span class="tag">英文</span><span class="tag is-grey-lightest">2</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E8%BD%AC%E8%BD%BD/"><span class="tag">转载</span><span class="tag is-grey-lightest">5</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E9%94%81/"><span class="tag">锁</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E9%9B%B6%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8/"><span class="tag">零基础入门</span><span class="tag is-grey-lightest">1</span></a></div><div class="control"><a class="tags has-addons" href="/tags/%E9%9D%A2%E8%AF%95/"><span class="tag">面试</span><span class="tag is-grey-lightest">1</span></a></div></div></div></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">Subscribe to Updates</h3><form action="https://feedburner.google.com/fb/a/mailverify" method="post" target="popupwindow" onsubmit="window.open(&#039;https://feedburner.google.com/fb/a/mailverify?uri=&#039;,&#039;popupwindow&#039;,&#039;scrollbars=yes,width=550,height=520&#039;);return true"><input type="hidden" value="" name="uri"><input type="hidden" name="loc" value="en_US"><div class="field has-addons"><div class="control has-icons-left is-expanded"><input class="input" name="email" type="email" placeholder="Email"><span class="icon is-small is-left"><i class="fas fa-envelope"></i></span></div><div class="control"><input class="button is-primary" type="submit" value="Subscribe"></div></div></form></div></div></div><div class="card widget"><div class="card-content"><div class="notification is-danger">You need to set <code>client_id</code> and <code>slot_id</code> to show this AD unit. Please set it in <code>_config.yml</code>.</div></div></div><div class="column-right-shadow is-hidden-widescreen"></div></div><div class="column column-right is-4-tablet is-4-desktop is-3-widescreen is-hidden-touch is-hidden-desktop-only order-3"><div class="card widget"><div class="card-content"><h3 class="menu-label">Recent</h3><article class="media"><div class="media-content size-small"><p><time dateTime="2020-08-17T13:54:59.000Z">2020-08-17</time></p><p class="title is-6"><a class="link-muted" href="/2020/08/17/Let&#039;s%20build%20a%20Full-Text%20Search%20engine/">Let&#039;s build a Full-Text Search engine</a></p><p class="is-uppercase"><a class="link-muted" href="/categories/Go/">Go</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2019-10-11T15:59:59.000Z">2019-10-11</time></p><p class="title is-6"><a class="link-muted" href="/2019/10/11/Go%E8%AF%AD%E8%A8%80%E5%85%A5%E9%97%A8%E7%AC%94%E8%AE%B0/">Go语言入门笔记</a></p><p class="is-uppercase"><a class="link-muted" href="/categories/Go/">Go</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2019-08-11T15:59:59.000Z">2019-08-11</time></p><p class="title is-6"><a class="link-muted" href="/2019/08/11/Java8%E7%9A%84%E6%B7%B1%E5%85%A5%E4%B8%8E%E5%AE%9E%E6%88%98/">Java8的深入与实战</a></p><p class="is-uppercase"><a class="link-muted" href="/categories/Java-%E5%9F%BA%E7%A1%80/">Java 基础</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2019-07-23T15:59:59.000Z">2019-07-23</time></p><p class="title is-6"><a class="link-muted" href="/2019/07/23/%E9%9D%A2%E8%AF%95%E9%AB%98%E9%A2%91%E9%A2%98/">面试高频题</a></p><p class="is-uppercase"><a class="link-muted" href="/categories/%E9%9D%A2%E8%AF%95/">面试</a></p></div></article><article class="media"><div class="media-content size-small"><p><time dateTime="2019-07-10T15:59:59.000Z">2019-07-10</time></p><p class="title is-6"><a class="link-muted" href="/2019/07/10/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E6%A1%86%E6%9E%B6Seata/">分布式事务框架Seata</a></p><p class="is-uppercase"><a class="link-muted" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/">分布式</a></p></div></article></div></div><div class="card widget"><div class="card-content"><div class="menu"><h3 class="menu-label">Archives</h3><ul class="menu-list"><li><a class="level is-mobile is-marginless" href="/archives/2020/08/"><span class="level-start"><span class="level-item">August 2020</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2019/10/"><span class="level-start"><span class="level-item">October 2019</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2019/08/"><span class="level-start"><span class="level-item">August 2019</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2019/07/"><span class="level-start"><span class="level-item">July 2019</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2019/06/"><span class="level-start"><span class="level-item">June 2019</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2019/05/"><span class="level-start"><span class="level-item">May 2019</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2019/04/"><span class="level-start"><span class="level-item">April 2019</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2019/03/"><span class="level-start"><span class="level-item">March 2019</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2019/02/"><span class="level-start"><span class="level-item">February 2019</span></span><span class="level-end"><span class="level-item tag">9</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2019/01/"><span class="level-start"><span class="level-item">January 2019</span></span><span class="level-end"><span class="level-item tag">8</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2018/12/"><span class="level-start"><span class="level-item">December 2018</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2018/11/"><span class="level-start"><span class="level-item">November 2018</span></span><span class="level-end"><span class="level-item tag">2</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2018/10/"><span class="level-start"><span class="level-item">October 2018</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2018/09/"><span class="level-start"><span class="level-item">September 2018</span></span><span class="level-end"><span class="level-item tag">4</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2018/07/"><span class="level-start"><span class="level-item">July 2018</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2018/06/"><span class="level-start"><span class="level-item">June 2018</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li><li><a class="level is-mobile is-marginless" href="/archives/2018/01/"><span class="level-start"><span class="level-item">January 2018</span></span><span class="level-end"><span class="level-item tag">1</span></span></a></li></ul></div></div></div></div></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.svg" alt="Hexo" height="28"></a><p class="size-small"><span>&copy; 2020 John Doe</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script>moment.locale("en");</script><script>var IcarusThemeSettings = {
+            site: {
+                url: 'http://blog.cuzz.site',
+                external_link: {"enable":true,"exclude":[]}
+            },
+            article: {
+                highlight: {
+                    clipboard: false,
+                    fold: 'unfolded'
+                }
+            }
+        };</script><script src="/js/animation.js"></script><a id="back-to-top" title="Back to Top" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="Type something..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"Type something...","untitled":"(Untitled)","posts":"Posts","pages":"Pages","categories":"Categories","tags":"Tags"});
+        });</script></body></html>
