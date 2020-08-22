@@ -117,7 +117,7 @@
 
 <p>文档：</p>
 <blockquote>
-<p>io.netty.channel<br>public interface ChannelFuture<br>extends Future<Void></p>
+<p>io.netty.channel<br>public interface ChannelFuture<br>extends Future<Void></Void></p>
 <p>The result of an asynchronous Channel I/O operation.</p>
 <p>All I/O operations in Netty are asynchronous. It means any I/O calls will return immediately with no guarantee that the requested I/O operation has been completed at the end of the call. Instead, you will be returned with a ChannelFuture instance which gives you the information about the result or status of the I/O operation.</p>
 <p>A ChannelFuture is either uncompleted or completed. When an I/O operation begins, a new future object is created. The new future is uncompleted initially - it is neither succeeded, failed, nor cancelled because the I/O operation is not finished yet. If the I/O operation is finished either successfully, with failure, or by cancellation, the future is marked as completed with more specific information, such as the cause of the failure. Please note that even failure and cancellation belong to the completed state.</p>

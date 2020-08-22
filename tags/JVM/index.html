@@ -11,7 +11,7 @@
 </li>
 </ul>
 <p>为了解决引用计数法的循环引用问题，Java 使用了可达性算法。</p>
-<p><img src="JVM%E9%9D%A2%E8%AF%95/1350633405_4538.jpg" alt="img"></p>
+<p><img src="/.site//1350633405_4538.jpg" alt="img"></p>
 <p>跟踪收集器采用的为集中式的管理方式，全局记录对象之间的引用状态，执行时从一些列GC  Roots的对象做为起点，从这些节点向下开始进行搜索所有的引用链，当一个对象到GC  Roots 没有任何引用链时，则证明此对象是不可用的。</p>
 <p>图中，对象Object6、Object7、Object8虽然互相引用，但他们的GC Roots是不可到达的，所以它们将会被判定为是可回收的对象。</p>
 <p>哪些对象可以作为 GC Roots 的对象：</p>
@@ -121,9 +121,9 @@
 </li>
 </ul>
 </li>
-<li><p>GC<br><img src="JVM%E9%9D%A2%E8%AF%95/a9a0eb99b30cf3fd8973f464eb4678bf50f760cc.jpg" alt="img"></p>
+<li><p>GC<br><img src="/.site//a9a0eb99b30cf3fd8973f464eb4678bf50f760cc.jpg" alt="img"></p>
 </li>
-<li><p>FullGC<br><img src="JVM%E9%9D%A2%E8%AF%95/e04f3f3b68cff61027e5ba8eba9613bb7c69a08a.jpg" alt="img"></p>
+<li><p>FullGC<br><img src="/.site//e04f3f3b68cff61027e5ba8eba9613bb7c69a08a.jpg" alt="img"></p>
 </li>
 </ul>
 </li>
@@ -274,7 +274,7 @@
 <li>Java 8 以后基本不使用 Serial Old</li>
 </ul>
 </li>
-<li>垃圾收集器<br><img src="JVM%E9%9D%A2%E8%AF%95/timg.jpg" alt="timg"></li>
+<li>垃圾收集器<br><img src="/.site//timg.jpg" alt="timg"></li>
 <li>参数说明<ul>
 <li>DefNew : Default New Generation</li>
 <li>Tenured : Old</li>
@@ -321,7 +321,7 @@
 </ul>
 </li>
 <li>垃圾收集器配置代码总结<ul>
-<li>配置新生代收集器，老年代收集器会自动配置上。<br><img src="JVM%E9%9D%A2%E8%AF%95/1558237229584.png" alt="1558237229584"></li>
+<li>配置新生代收集器，老年代收集器会自动配置上。<br><img src="/.site//1558237229584.png" alt="1558237229584"></li>
 </ul>
 </li>
 <li>如何选择垃圾收集器<ul>
@@ -362,14 +362,14 @@
 <ul>
 <li><p>Region 区域化垃圾收集器：最大好处是化整为零，避免全内存扫描，只需要按照区域来进行扫描即可。</p>
 </li>
-<li><h3 id="Region"><a href="#Region" class="headerlink" title="Region"></a>Region</h3><p><img src="JVM%E9%9D%A2%E8%AF%95/5611237-f643066bd97c7703.png" alt="5611237-f643066bd97c7703"><br>G1的内存结构和传统的内存空间划分有比较的不同。G1将内存划分成了多个大小相等的Region（默认是512K），Region逻辑上连续，物理内存地址不连续。同时每个Region被标记成E、S、O、H，分别表示Eden、Survivor、Old、Humongous。其中E、S属于年轻代，O与H属于老年代。<br>H表示Humongous。从字面上就可以理解表示大的对象（下面简称H对象）。<strong>当分配的对象大于等于Region大小的一半</strong>的时候就会被认为是巨型对象。H对象默认分配在老年代，可以防止GC的时候大对象的内存拷贝。通过如果发现堆内存容不下H对象的时候，会触发一次GC操作。 </p>
+<li><h3 id="Region"><a href="#Region" class="headerlink" title="Region"></a>Region</h3><p><img src="/.site//5611237-f643066bd97c7703.png" alt="5611237-f643066bd97c7703"><br>G1的内存结构和传统的内存空间划分有比较的不同。G1将内存划分成了多个大小相等的Region（默认是512K），Region逻辑上连续，物理内存地址不连续。同时每个Region被标记成E、S、O、H，分别表示Eden、Survivor、Old、Humongous。其中E、S属于年轻代，O与H属于老年代。<br>H表示Humongous。从字面上就可以理解表示大的对象（下面简称H对象）。<strong>当分配的对象大于等于Region大小的一半</strong>的时候就会被认为是巨型对象。H对象默认分配在老年代，可以防止GC的时候大对象的内存拷贝。通过如果发现堆内存容不下H对象的时候，会触发一次GC操作。 </p>
 </li>
 <li><p>回收步骤</p>
 <ul>
 <li>参看：<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/548c67aa1bc0">G1从入门到放弃</a></li>
 </ul>
 </li>
-<li><p>四步过程<br><img src="JVM%E9%9D%A2%E8%AF%95/u=1236259389,1737476709&fm=26&gp=0.jpg" alt="u=1236259389,1737476709&amp;fm=26&amp;gp=0"></p>
+<li><p>四步过程<br><img src="/.site//u=1236259389,1737476709&fm=26&gp=0.jpg" alt="u=1236259389,1737476709&amp;fm=26&amp;gp=0"></p>
 </li>
 </ul>
 </li>
