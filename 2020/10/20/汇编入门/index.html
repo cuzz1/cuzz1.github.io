@@ -1,0 +1,372 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>汇编入门 - cuzz&#039;s blog</title><meta description="博客记录"><meta property="og:type" content="blog"><meta property="og:title" content="汇编入门"><meta property="og:url" content="http://blog.cuzz.site/2020/10/20/%E6%B1%87%E7%BC%96%E5%85%A5%E9%97%A8/"><meta property="og:site_name" content="cuzz&#039;s blog"><meta property="og:description" content="博客记录"><meta property="og:locale" content="en_US"><meta property="og:image" content="https://picsum.photos/525/308"><meta property="article:published_time" content="2020-10-20T15:59:59.000Z"><meta property="article:modified_time" content="2020-10-30T17:21:07.037Z"><meta property="article:author" content="cuzz"><meta property="article:tag" content="汇编"><meta property="article:tag" content="gdb"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://picsum.photos/525/308"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://blog.cuzz.site/2020/10/20/%E6%B1%87%E7%BC%96%E5%85%A5%E9%97%A8/"},"headline":"cuzz's blog","image":[],"datePublished":"2020-10-20T15:59:59.000Z","dateModified":"2020-10-30T17:21:07.037Z","author":{"@type":"Person","name":"John Doe"},"description":"从 C 语言到机器码先从一个非常简单的程序来看编译过程中发生了那些步骤。 #include &lt;stdio.h&gt;int main() &amp;#123;    printf(&quot;hello world\\n&quot;);    return 0;&amp;#125;  我们在 Unix 系统上终端上使用 GCC 进行编译： &gt; gcc -o hello hello.c"}</script><link rel="canonical" href="http://blog.cuzz.site/2020/10/20/%E6%B1%87%E7%BC%96%E5%85%A5%E9%97%A8/"><link rel="icon" href="/img/favicon.png"><link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/5.13.0/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css"><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><meta name="generator" content="Hexo 5.0.2"></head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.png" alt="cuzz&#039;s blog" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">Home</a><a class="navbar-item" href="/archives">Archives</a><a class="navbar-item" href="/categories">Categories</a><a class="navbar-item" href="/tags">Tags</a><a class="navbar-item" href="/about">About</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/cuzz1"><i class="fab fa-github"></i></a><a class="navbar-item is-hidden-tablet catalogue" title="Catalogue" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="Search" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><div class="card-image"><span class="image is-7by3"><img class="fill" src="https://picsum.photos/525/308" alt="汇编入门"></span></div><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><span class="level-item">Posted&nbsp;<time dateTime="2020-10-20T15:59:59.000Z" title="2020-10-20T15:59:59.000Z">2020-10-20</time></span><span class="level-item">Updated&nbsp;<time dateTime="2020-10-30T17:21:07.037Z" title="2020-10-30T17:21:07.037Z">2020-10-31</time></span><span class="level-item"><a class="link-muted" href="/categories/CSAPP/">CSAPP</a></span></div></div><h1 class="title is-3 is-size-4-mobile">汇编入门</h1><div class="content"><h2 id="从-C-语言到机器码"><a href="#从-C-语言到机器码" class="headerlink" title="从 C 语言到机器码"></a>从 C 语言到机器码</h2><p>先从一个非常简单的程序来看编译过程中发生了那些步骤。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;hello world\n&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>我们在 Unix 系统上终端上使用 GCC 进行编译：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&gt; gcc -o hello hello.c</span><br></pre></td></tr></table></figure>
+
+<a id="more"></a>
+
+<p>这里 GCC 编译器把 <code>hello.c</code> 源文件翻译成可执行文件 <code>hello</code>，这个过程一共可以分为 4 步骤：</p>
+<ul>
+<li>预处理器（Pre-processor）：把头文件插入到程序文本中，得到 <code>hello.i</code> 文件</li>
+<li>编译器（Compiler）：编译成汇编语言，把 <code>hello.i</code> 转换为 <code>hello.s</code> </li>
+<li>汇编器（Assember）：将汇编语言翻译成机器语言，得到 <code>hello.o</code> 文件</li>
+<li>连接器（Linker）：把 <code>printf</code> 函数从 <code>print.o</code> 以某种方式合到 <code>hello.o</code>程序中，得到 <code>hello</code> 可执行文件</li>
+</ul>
+<center><img src="http://img.cuzz.site/20201022113601.png" width="90%"></center>
+
+<p>当我们用高级语言编程的时候（比如 C 语言，Java 语言），编译器为我们屏蔽了很多机器级别的实现。当使用汇编写程序的时候，程序员需要指定程序来执行计算的低级指令。</p>
+<p>高级语言提供的更高抽象级别进行工作会更加高效和可靠。编译器提供的类型检查有助于检测许多程序错误，并确保我们以一致的方式引用和操作数据。</p>
+<p>使用现代的优化编译器，生成的代码通常至少与熟练的汇编语言程序员手动编写的代码效率相同。最重要的是，可以在许多不同的机器上编译和执行以高级语言编写的程序，而汇编代码是高度机器特定的。</p>
+<p>既然编译器这么 智能，那我们还要学习汇编呢？</p>
+<ul>
+<li>能够阅读和理解汇编代码是一项很重要的技能</li>
+<li>理解编译过程的优化能，分析代码中的隐含低效的代码，提高代码效率</li>
+<li>挖掘代码中隐藏漏洞，增加安全性</li>
+</ul>
+<h2 id="汇编入门"><a href="#汇编入门" class="headerlink" title="汇编入门"></a>汇编入门</h2><p>我们先写一个简单的 C 语言代码文件 <code>mstore.c</code>  如下：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">long</span> <span class="title">mult2</span><span class="params">(<span class="keyword">long</span>, <span class="keyword">long</span>)</span></span>;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">multstore</span><span class="params">(<span class="keyword">long</span> x, <span class="keyword">long</span> y, <span class="keyword">long</span> *dest)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">long</span> t = mult2(x, y);</span><br><span class="line">    <span class="keyword">return</span> *dest = t;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>在命令行中使用 <code>-S</code> 选项可以看到 C 语言编译产生的汇编代码：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&gt; gcc -Og -S mestore.c</span><br></pre></td></tr></table></figure>
+
+<p>打开 <code>mestore.c</code> 文件，除去一些不重要的信息，得到如下汇编代码：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">multstore:                 </span><br><span class="line">  pushq   %rbx  </span><br><span class="line">  movq    %rdx, %rbx</span><br><span class="line">  call    mult2</span><br><span class="line">  movq    %rax, (%rbx)</span><br><span class="line">  popq    %rbx</span><br><span class="line">  ret</span><br></pre></td></tr></table></figure>
+
+<p>每一行都对对应一条机器指令，比如 <code>pushq</code> 指令是把寄存器中 <code>%rbx</code> 压入程序栈中。</p>
+<p>如果我们使用 <code>-c</code> 命令行选项，GCC 会编译并汇编代码生成 <code>mestore.o</code> 文件</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&gt; gcc -Og -c mstore.c</span><br></pre></td></tr></table></figure>
+
+<p>在 <code>mestore.o</code> 文件中有一段字节序列为：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">53 48 89 d3 e8 00 00 00 00 48 89 03 5b c3</span><br></pre></td></tr></table></figure>
+
+<p>我们通过反汇编 <code>mestore.o</code> 文件</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">&gt; objdump -d mestore.o</span><br></pre></td></tr></table></figure>
+
+<p>结果如下，发现反汇编和前面手动编译的代码基本相似。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">0000000000000000 &lt;multstore&gt;:</span><br><span class="line">   0:    f3 0f 1e fa              endbr64</span><br><span class="line">   4:    53                       push   %rbx</span><br><span class="line">   5:    48 89 d3                 mov    %rdx,%rbx</span><br><span class="line">   8:    e8 00 00 00 00           callq  d &lt;multstore+0xd&gt;</span><br><span class="line">   d:    48 89 03                 mov    %rax,(%rbx)</span><br><span class="line">  10:    5b                       pop    %rbx</span><br><span class="line">  11:    c3                       retq</span><br></pre></td></tr></table></figure>
+
+<h3 id="数据格式"><a href="#数据格式" class="headerlink" title="数据格式"></a>数据格式</h3><p>字（word）表示 16 位数据类型，所以是双字（double words）表示 32 位数据类型，四字（quad words）表示 64 位。</p>
+<table>
+<thead>
+<tr>
+<th align="center">C 声明</th>
+<th align="center">Intel 数据类型</th>
+<th align="center">汇编代码后缀</th>
+<th align="center">大小（字节）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">char</td>
+<td align="center">字节</td>
+<td align="center">b</td>
+<td align="center">1</td>
+</tr>
+<tr>
+<td align="center">short</td>
+<td align="center">字</td>
+<td align="center">w</td>
+<td align="center">2</td>
+</tr>
+<tr>
+<td align="center">int</td>
+<td align="center">双字</td>
+<td align="center">l</td>
+<td align="center">4</td>
+</tr>
+<tr>
+<td align="center">long</td>
+<td align="center">四字</td>
+<td align="center">q</td>
+<td align="center">8</td>
+</tr>
+<tr>
+<td align="center">char *</td>
+<td align="center">四字</td>
+<td align="center">q</td>
+<td align="center">8</td>
+</tr>
+<tr>
+<td align="center">float</td>
+<td align="center">单精度</td>
+<td align="center">s</td>
+<td align="center">4</td>
+</tr>
+<tr>
+<td align="center">double</td>
+<td align="center">双精度</td>
+<td align="center">l</td>
+<td align="center">8</td>
+</tr>
+</tbody></table>
+<p>大多数 GCC 生成的汇编代码指令都有一个字符的后缀，表明操作数的大小。例如数据传送指令有四个变种：<code>movb</code> （传送字节）、<code>moww</code>（传送字）、<code>movl</code> (传送双字) 和 <code>movq</code> (传送四字)。</p>
+<p>注意两点：</p>
+<ul>
+<li>后缀用 <code>l</code> 表示双字，是因为 32 位数被看成长字（long word）</li>
+<li>4 字节整数和 8 字节双精度浮点数都用 <code>l</code> 后缀，并不会产生歧义，因为浮点数使用的不同指令和寄存器</li>
+</ul>
+<h3 id="访问信息"><a href="#访问信息" class="headerlink" title="访问信息"></a>访问信息</h3><center><img src="http://img.cuzz.site/20201023154750.png" width="80%"></center>
+
+<p>x86-64 的 CPU 包含 16 个储存 64 位通用寄存器，其中<code>%rax</code> 到 <code>%rsp</code> 比较常用，而 <code>%r8</code> 到 <code>%r15</code> 是从 32 位转了 64 位新加的。为了兼容 32 位（<code>%eax</code> 到 <code>%esp</code>）和 16 位（<code>%ax</code> 到 <code>%sp</code>）机保持兼容，对应低位表示。如：32 位只能访问低 4 位字节。</p>
+<ul>
+<li><code>%rax</code> 一般用作累加器（Accumulator）</li>
+<li><code>%rbx</code> 一般用作基址寄存器（ Base ）</li>
+<li><code>%rxc</code> 一般用来计数（ Count ）</li>
+<li><code>%rdx</code> 一般用来存放数据（ Data ）</li>
+<li><code>%rsi</code>一般用作源变址（ Source Index ）</li>
+<li><code>%rdi</code> 一般用作目标变址（ DestinatinIndex ）</li>
+<li><code>%rbp</code> 一般用作基址指针（ Base Pointer ）</li>
+<li><code>%rsp</code> 一般用作堆栈指针（ Stack Pointer ）</li>
+</ul>
+<p>除此之外还有：</p>
+<ul>
+<li><code>%rip</code> 是指令指针，也称为 PC</li>
+<li>CF、ZF、SF 和 OF 条件码</li>
+</ul>
+<p>下面我们通过 <code>movq</code> 这个指令来了解操作数的三种基本类型：立即数(Imm)、寄存器值(Reg)和内存值(Mem)。</p>
+<table>
+<thead>
+<tr>
+<th align="center">Source</th>
+<th align="center">Dest</th>
+<th align="center">movq Src, Dest</th>
+<th align="center">C Analog</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">Imm</td>
+<td align="center">Reg</td>
+<td align="center"><code>movq $0x4, %rax</code></td>
+<td align="center"><code>temp = 0x4</code></td>
+</tr>
+<tr>
+<td align="center">Imm</td>
+<td align="center">Mem</td>
+<td align="center"><code>movq $-147, (%rax)</code></td>
+<td align="center"><code>*p = -147</code></td>
+</tr>
+<tr>
+<td align="center">Reg</td>
+<td align="center">Reg</td>
+<td align="center"><code>movq %rax, %rdx</code></td>
+<td align="center"><code>temp2 = temp1</code></td>
+</tr>
+<tr>
+<td align="center">Reg</td>
+<td align="center">Mem</td>
+<td align="center"><code>movq %rax, (%rdx)</code></td>
+<td align="center"><code>*p = temp</code></td>
+</tr>
+<tr>
+<td align="center">Mem</td>
+<td align="center">Reg</td>
+<td align="center"><code>movq (%rax), %rdx</code></td>
+<td align="center"><code>temp = *p</code></td>
+</tr>
+</tbody></table>
+<p>注意：是没有 <code>movq Mem, Mem</code> 的，不能用一条指令完成内存中的数据交换。</p>
+<p>下面看看几种寻址的方式：</p>
+<table>
+<thead>
+<tr>
+<th align="center">表示</th>
+<th align="center">计算方式</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center"><code>(R)</code></td>
+<td align="center"><code>Mem[Reg[R]]</code></td>
+</tr>
+<tr>
+<td align="center"><code>D(R)</code></td>
+<td align="center"><code>Mem[Reg[R] + D]</code></td>
+</tr>
+<tr>
+<td align="center"><code>D(Rb, Ri, S)</code></td>
+<td align="center"><code>Mem[Reg[Rb]+S*Reg[Ri]+D]</code></td>
+</tr>
+</tbody></table>
+<p>其中：</p>
+<ul>
+<li><code>D</code> - 常数偏移量</li>
+<li><code>Rb</code> - 基寄存器</li>
+<li><code>Ri</code> - 索引寄存器，不能是 %rsp</li>
+<li><code>S</code> - 系数</li>
+</ul>
+<p>我们通过具体的例子来巩固一下，这里假设 <code>%rdx</code> 中的存着 <code>0xf000</code>，<code>%rcx</code> 中存着 <code>0x0100</code>，那么</p>
+<ul>
+<li><code>0x8(%rdx)</code> = <code>0xf000</code> + <code>0x8</code> = <code>0xf008</code></li>
+<li><code>(%rdx, %rcx)</code> = <code>0xf000</code> + <code>0x100</code> = <code>0xf100</code></li>
+<li><code>(%rdx, %rcx, 4)</code> = <code>0xf000</code> + <code>4*0x100</code> = <code>0xf400</code></li>
+<li><code>0x80(, %rdx, 2)</code> = <code>2*0xf000</code> + <code>0x80</code> = <code>0x1e080</code></li>
+</ul>
+<h3 id="操作指令"><a href="#操作指令" class="headerlink" title="操作指令"></a>操作指令</h3><p>加载有效指令 <code>leaq Src, Dst</code>（load effective address），其中 <code>Src</code> 是地址的表达式，然后把计算的值存入 <code>Dst</code> 指定的寄存器。指的是从内存读取数据到寄存器中，但实际上没有引用内存。类似于 C 语言的 <code>Dst = &amp;Src</code>。</p>
+<p>我们通过一个例子来看：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">long</span> <span class="title">m12</span><span class="params">(<span class="keyword">long</span> x)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> x * <span class="number">12</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对应的汇编：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">leaq (%rdi, %rdi, 2), %rax      # t &lt;- x+x*2</span><br><span class="line">salq $2, %rax                   # return t &lt;&lt; 2</span><br></pre></td></tr></table></figure>
+
+<p>直接对 <code>%rdi</code> 计算，然后赋值给 <code>%rax</code> </p>
+<p>两个操作数指令：</p>
+<ul>
+<li><code>addq Src, Dest</code> -&gt; <code>Dest = Dest + Src</code></li>
+<li><code>subq Src, Dest</code> -&gt; <code>Dest = Dest - Src</code></li>
+<li><code>imulq Src, Dest</code> -&gt; <code>Dest = Dest * Src</code></li>
+<li><code>salq Src, Dest</code> -&gt; <code>Dest = Dest &lt;&lt; Src</code></li>
+<li><code>sarq Src, Dest</code> -&gt; <code>Dest = Dest &gt;&gt; Src</code>  （算术）</li>
+<li><code>shrq Src, Dest</code> -&gt; <code>Dest = Dest &gt;&gt; Src</code>  （逻辑）</li>
+<li><code>xorq Src, Dest</code> -&gt; <code>Dest = Dest ^ Src</code></li>
+<li><code>andq Src, Dest</code> -&gt; <code>Dest = Dest &amp; Src</code></li>
+<li><code>orq Src, Dest</code> -&gt; <code>Dest = Dest | Src</code></li>
+</ul>
+<p>一个操作数指令：</p>
+<ul>
+<li><code>incq Dest</code> -&gt; <code>Dest = Dest + 1</code></li>
+<li><code>decq Dest</code> -&gt; <code>Dest = Dest - 1</code></li>
+<li><code>negq Dest</code> -&gt; <code>Dest = -Dest</code></li>
+<li><code>notq Dest</code> -&gt; <code>Dest = ~Dest</code></li>
+</ul>
+<h2 id="控制"><a href="#控制" class="headerlink" title="控制"></a>控制</h2><p>到目前为止，我们只考虑了顺序执行，还有一些比如：条件语句、循环和分支语句，是根据测试结果来决定执行顺序。</p>
+<h3 id="条件码"><a href="#条件码" class="headerlink" title="条件码"></a>条件码</h3><p>我们用一个加法运算来说明，<code>t = a + b</code> ，对应的汇编为 <code>addq Src, Dst</code> 具体判断如下：</p>
+<table>
+<thead>
+<tr>
+<th align="center">条件码</th>
+<th align="center">含义</th>
+<th align="center">判断</th>
+<th align="center">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">CF</td>
+<td align="center">进位标志(Carry Flag)</td>
+<td align="center"><code>(unsigned) t &lt; (unsigned) a</code></td>
+<td align="center">无符号溢出</td>
+</tr>
+<tr>
+<td align="center">ZF</td>
+<td align="center">零标志(Zero Flag)</td>
+<td align="center"><code>t == 0</code></td>
+<td align="center">零</td>
+</tr>
+<tr>
+<td align="center">SF</td>
+<td align="center">符号标志(Sign Flag)</td>
+<td align="center"><code>t &lt; 0</code></td>
+<td align="center">负数</td>
+</tr>
+<tr>
+<td align="center">OF</td>
+<td align="center">溢出标志(Overflow Flag)</td>
+<td align="center"><code>(a &gt; 0 &amp;&amp; b &gt; 0 &amp;&amp; t &lt; 0)</code> || <code>(a &lt; 0 &amp;&amp; b &lt; 0 &amp;&amp; t &gt; 0)</code></td>
+<td align="center">有符号溢出</td>
+</tr>
+</tbody></table>
+<h3 id="访问条件码"><a href="#访问条件码" class="headerlink" title="访问条件码"></a>访问条件码</h3><p>条件码通过一定的组合可以得到一些判断条件：</p>
+<center><img src="http://img.cuzz.site/20201025162548.png" width="80%"></center>
+
+<p>通过一个例子来看：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">gt</span><span class="params">(<span class="keyword">long</span> x, <span class="keyword">long</span> y)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">return</span> x &gt; y;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对应汇编代码，<code>%rdi</code> 存储 x，<code>%rsi</code> 储存 y，<code>%rax</code> 表示返回值</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">comq %rsi, %rdi             # 比较 x 和 y</span><br><span class="line">     setg %al               # 当 &gt; 设置值</span><br><span class="line">     movzbl %al, %eax       # 将高位设置为 0</span><br><span class="line">     ret</span><br></pre></td></tr></table></figure>
+
+<h3 id="跳转指令"><a href="#跳转指令" class="headerlink" title="跳转指令"></a>跳转指令</h3><p>正常情况下指令是一条一条顺序执行，跳转指令（jump）会使程序切换到一个全新的位置。</p>
+<center><img src="http://img.cuzz.site/20201025221405.png" width="80%"></center>
+
+<p>通过一个例子来看：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">long</span> <span class="title">absdiff</span><span class="params">(<span class="keyword">long</span> x, <span class="keyword">long</span> y)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">long</span> result;</span><br><span class="line">    <span class="keyword">if</span> (x &gt; y)</span><br><span class="line">        result = x - y;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        result = y - x;</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>没有优化，对应汇编代码，<code>%rdi</code> 存储 x，<code>%rsi</code> 储存 y，<code>%rax</code> 表示返回值</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">absdiff:</span><br><span class="line">    cmpq    %rsi, %rdi</span><br><span class="line">    jle     .L4</span><br><span class="line">    movq    %rdi, %rax</span><br><span class="line">    subq    %rsi, %rax</span><br><span class="line">    ret</span><br><span class="line">.L4:    # x &lt;&#x3D; y</span><br><span class="line">    movq    %rsi, %rax</span><br><span class="line">    subq    %rdi, %rax</span><br><span class="line">    ret</span><br></pre></td></tr></table></figure>
+
+<p>我们知道 CPU 比较喜欢顺序工作，执行一系列操作会有缓存，所以效率比较高，如果遇到分支，会打破这种顺序工作，带来很大的性能影响。因此人们通常使用分支预测来解决，如果只是对这种简单的分支可以直接把两种结果直接算出来。简化为我们熟知的二元运算  <code>test ? then_expr : else_expr</code> 。</p>
+<p>优化后，对应的汇编代码</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">absdiff:</span><br><span class="line">    movq    %rdi, %rax  # x</span><br><span class="line">    subq    %rsi, %rax  # result &#x3D; x-y</span><br><span class="line">    movq    %rsi, %rdx</span><br><span class="line">    subq    %rdi, %rdx  # eval &#x3D; y-x</span><br><span class="line">    cmpq    %rsi, %rdi  # x:y</span><br><span class="line">    cmovle  %rdx, %rax  # if &lt;&#x3D;, result &#x3D; eval</span><br><span class="line">    ret</span><br></pre></td></tr></table></figure>
+
+<p>需要注意的是，有些场景不适合：</p>
+<ul>
+<li>如果两个分支比较大的计算量</li>
+<li>如果两个计算会相互影响</li>
+</ul>
+<h3 id="循环"><a href="#循环" class="headerlink" title="循环"></a>循环</h3><p>看看 do-while 语句</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">long</span> <span class="title">pcount_do</span><span class="params">(<span class="keyword">unsigned</span> <span class="keyword">long</span> x)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">long</span> result = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">do</span> &#123;</span><br><span class="line">        result += x &amp; <span class="number">0x1</span>;</span><br><span class="line">        x &gt;&gt;= <span class="number">1</span>;</span><br><span class="line">    &#125; <span class="keyword">while</span> (x);</span><br><span class="line">    <span class="keyword">return</span> result;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>和对应的汇编</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">    movl    $0, %eax    # result &#x3D; 0</span><br><span class="line">.L2:                    # loop:</span><br><span class="line">    movq    %rdi, %rdx</span><br><span class="line">    andl    $1, %edx    # t &#x3D; x &amp; 0x1</span><br><span class="line">    addq    %rdx, %rax  # result +&#x3D; t</span><br><span class="line">    shrq    %rdi        # x &gt;&gt;&#x3D; 1</span><br><span class="line">    jne     .L2         # if (x) goto loop</span><br><span class="line">    rep; ret</span><br></pre></td></tr></table></figure>
+
+<h2 id="过程调用"><a href="#过程调用" class="headerlink" title="过程调用"></a>过程调用</h2><p>过程调用是一个是软件中一个很重要的抽象，提供了一种封装代码方式，在不同编程语言中有不同的形式，如：函数（function）、方法（method）、子例程（subroutine）和处理函数（handler）等。但这些都必须满足如下：</p>
+<ul>
+<li>传递控制：包括如何开始执行过程代码，以及如何返回到开始的地方</li>
+<li>传递数据：包括过程需要的参数以及过程的返回值</li>
+<li>内存管理：如何在过程执行的时候分配内存，以及在返回之后释放内存</li>
+</ul>
+<h3 id="栈结构"><a href="#栈结构" class="headerlink" title="栈结构"></a>栈结构</h3><p>当 x86-64 过程调用中所需要的存储空间超过了寄存器能够存放的大小时，就会在栈上分配空间，这个空间叫作栈帧（stack fram）。栈可以用来传递参数、存储返回信息、保存寄存器和局部变量等。</p>
+<center><img src="http://img.cuzz.site/20201026225240.png" width="80%"></center>
+
+<p>重要指令：</p>
+<ul>
+<li><code>call Lable</code> 过程调用，直接调用<ul>
+<li>push 返回地址到栈中</li>
+<li>跳到 label</li>
+</ul>
+</li>
+<li><code>ret</code> 从过程调用中返回<ul>
+<li>pop 地址从栈中</li>
+<li>跳到对应地址</li>
+</ul>
+</li>
+</ul>
+<p>接下来我看一个过程调用的例子：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">multstore</span> <span class="params">(<span class="keyword">long</span> x, <span class="keyword">long</span>, y, <span class="keyword">long</span> *dest)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">long</span> t = mult2(x, y);</span><br><span class="line">    *dest = t;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">long</span> <span class="title">mult2</span><span class="params">(<span class="keyword">long</span> a, <span class="keyword">long</span> b)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">long</span> s = a * b;</span><br><span class="line">    <span class="keyword">return</span> s;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>对应的汇编</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">0000000000400540 &lt;multstore&gt;:</span><br><span class="line">    # x 在 %rdi 中，y 在 %rsi 中，dest 在 %rdx 中</span><br><span class="line">    400540: push    %rbx            # 通过压栈保存 %rbx</span><br><span class="line">    400541: mov     %rdx, %rbx      # 保存 dest</span><br><span class="line">    400544: callq   400550 &lt;mult2&gt;  # 调用 mult2(x, y)</span><br><span class="line">    # t 在 %rax 中</span><br><span class="line">    400549: mov     %rax, (%rbx)    # 结果保存到 dest 中, *dest &#x3D; t</span><br><span class="line">    40054c: pop     %rbx            # 通过出栈恢复原来的 %rbx</span><br><span class="line">    40054d: retq                    # 返回</span><br><span class="line"></span><br><span class="line">0000000000400550 &lt;mult2&gt;:</span><br><span class="line">    # a 在 %rdi 中，b 在 %rsi 中</span><br><span class="line">    400550: mov     %rdi, %rax      # 得到 a 的值</span><br><span class="line">    400553: imul    %rsi, %rax      # a * b</span><br><span class="line">    # s 在 %rax 中</span><br><span class="line">    400557: retq                    # 返回 callq 的下一行</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>在 ret 之前会释放栈，比如前面通过<code>subq $32,%rsp</code> 分配了空间，后面就会通过 <code>addq $32, %rsp</code> 释放</li>
+<li>如果参数超过了 6 个，寄存器放不下就会放到栈帧中</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>本文简单介绍 x86-64 汇编相关内容，主要介绍了一下汇编中的常用指令和使用，除了一些逆向工程师和一些底层专业人员需要比较深入了解汇编，大多数开发，并不需要写汇编语言，但是希望自己能够阅读和理解一些简单汇编代码，主要为了 Boom Lab 做准备。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li>深入理解计算机系统</li>
+<li><a target="_blank" rel="noopener" href="https://wdxtub.com/csapp/thin-csapp-2/2016/04/16/">机器指令和程序优化</a></li>
+</ul>
+</div><div class="article-tags size-small mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="/tags/%E6%B1%87%E7%BC%96/">汇编</a><a class="link-muted mr-2" rel="tag" href="/tags/gdb/">gdb</a></div><!--!--></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">Like this article? Support the author with</h3><div class="buttons is-centered"><a class="button is-info donate"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>Alipay</span><span class="qrcode"><img src="/img/alipay.png" alt="Alipay"></span></a><a class="button is-success donate"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>Wechat</span><span class="qrcode"><img src="/img/wechatpay.png" alt="Wechat"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2020/10/20/CSAPP_Boom_Lab/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">Boom Lab</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2020/10/17/%E6%B5%AE%E7%82%B9%E6%95%B0%E5%9C%A8%E8%AE%A1%E7%AE%97%E6%9C%BA%E4%B8%AD%E7%9A%84%E8%A1%A8%E7%A4%BA/"><span class="level-item">浮点数在计算机中的表示</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">Comments</h3><div id="comment-container"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.6.2/dist/gitalk.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@1.6.2/dist/gitalk.min.js"></script><script>var gitalk = new Gitalk({
+            id: "05a1a12aaf63b77898f08254ceb09815",
+            repo: "cuzz1.github.io",
+            owner: "cuzz1",
+            clientID: "e829281603f9115c572d",
+            clientSecret: "246dae10dfb1b363805ab98902dc93539c355bb3",
+            admin: ["cuzz1"],
+            createIssueManually: false,
+            distractionFreeMode: false,
+            perPage: 20,
+            pagerDirection: "last",
+            
+            
+            enableHotKey: true,
+            language: "zh-CN",
+        })
+        gitalk.render('comment-container')</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1 is-sticky"><div class="card widget" id="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">Catalogue</h3><ul class="menu-list"><li><a class="is-flex" href="#从-C-语言到机器码"><span class="mr-2">1</span><span>从 C 语言到机器码</span></a></li><li><a class="is-flex" href="#汇编入门"><span class="mr-2">2</span><span>汇编入门</span></a><ul class="menu-list"><li><a class="is-flex" href="#数据格式"><span class="mr-2">2.1</span><span>数据格式</span></a></li><li><a class="is-flex" href="#访问信息"><span class="mr-2">2.2</span><span>访问信息</span></a></li><li><a class="is-flex" href="#操作指令"><span class="mr-2">2.3</span><span>操作指令</span></a></li></ul></li><li><a class="is-flex" href="#控制"><span class="mr-2">3</span><span>控制</span></a><ul class="menu-list"><li><a class="is-flex" href="#条件码"><span class="mr-2">3.1</span><span>条件码</span></a></li><li><a class="is-flex" href="#访问条件码"><span class="mr-2">3.2</span><span>访问条件码</span></a></li><li><a class="is-flex" href="#跳转指令"><span class="mr-2">3.3</span><span>跳转指令</span></a></li><li><a class="is-flex" href="#循环"><span class="mr-2">3.4</span><span>循环</span></a></li></ul></li><li><a class="is-flex" href="#过程调用"><span class="mr-2">4</span><span>过程调用</span></a><ul class="menu-list"><li><a class="is-flex" href="#栈结构"><span class="mr-2">4.1</span><span>栈结构</span></a></li></ul></li><li><a class="is-flex" href="#总结"><span class="mr-2">5</span><span>总结</span></a></li><li><a class="is-flex" href="#参考"><span class="mr-2">6</span><span>参考</span></a></li></ul></div></div><style>.menu-list > li > a.is-active + .menu-list { display: block; }.menu-list > li > a + .menu-list { display: none; }</style><script src="/js/toc.js" defer></script></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.png" alt="cuzz&#039;s blog" height="28"></a><p class="size-small"><span>&copy; 2020 John Doe</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script>moment.locale("en");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: false,
+                    fold: ''
+                }
+            }
+        };</script><script src="/js/animation.js"></script><a id="back-to-top" title="Back to top" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="Type something..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"Type something...","untitled":"(Untitled)","posts":"Posts","pages":"Pages","categories":"Categories","tags":"Tags"});
+        });</script><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/tororo.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false},"rect":"opacity:0.7","log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body></html>
