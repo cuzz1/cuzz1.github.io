@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"><meta><title>分布式事务框架Seata - cuzz&#039;s blog</title><meta description="博客记录"><meta property="og:type" content="blog"><meta property="og:title" content="分布式事务框架Seata"><meta property="og:url" content="http://blog.cuzz.site/2019/07/10/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E6%A1%86%E6%9E%B6Seata/"><meta property="og:site_name" content="cuzz&#039;s blog"><meta property="og:description" content="博客记录"><meta property="og:locale" content="en_US"><meta property="og:image" content="https://picsum.photos/536/356"><meta property="article:published_time" content="2019-07-10T15:59:59.000Z"><meta property="article:modified_time" content="2020-11-14T15:32:34.006Z"><meta property="article:author" content="cuzz"><meta property="article:tag" content="Seata"><meta property="twitter:card" content="summary"><meta property="twitter:image" content="https://picsum.photos/536/356"><script type="application/ld+json">{"@context":"https://schema.org","@type":"BlogPosting","mainEntityOfPage":{"@type":"WebPage","@id":"http://blog.cuzz.site/2019/07/10/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E6%A1%86%E6%9E%B6Seata/"},"headline":"cuzz's blog","image":[],"datePublished":"2019-07-10T15:59:59.000Z","dateModified":"2020-11-14T15:32:34.006Z","author":{"@type":"Person","name":"John Doe"},"description":"分布式基础CAP 定理CAP 定理指的是在一个分布式系统中， Consistency（一致性）、 Availability（可用性）、Partition tolerance（分区容错性），三者不可兼得。在分布式系统中，分区容错性是必须需要实现的。所以只能在一致性和可用性之间进行权衡（AP 或者 CP）。"}</script><link rel="canonical" href="http://blog.cuzz.site/2019/07/10/%E5%88%86%E5%B8%83%E5%BC%8F%E4%BA%8B%E5%8A%A1%E6%A1%86%E6%9E%B6Seata/"><link rel="icon" href="/img/favicon.png"><link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/5.13.0/css/all.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/highlight.js@9.12.0/styles/atom-one-light.css"><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;600&amp;family=Source+Code+Pro"><link rel="stylesheet" href="/css/default.css"><style>body>.footer,body>.navbar,body>.section{opacity:0}</style><!--!--><!--!--><!--!--><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/css/lightgallery.min.css"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/css/justifiedGallery.min.css"><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/pace-js@1.0.2/pace.min.js"></script><meta name="generator" content="Hexo 5.0.2"></head><body class="is-2-column"><nav class="navbar navbar-main"><div class="container"><div class="navbar-brand justify-content-center"><a class="navbar-item navbar-logo" href="/"><img src="/img/logo.png" alt="cuzz&#039;s blog" height="28"></a></div><div class="navbar-menu"><div class="navbar-start"><a class="navbar-item" href="/">Home</a><a class="navbar-item" href="/archives">Archives</a><a class="navbar-item" href="/categories">Categories</a><a class="navbar-item" href="/tags">Tags</a><a class="navbar-item" href="/about">About</a></div><div class="navbar-end"><a class="navbar-item" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/cuzz1"><i class="fab fa-github"></i></a><a class="navbar-item is-hidden-tablet catalogue" title="Catalogue" href="javascript:;"><i class="fas fa-list-ul"></i></a><a class="navbar-item search" title="Search" href="javascript:;"><i class="fas fa-search"></i></a></div></div></div></nav><section class="section"><div class="container"><div class="columns"><div class="column order-2 column-main is-8-tablet is-8-desktop is-8-widescreen"><div class="card"><div class="card-image"><span class="image is-7by3"><img class="fill" src="https://picsum.photos/536/356" alt="分布式事务框架Seata"></span></div><article class="card-content article" role="article"><div class="article-meta size-small is-uppercase level is-mobile"><div class="level-left"><span class="level-item">Posted&nbsp;<time dateTime="2019-07-10T15:59:59.000Z" title="2019-07-10T15:59:59.000Z">2019-07-10</time></span><span class="level-item">Updated&nbsp;<time dateTime="2020-11-14T15:32:34.006Z" title="2020-11-14T15:32:34.006Z">2020-11-14</time></span><span class="level-item"><a class="link-muted" href="/categories/%E5%88%86%E5%B8%83%E5%BC%8F/">分布式</a></span></div></div><h1 class="title is-3 is-size-4-mobile">分布式事务框架Seata</h1><div class="content"><h2 id="分布式基础"><a href="#分布式基础" class="headerlink" title="分布式基础"></a>分布式基础</h2><h3 id="CAP-定理"><a href="#CAP-定理" class="headerlink" title="CAP 定理"></a>CAP 定理</h3><p>CAP 定理指的是在一个分布式系统中， Consistency（一致性）、 Availability（可用性）、Partition tolerance（分区容错性），三者不可兼得。在分布式系统中，分区容错性是必须需要实现的。所以只能在一致性和可用性之间进行权衡（AP 或者 CP）。</p>
+<a id="more"></a>
+
+<h3 id="BASE-理论"><a href="#BASE-理论" class="headerlink" title="BASE 理论"></a>BASE 理论</h3><p>BASE 是 Basically Available（基本可用）、Soft state（软状态）和 Eventually consistent（最终一致性）三个短语的缩写。是对 CAP 中 AP 的一个扩展</p>
+<ol>
+<li>BA 基本可用：分布式系统在出现故障时，允许损失部分可用功能，保证核心功能可用。</li>
+<li>S 软状态：允许系统中存在中间状态，这个状态不影响系统可用性，这里指的是 CAP 中的不一致。</li>
+<li>E 最终一致：最终一致是指经过一段时间后，所有节点数据都将会达到一致。</li>
+</ol>
+<p>BASE 解决了 CAP 中理论没有网络延迟，在 BASE 中用软状态和最终一致，保证了延迟后的一致性。</p>
+<p>BASE 和 ACID 是相反的，它完全不同于 ACID 的强一致性模型，而是通过牺牲强一致性来获得可用性，并允许数据在一段时间内是不一致的，但最终达到一致状态。</p>
+<h3 id="分布式事务实现方式"><a href="#分布式事务实现方式" class="headerlink" title="分布式事务实现方式"></a><a target="_blank" rel="noopener" href="https://github.com/doocs/advanced-java/blob/master/docs/distributed-system/distributed-transaction.md">分布式事务实现方式</a></h3><ul>
+<li><strong>XA 方案(两阶段提交)</strong></li>
+<li><strong>TCC 方案</strong></li>
+<li>本地消息表</li>
+<li>可靠消息最终一致性方案</li>
+<li>最大努力通知方案</li>
+</ul>
+<h2 id="Seata简介"><a href="#Seata简介" class="headerlink" title="Seata简介"></a>Seata简介</h2><p>Seata (Simple Extensible Autonomous Transaction Architecture) 是阿里巴巴开源的分布式事务中间件，，解决微服务场景下面临的分布式事务问题。</p>
+<p>具体看 <a target="_blank" rel="noopener" href="https://github.com/seata/seata">Seata</a> 官网：</p>
+<p><img src="https://camo.githubusercontent.com/b3a71332ae0a91db7f8616286a69b879fcbea672/68747470733a2f2f63646e2e6e6c61726b2e636f6d2f6c61726b2f302f323031382f706e672f31383836322f313534353239363739313037342d33626365376263652d303235652d343563332d393338362d3762393531333564616465382e706e67" alt="Seata solution"></p>
+<p><strong>Seata主要由三个重要组件组成：</strong></p>
+<ul>
+<li>Transaction Coordinator(TC)：管理全局的分支事务的状态，用于全局性事务的提交和回滚。</li>
+<li>Transaction Manager(TM)：事务管理器，用于开启全局事务、提交或者回滚全局事务，是全局事务的开启者。</li>
+<li>Resource Manager(RM)：资源管理器，用于分支事务上的资源管理，向 TC 注册分支事务，上报分支事务的状态，接受 TC 的命令来提交或者回滚分支事务。</li>
+</ul>
+<h2 id="Seata-两种模式"><a href="#Seata-两种模式" class="headerlink" title="Seata 两种模式"></a>Seata 两种模式</h2><p>Seata 关注的就是微服务架构下的数据一致性问题，是一整套的分布式事务解决方案。Seata 框架包含两种模式，一种是 AT 模式。AT 模式主要从数据分片的角度，关注多 DB 访问的数据一致性，当然也包括多服务下的多 DB 数据访问一致性问题。</p>
+<p>另外一个就是 TCC 模式，TCC 模式主要关注业务拆分，在按照业务横向扩展资源时，解决微服务间调用的一致性问题，保证读资源访问的事务属性。</p>
+<h3 id="AT-模式"><a href="#AT-模式" class="headerlink" title="AT 模式"></a>AT 模式</h3><p>AT 模式是通过两段提交的方式实现，AT 模式下，把每个数据库被当做是一个 Resource，Seata 里称为 DataSource Resource。业务通过 JDBC 标准接口访问数据库资源时，Seata 框架会对所有请求进行拦截，做一些操作。每个本地事务提交时，Seata RM（Resource Manager，资源管理器） 都会向 TC（Transaction Coordinator，事务协调器） 注册一个分支事务。当请求链路调用完成后，发起方通知 TC 提交或回滚分布式事务，进入二阶段调用流程。此时，TC 会根据之前注册的分支事务回调到对应参与者去执行对应资源的第二阶段。TC 是怎么找到分支事务与资源的对应关系呢？每个资源都有一个全局唯一的资源 ID，并且在初始化时用该 ID 向 TC 注册资源。在运行时，每个分支事务的注册都会带上其资源 ID。这样 TC 就能在二阶段调用时正确找到对应的资源。</p>
+<p>这就是我们的 AT 模式。简单总结一下，就是把每个数据库当做一个 Resource，在本地事务提交时会去注册一个分支事务。</p>
+<p>这种模式是对业务零入侵，并发没那么高。</p>
+<h3 id="TCC-模式"><a href="#TCC-模式" class="headerlink" title="TCC 模式"></a>TCC 模式</h3><p><strong>TCC 模型是把锁的粒度完全交给业务处理，它需要每个子事务业务都实现Try-Confirm / Cancel 接口。</strong></p>
+<blockquote>
+<p>TCC 模式本质也是 2PC ，只是 TCC 在应用层控制。</p>
+</blockquote>
+<ul>
+<li>Try:<ul>
+<li>尝试执行业务</li>
+<li>完成所有业务检查（一致性）</li>
+<li>预留必须业务资源（准隔离性）</li>
+</ul>
+</li>
+<li>Confirm:<ul>
+<li>确认执行业务；</li>
+<li>真正执行业务，不作任何业务检查</li>
+<li>只使用Try阶段预留的业务资源</li>
+<li>Confirm 操作满足幂等性</li>
+</ul>
+</li>
+<li>Cancel:<ul>
+<li>取消执行业务</li>
+<li>释放Try阶段预留的业务资源</li>
+<li>Cancel操作满足幂等性</li>
+</ul>
+</li>
+</ul>
+<p><strong>这三个阶段，都会按本地事务的方式执行。不同于 XA 的 prepare ，TCC 无需将 XA 的投票期间的所有资源挂起，因此极大的提高了吞吐量。</strong></p>
+<p>那么对应到 TCC 模式里，也是一样的，Seata 框架把每组 TCC 接口当做一个 Resource，称为 TCC Resource。这套 TCC 接口可以是 RPC，也以是服务内 JVM 调用。在业务启动时，Seata 框架会自动扫描识别到 TCC 接口的调用方和发布方。如果是 RPC 的话，就是 sofa:reference、sofa:service、dubbo:reference、dubbo:service 等。</p>
+<p>扫描到 TCC 接口的调用方和发布方之后。如果是发布方，会在业务启动时向 TC 注册 TCC Resource，与 DataSource Resource 一样，每个资源也会带有一个资源 ID。</p>
+<p>如果是调用方，Seata 框架会给调用方加上切面，与 AT 模式一样，在运行时，该切面会拦截所有对 TCC 接口的调用。每调用一次 Try 接口，切面会先向 TC 注册一个分支事务，然后才去执行原来的 RPC 调用。当请求链路调用完成后，TC 通过分支事务的资源 ID 回调到正确的参与者去执行对应 TCC 资源的 Confirm 或 Cancel 方法。</p>
+<p>在讲完了整个框架模型以后，大家可能会问 TCC 三个接口怎么实现。因为框架本身很简单，主要是扫描 TCC 接口，注册资源，拦截接口调用，注册分支事务，最后回调二阶段接口。最核心的实际上是 TCC 接口的实现逻辑。下面我将根据蚂蚁金服内部多年的实践来为大家分析怎么实现一个完备的 TCC 接口。</p>
+<h2 id="运行-Demo"><a href="#运行-Demo" class="headerlink" title="运行 Demo"></a>运行 Demo</h2><p><a target="_blank" rel="noopener" href="https://github.com/seata/seata-samples">官方Demo</a></p>
+<p>下面是 dubbo 的例子，运行后报错可以看到回滚信息：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">INFO [rpcDispatch_RMROLE_4_8] - onMessage:xid&#x3D;10.116.22.63:8091:2016481020,branchId&#x3D;2016481022,branchType&#x3D;AT,resourceId&#x3D;jdbc:mysql:&#x2F;&#x2F;localhost:3306&#x2F;fescar_demo?serverTimezone&#x3D;UTC,applicationData&#x3D;null</span><br><span class="line"> INFO [rpcDispatch_RMROLE_4_8] - Branch Rollbacking: 10.116.22.63:8091:2016481020 2016481022 jdbc:mysql:&#x2F;&#x2F;localhost:3306&#x2F;fescar_demo?serverTimezone&#x3D;UTC</span><br><span class="line"> INFO [rpcDispatch_RMROLE_4_8] - xid 10.116.22.63:8091:2016481020 branch 2016481022, undo_log deleted with GlobalFinished</span><br><span class="line"> INFO [rpcDispatch_RMROLE_4_8] - Branch Rollbacked result: PhaseTwo_Rollbacked</span><br><span class="line">DEBUG [rpcDispatch_RMROLE_4_8] - branch rollback result:xid&#x3D;10.116.22.63:8091:2016481020,branchId&#x3D;2016481022,branchStatus&#x3D;PhaseTwo_Rollbacked,result code &#x3D;Success,getMsg &#x3D;null</span><br><span class="line"> INFO [rpcDispatch_RMROLE_4_8] - RmRpcClient sendResponse xid&#x3D;10.116.22.63:8091:2016481020,branchId&#x3D;2016481022,branchStatus&#x3D;PhaseTwo_Rollbacked,result code &#x3D;Success,getMsg &#x3D;null</span><br><span class="line">DEBUG [rpcDispatch_RMROLE_4_8] - send response:xid&#x3D;10.116.22.63:8091:2016481020,branchId&#x3D;2016481022,branchStatus&#x3D;PhaseTwo_Rollbacked,result code &#x3D;Success,getMsg &#x3D;null,channel:[id: 0xc8027ef7, L:&#x2F;127.0.0.1:62873 - R:&#x2F;127.0.0.1:8091]</span><br></pre></td></tr></table></figure>
+
+<p><strong>注意：</strong></p>
+<ul>
+<li>数据库驱动与 Mysql 版本一致</li>
+<li>数据库 rul 添加时区 <code>jdbc.account.url=jdbc:mysql://localhost:3306/fescar_demo?serverTimezone=UTC</code></li>
+</ul>
+<h2 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h2><p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/Nb3qeOXXW1xa-qFr-uNi9g">Seata AT 模式分布式事务源码分析</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s/G9vkficqBSpmtGITgsJPgw">分布式事务 Seata TCC 模式深度解析</a></p>
+</div><div class="article-tags size-small mb-4"><span class="mr-2">#</span><a class="link-muted mr-2" rel="tag" href="/tags/Seata/">Seata</a></div><!--!--></article></div><div class="card"><div class="card-content"><h3 class="menu-label has-text-centered">Like this article? Support the author with</h3><div class="buttons is-centered"><a class="button is-info donate"><span class="icon is-small"><i class="fab fa-alipay"></i></span><span>Alipay</span><span class="qrcode"><img src="/img/alipay.png" alt="Alipay"></span></a><a class="button is-success donate"><span class="icon is-small"><i class="fab fa-weixin"></i></span><span>Wechat</span><span class="qrcode"><img src="/img/wechatpay.png" alt="Wechat"></span></a></div></div></div><nav class="post-navigation mt-4 level is-mobile"><div class="level-start"><a class="article-nav-prev level level-item link-muted" href="/2019/08/11/Java8%E7%9A%84%E6%B7%B1%E5%85%A5%E4%B8%8E%E5%AE%9E%E6%88%98/"><i class="level-item fas fa-chevron-left"></i><span class="level-item">Java8的深入与实战</span></a></div><div class="level-end"><a class="article-nav-next level level-item link-muted" href="/2019/06/03/%E5%85%B3%E4%BA%8Enull%E7%9A%84%E6%80%9D%E8%80%83/"><span class="level-item">关于null的思考</span><i class="level-item fas fa-chevron-right"></i></a></div></nav><div class="card"><div class="card-content"><h3 class="title is-5">Comments</h3><div id="comment-container"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/gitalk@1.6.2/dist/gitalk.css"><script src="https://cdn.jsdelivr.net/npm/gitalk@1.6.2/dist/gitalk.min.js"></script><script>var gitalk = new Gitalk({
+            id: "4223610de7a6028fe0493dbf3dda6959",
+            repo: "cuzz1.github.io",
+            owner: "cuzz1",
+            clientID: "e829281603f9115c572d",
+            clientSecret: "246dae10dfb1b363805ab98902dc93539c355bb3",
+            admin: ["cuzz1"],
+            createIssueManually: false,
+            distractionFreeMode: false,
+            perPage: 20,
+            pagerDirection: "last",
+            
+            
+            enableHotKey: true,
+            language: "zh-CN",
+        })
+        gitalk.render('comment-container')</script></div></div></div><div class="column column-left is-4-tablet is-4-desktop is-4-widescreen  order-1 is-sticky"><div class="card widget" id="toc"><div class="card-content"><div class="menu"><h3 class="menu-label">Catalogue</h3><ul class="menu-list"><li><a class="is-flex" href="#分布式基础"><span class="mr-2">1</span><span>分布式基础</span></a><ul class="menu-list"><li><a class="is-flex" href="#CAP-定理"><span class="mr-2">1.1</span><span>CAP 定理</span></a></li><li><a class="is-flex" href="#BASE-理论"><span class="mr-2">1.2</span><span>BASE 理论</span></a></li><li><a class="is-flex" href="#分布式事务实现方式"><span class="mr-2">1.3</span><span>分布式事务实现方式</span></a></li></ul></li><li><a class="is-flex" href="#Seata简介"><span class="mr-2">2</span><span>Seata简介</span></a></li><li><a class="is-flex" href="#Seata-两种模式"><span class="mr-2">3</span><span>Seata 两种模式</span></a><ul class="menu-list"><li><a class="is-flex" href="#AT-模式"><span class="mr-2">3.1</span><span>AT 模式</span></a></li><li><a class="is-flex" href="#TCC-模式"><span class="mr-2">3.2</span><span>TCC 模式</span></a></li></ul></li><li><a class="is-flex" href="#运行-Demo"><span class="mr-2">4</span><span>运行 Demo</span></a></li><li><a class="is-flex" href="#参考链接"><span class="mr-2">5</span><span>参考链接</span></a></li></ul></div></div><style>.menu-list > li > a.is-active + .menu-list { display: block; }.menu-list > li > a + .menu-list { display: none; }</style><script src="/js/toc.js" defer></script></div></div><!--!--></div></div></section><footer class="footer"><div class="container"><div class="level"><div class="level-start"><a class="footer-logo is-block mb-2" href="/"><img src="/img/logo.png" alt="cuzz&#039;s blog" height="28"></a><p class="size-small"><span>&copy; 2020 John Doe</span>  Powered by <a href="https://hexo.io/" target="_blank" rel="noopener">Hexo</a> &amp; <a href="https://github.com/ppoffice/hexo-theme-icarus" target="_blank" rel="noopener">Icarus</a></p></div><div class="level-end"><div class="field has-addons"><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Creative Commons" href="https://creativecommons.org/"><i class="fab fa-creative-commons"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Attribution 4.0 International" href="https://creativecommons.org/licenses/by/4.0/"><i class="fab fa-creative-commons-by"></i></a></p><p class="control"><a class="button is-transparent is-large" target="_blank" rel="noopener" title="Download on GitHub" href="https://github.com/ppoffice/hexo-theme-icarus"><i class="fab fa-github"></i></a></p></div></div></div></div></footer><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script><script src="https://cdn.jsdelivr.net/npm/moment@2.22.2/min/moment-with-locales.min.js"></script><script>moment.locale("en");</script><script>var IcarusThemeSettings = {
+            article: {
+                highlight: {
+                    clipboard: false,
+                    fold: ''
+                }
+            }
+        };</script><script src="/js/animation.js"></script><a id="back-to-top" title="Back to top" href="javascript:;"><i class="fas fa-chevron-up"></i></a><script src="/js/back_to_top.js" defer></script><!--!--><!--!--><script src="https://cdn.jsdelivr.net/npm/lightgallery@1.6.8/dist/js/lightgallery.min.js" defer></script><script src="https://cdn.jsdelivr.net/npm/justifiedGallery@3.7.0/dist/js/jquery.justifiedGallery.min.js" defer></script><script>window.addEventListener("load", () => {
+            if (typeof $.fn.lightGallery === 'function') {
+                $('.article').lightGallery({ selector: '.gallery-item' });
+            }
+            if (typeof $.fn.justifiedGallery === 'function') {
+                if ($('.justified-gallery > p > .gallery-item').length) {
+                    $('.justified-gallery > p > .gallery-item').unwrap();
+                }
+                $('.justified-gallery').justifiedGallery();
+            }
+        });</script><!--!--><!--!--><!--!--><script src="/js/main.js" defer></script><div class="searchbox"><div class="searchbox-container"><div class="searchbox-header"><div class="searchbox-input-container"><input class="searchbox-input" type="text" placeholder="Type something..."></div><a class="searchbox-close" href="javascript:;">×</a></div><div class="searchbox-body"></div></div></div><script src="/js/insight.js" defer></script><script>document.addEventListener('DOMContentLoaded', function () {
+            loadInsight({"contentUrl":"/content.json"}, {"hint":"Type something...","untitled":"(Untitled)","posts":"Posts","pages":"Pages","categories":"Categories","tags":"Tags"});
+        });</script><script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginModelPath":"assets/","model":{"jsonPath":"/live2dw/assets/tororo.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":false},"rect":"opacity:0.7","log":false,"pluginJsPath":"lib/","pluginRootPath":"live2dw/","tagMode":false});</script></body></html>
